@@ -89,7 +89,20 @@ namespace QuickMinCombine {
             string path;
             if( Dialogs.GetFolderPath( out path, new FolderBrowserDialog(), "Select a directory to watch", false, this._lastDir ) ) {
                 this._lastDir = path;
-                lstFiles.Items.AddRange( FileOp.GetCssFiles( path ).ToArray() );
+                // If the list is empty go ahead and just add files
+                // otherwise, check for dupes
+                if( lstFiles.Items.Count == 0 ) {
+                    lstFiles.Items.AddRange( FileOp.GetCssFiles( path ).ToArray() );
+                }
+                else {
+                    var fl = FileOp.GetCssFiles( path );
+                    foreach( string f in fl ) {
+                        if( !lstFiles.Items.Contains( f ) ) {
+                            lstFiles.Items.Add( f );
+                        }
+                    }
+                }
+
                 btnClear.Enabled = true;
                 CheckReadyState();
             }
@@ -99,11 +112,14 @@ namespace QuickMinCombine {
         private void btnAddFile_Click( object sender, EventArgs e ) {
             string path;
             if( Dialogs.GetOpenPath( out path, new OpenFileDialog(), "CSS Files (*.css)|*.css", "Open File", this._lastDir ) ) {
-                // Only want lastDir to be the directory, excluding file name
-                this._lastDir = path.Substring( 0, ( path.LastIndexOf( "\\" ) + 1 ) );
-                lstFiles.Items.Add( path );
-                btnClear.Enabled = true;
-                CheckReadyState();
+                // Don't add dupes
+                if( !lstFiles.Items.Contains( path ) ) {
+                    // Only want lastDir to be the directory, excluding file name
+                    this._lastDir = path.Substring( 0, ( path.LastIndexOf( "\\" ) + 1 ) );
+                    lstFiles.Items.Add( path );
+                    btnClear.Enabled = true;
+                    CheckReadyState();
+                }
             }
         }
 

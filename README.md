@@ -2,6 +2,8 @@
 
 Combinify is a simple C# (.Net4) app that monitors a selected directory of css files and combines/combines & minifies them when any of the files LastWriteTime changes.
 
+**Notice: This is the initial commit, there could still be bugs in the minifier. Use with care and don't blindly trust it.**
+
 
 ### Very basic feature set
 
@@ -9,7 +11,7 @@ Combinify is a simple C# (.Net4) app that monitors a selected directory of css f
 * Watch a collection of files
   * Add directory
   * Add single file
-  * Move file up or down order list
+  * Move file up or down watch list (Files are processed in order)
   * Remove file from watch list
 * Combine all watched files on file save
 * Combine and minify all watched files on file save

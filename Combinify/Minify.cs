@@ -86,8 +86,13 @@ namespace QuickMinCombine {
         private static string CleanBrackets( string s ) {
             string result = string.Empty;
 
-            // Get rid of white spaces around parenthese, braces, and brackets
-            result = Regex.Replace( s, "\\s*(?<Brace>[\\(\\)\\{\\}\\[\\]])\\s*", "${Brace}", RegexOptions.Singleline );
+            // Get rid of white spaces around parenthese and braces
+            result = Regex.Replace( s, "\\s*(?<Brace>[\\(\\)\\{\\}])\\s*", "${Brace}", RegexOptions.Singleline );
+
+            // Square brackets are a special case since you can have classes with descendant attribute selectors
+            // Still kind of flawed ignores '.class [ attr' but I'd rather it be a few bytes bigger than broken...need to find a sure fix
+            result = Regex.Replace( result, "\\s*(?<Right>(?<!\\w )\\[)\\s*", "${Right}", RegexOptions.Singleline );
+            result = Regex.Replace( result, "\\s*(?<Left>\\])\\s*(?! \\w|\\.|#)", "${Left}", RegexOptions.Singleline );
 
             // Have to put the space back for media queries
             result = Regex.Replace( result, "and\\(", "and (", RegexOptions.Singleline );
@@ -112,11 +117,11 @@ namespace QuickMinCombine {
             // Get rid of white spaces infront of '!important'
             result = Regex.Replace( result, "\\s*!important", "!important", RegexOptions.Singleline );
 
-            // Get rid of zero'd out values (margin: 0 0 0 0)
-            result = Regex.Replace( result, ":(0 0 0 0|0 0)", ":0", RegexOptions.Singleline );
-
             // Get rid of measurements on zero values
             result = Regex.Replace( result, "(?<=(:|,))0+(%|in|cm|mm|em|ex|pt|pc|px)", "0", RegexOptions.Singleline );
+
+            // Get rid of zero'd out values (margin: 0 0 0 0)
+            result = Regex.Replace( result, ":(0 0 0 0|0 0)(;|\\})", ":0", RegexOptions.Singleline );
 
             // Set various borders to zero if they were previously 'none'
             result = Regex.Replace( result, "(?<Borders>(border|border-top|border-right|border-bottom|border-left|outline|background)):none", "${Borders}:0", RegexOptions.Singleline );
@@ -153,6 +158,7 @@ namespace QuickMinCombine {
             }
 
             // Replace all hsl(x,x,x) and hsla(x,x,x,1) strings with their hex value
+            // Have to '?' the '%' since they may have been removed in a previous step
             MatchCollection hslMatch = Regex.Matches( result, "(hsl\\(\\d{1,3},\\d{1,3}%?,\\d{1,3}%?\\))|" +
                                                               "(hsla\\(\\d{1,3},\\d{1,3}%?,\\d{1,3}%?,1\\))" );
             foreach( Match hm in hslMatch ) {
