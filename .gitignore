@@ -1,0 +1,5 @@
+# Untracked files:
+*.suo
+*.user
+Combinify/bin/*
+Combinify/obj/*
