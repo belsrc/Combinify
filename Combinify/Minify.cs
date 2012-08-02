@@ -44,12 +44,14 @@ namespace QuickMinCombine {
         /// <param name="contents">The string value of the file(s).</param>
         /// <returns>A minified version of the supplied CCS string.</returns>
         public static string MakeItUgly( string contents ) {
+            var colors = new ColorConversions();
+
             string result = CleanCommWhitespace( contents );
             result = CleanSelectors( result );
             result = CleanBrackets( result );
             result = CleanUnnecessary( result );
             result = ConvertColors( result );
-            result = CompressHex( result );
+            result = CompressHexValues( result );
 
             // Return the string after trimming any leading or trailing spaces
             return result.Trim();
@@ -135,6 +137,7 @@ namespace QuickMinCombine {
         }
 
         private static string ConvertColors( string str ) {
+            var colors = new ColorConversions();
             string result = str;
             char[] parens = { '(', ')' };
             string[] nums;
@@ -144,13 +147,12 @@ namespace QuickMinCombine {
                                                               "(rgba\\(\\d{1,3},\\d{1,3},\\d{1,3},1\\))" );
             foreach( Match rm in rgbMatch ) {
                 nums = ( rm.Value ).Split( parens )[ 1 ].Split( ',' );
-                int r, g, b;
+                
+                byte[] rgb = { Byte.Parse( nums[ 0 ] ),
+                               Byte.Parse( nums[ 1 ] ),
+                               Byte.Parse( nums[ 2 ] ) };
 
-                r = Int32.Parse( nums[ 0 ] );
-                g = Int32.Parse( nums[ 1 ] );
-                b = Int32.Parse( nums[ 2 ] );
-
-                result = result.Replace( rm.Value, ConvertRgbToHex( r, g, b ) );
+                result = result.Replace( rm.Value, colors.ConvertRgbToHex( rgb ) );
             }
 
             // Replace all hsl(x,x,x) and hsla(x,x,x,1) strings with their hex value
@@ -165,73 +167,27 @@ namespace QuickMinCombine {
                 s = Double.Parse( nums[ 1 ] ) / 100;
                 l = Double.Parse( nums[ 2 ] ) / 100;
 
-                result = result.Replace( hm.Value, ConvertHslToHex( h, s, l ) );
+                result = result.Replace( hm.Value, colors.ConvertHslToHex( h, s, l ) );
             }
 
             return result;
         }
 
-        private static string CompressHex( string s ) {
-            string result = s;
-            string tmp;
+        private static string CompressHexValues( string str ) {
+            var colors = new ColorConversions();
+            string result = str;
+            string tmp = string.Empty;
 
             // Match hex values that are 6 long, if they're 3 they're already compressed
             MatchCollection hexMatch = Regex.Matches( result, "#[0-9a-fA-F]{6}(?=,|;|\\})" );
             foreach( Match hm in hexMatch ) {
-                tmp = hm.Value.Replace( "#", string.Empty );
-                if( tmp[ 0 ] == tmp[ 1 ] && tmp[ 2 ] == tmp[ 3 ] && tmp[ 4 ] == tmp[ 5 ] ) {
-                    result = result.Replace( hm.Value, "#" + tmp[ 0 ] + tmp[ 2 ] + tmp[ 4 ] );
-                }
+                tmp = colors.CompressHex( hm.Value.Replace( "#", string.Empty ) );
+                tmp = colors.SwapOutHex( tmp );
+
+                result = result.Replace( hm.Value, tmp );
             }
 
             return result;
-        }
-
-        // Apparently if one of the values is 0 instead of getting 00 back you just get 0
-        // so I guess there goes my liner.
-        // *cry* return ( "#" + r.ToString( "X" ) + g.ToString( "X" ) + b.ToString( "X" ) ).ToLower();
-        private static string ConvertRgbToHex( int r, int g, int b ) {
-            string s = "#";
-            s += r == 0 ? "00" : r.ToString( "X" );
-            s += g == 0 ? "00" : g.ToString( "X" );
-            s += b == 0 ? "00" : b.ToString( "X" );
-
-            return s.ToLower();
-        }
-
-        /* Ported from http://mjijackson.com/2008/02/rgb-to-hsl-and-rgb-to-hsv-color-model-conversion-algorithms-in-javascript
-         * Original comments.....
-         * Converts an HSL color value to RGB. Conversion formula
-         * adapted from http://en.wikipedia.org/wiki/HSL_color_space.
-         * Assumes h, s, and l are contained in the set [0, 1] and
-         * returns r, g, and b in the set [0, 255].
-         */
-        private static string ConvertHslToHex( double h, double s, double l ) {
-            double r, g, b, q, p;
-
-            if( s == 0 ) {
-                r = g = b = l;
-            }
-            else {
-                q = l < 0.5 ? l * ( 1 + s ) : l + s - ( l * s );
-                p = 2 * l - q;
-                r = HueToRgb( p, q, h + ( 1.0 / 3.0 ) );
-                g = HueToRgb( p, q, h );
-                b = HueToRgb( p, q, h - ( 1.0 / 3.0 ) );
-            }
-
-            return ConvertRgbToHex( ( int )Math.Round( r * 255 ), ( int )Math.Round( g * 255 ), ( int )Math.Round( b * 255 ) );
-        }
-
-        private static double HueToRgb( double p, double q, double t ) {
-            if( t < 0 ) { t += 1; }
-            if( t > 1 ) { t -= 1; }
-
-            if( t * 6.0 < 1.0 ) { return p + ( ( q - p ) * 6 * t ); }
-            if( t * 2.0 < 1.0 ) { return q; }
-            if( t * 3.0 < 2.0 ) { return p + ( ( q - p ) * 6 * ( ( 2.0 / 3.0 ) - t ) ); }
-
-            return p;
         }
     }
 }
