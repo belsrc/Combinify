@@ -47,7 +47,6 @@ namespace QuickMinCombine {
             string result = CleanCommWhitespace( contents );
             result = CleanSelectors( result );
             result = CleanBrackets( result );
-            result = CleanQuotes( result );
             result = CleanUnnecessary( result );
             result = ConvertColors( result );
             result = CompressHex( result );
@@ -87,6 +86,8 @@ namespace QuickMinCombine {
             string result = string.Empty;
 
             // Get rid of white spaces around parenthese and braces
+            // Had a big ugly regex for matching parens but apparently its just fine if there is no space
+            // after the closing parent in the background shorthand...yay more savings?
             result = Regex.Replace( s, "\\s*(?<Brace>[\\(\\)\\{\\}])\\s*", "${Brace}", RegexOptions.Singleline );
 
             // Square brackets are a special case since you can have classes with descendant attribute selectors
@@ -100,11 +101,6 @@ namespace QuickMinCombine {
             return result;
         }
 
-        private static string CleanQuotes( string s ) {
-            // Get rid of white spaces around quotation marks and apostrophes
-            return Regex.Replace( s, "\\s*(?<Quotes>'|\\\")\\s*", "${Quotes}", RegexOptions.Singleline );
-        }
-
         private static string CleanUnnecessary( string s ) {
             string result = string.Empty;
 
@@ -112,7 +108,7 @@ namespace QuickMinCombine {
             result = Regex.Replace( s, ";}\\s*", "}", RegexOptions.Singleline );
 
             // Get rid of leading zeros on decimals
-            result = Regex.Replace( result, "(?<=(:|,))0+(?<Value>\\.\\d+)", "${Value}", RegexOptions.Singleline );
+            result = Regex.Replace( result, "(?<=(:|,| ))0+(?<Value>\\.\\d+)", "${Value}", RegexOptions.Singleline );
 
             // Get rid of white spaces infront of '!important'
             result = Regex.Replace( result, "\\s*!important", "!important", RegexOptions.Singleline );
@@ -126,8 +122,8 @@ namespace QuickMinCombine {
             // Set various borders to zero if they were previously 'none'
             result = Regex.Replace( result, "(?<Borders>(border|border-top|border-right|border-bottom|border-left|outline|background)):none", "${Borders}:0", RegexOptions.Singleline );
 
-            // Set various shadows to zero if they were previously 'none'
-            result = Regex.Replace( result, "(?<Shadows>(box-shadow|text-shadow)):none", "${Shadows}:0", RegexOptions.Singleline );
+            // Removed the box|text shadow replacement since, apparently, you cant set those to zero, which would be nice. Especially since you can do
+            // it with borders and a number of other props. Hopefully it eventually gets approved so I can put it back and get more space back.
 
             // Shorten MS filter
             result = Regex.Replace( result, "progid:DXImageTransform\\.Microsoft\\.Alpha\\(Opacity=", "alpha(opacity=", RegexOptions.Singleline );
@@ -191,8 +187,16 @@ namespace QuickMinCombine {
             return result;
         }
 
+        // Apparently if one of the values is 0 instead of getting 00 back you just get 0
+        // so I guess there goes my liner.
+        // *cry* return ( "#" + r.ToString( "X" ) + g.ToString( "X" ) + b.ToString( "X" ) ).ToLower();
         private static string ConvertRgbToHex( int r, int g, int b ) {
-            return ( "#" + r.ToString( "X" ) + g.ToString( "X" ) + b.ToString( "X" ) ).ToLower();
+            string s = "#";
+            s += r == 0 ? "00" : r.ToString( "X" );
+            s += g == 0 ? "00" : g.ToString( "X" );
+            s += b == 0 ? "00" : b.ToString( "X" );
+
+            return s.ToLower();
         }
 
         /* Ported from http://mjijackson.com/2008/02/rgb-to-hsl-and-rgb-to-hsv-color-model-conversion-algorithms-in-javascript
@@ -209,11 +213,11 @@ namespace QuickMinCombine {
                 r = g = b = l;
             }
             else {
-                q = l < 0.5 ? l * ( 1 + s ) : l + s - l * s;
+                q = l < 0.5 ? l * ( 1 + s ) : l + s - ( l * s );
                 p = 2 * l - q;
-                r = HueToRgb( p, q, h + 1 / 3 );
+                r = HueToRgb( p, q, h + ( 1.0 / 3.0 ) );
                 g = HueToRgb( p, q, h );
-                b = HueToRgb( p, q, h - 1 / 3 );
+                b = HueToRgb( p, q, h - ( 1.0 / 3.0 ) );
             }
 
             return ConvertRgbToHex( ( int )Math.Round( r * 255 ), ( int )Math.Round( g * 255 ), ( int )Math.Round( b * 255 ) );
@@ -222,9 +226,10 @@ namespace QuickMinCombine {
         private static double HueToRgb( double p, double q, double t ) {
             if( t < 0 ) { t += 1; }
             if( t > 1 ) { t -= 1; }
-            if( t < 1 / 6 ) { return p + ( q - p ) * 6 * t; }
-            if( t < 1 / 2 ) { return q; }
-            if( t < 2 / 3 ) { return p + ( q - p ) * ( 2 / 3 - t ) * 6; }
+
+            if( t * 6.0 < 1.0 ) { return p + ( ( q - p ) * 6 * t ); }
+            if( t * 2.0 < 1.0 ) { return q; }
+            if( t * 3.0 < 2.0 ) { return p + ( ( q - p ) * 6 * ( ( 2.0 / 3.0 ) - t ) ); }
 
             return p;
         }

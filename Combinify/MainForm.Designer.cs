@@ -60,6 +60,7 @@
             this.smiStart = new System.Windows.Forms.ToolStripMenuItem();
             this.smiStop = new System.Windows.Forms.ToolStripMenuItem();
             this.smiClose = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.cmsListOps.SuspendLayout();
             this.grpOperation.SuspendLayout();
             this.ssStatus.SuspendLayout();
@@ -118,10 +119,11 @@
             // 
             this.cmsListOps.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.smiRemove,
+            this.toolStripMenuItem1,
             this.smiUp,
             this.smiDown});
             this.cmsListOps.Name = "cmsListOps";
-            this.cmsListOps.Size = new System.Drawing.Size(165, 70);
+            this.cmsListOps.Size = new System.Drawing.Size(165, 98);
             this.cmsListOps.Opening += new System.ComponentModel.CancelEventHandler(this.cmsListOps_Opening);
             // 
             // smiRemove
@@ -385,6 +387,11 @@
             this.smiClose.Text = "Close Combinify";
             this.smiClose.Click += new System.EventHandler(this.smiClose_Click);
             // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(161, 6);
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -460,6 +467,7 @@
         private System.Windows.Forms.ToolStripMenuItem smiStart;
         private System.Windows.Forms.ToolStripMenuItem smiStop;
         private System.Windows.Forms.ToolStripMenuItem smiClose;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
     }
 }
 

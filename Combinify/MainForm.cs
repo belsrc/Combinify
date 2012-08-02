@@ -179,7 +179,9 @@ namespace QuickMinCombine {
 
         // Remove item context menu click event
         private void smiRemove_Click( object sender, EventArgs e ) {
-            lstFiles.Items.RemoveAt( lstFiles.SelectedIndex );
+            if( MessageBox.Show( "Are you sure you want to remove this item?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning ) == DialogResult.Yes ) {
+                lstFiles.Items.RemoveAt( lstFiles.SelectedIndex );
+            }
         }
 
         // Move list item up context menu click event
@@ -260,6 +262,7 @@ namespace QuickMinCombine {
             btnStop.Visible = !btnStop.Visible;
             btnDirectory.Enabled = !btnDirectory.Enabled;
             btnClear.Enabled = !btnClear.Enabled;
+            btnAddFile.Enabled = !btnAddFile.Enabled;
             btnCombineTo.Enabled = !btnCombineTo.Enabled;
             smiStart.Enabled = !smiStart.Enabled;
             smiStop.Enabled = !smiStop.Enabled;

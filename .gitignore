@@ -1,5 +1,9 @@
 # Untracked files:
 *.suo
 *.user
+*.testsettings
+*.vsmdi
 Combinify/bin/*
 Combinify/obj/*
+MinifyTestProject/*
+TestResults/*
