@@ -29,36 +29,73 @@
 */
 namespace QuickMinCombine {
     using System;
-    using System.Linq;
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.IO;
-    using System.Windows.Forms;
+    using System.Linq;
     using System.Threading;
+    using System.Windows.Forms;
 
+    /// <summary>
+    /// Partial class for the main form.
+    /// </summary>
     public partial class frmMain : Form {
-        private string _lastDir = "";
-        private string _combineFile = "";
+        /// <summary>
+        /// The last directory to be used.
+        /// </summary>
+        private string _lastDir = string.Empty;
+
+        /// <summary>
+        /// Path for the combined file.
+        /// </summary>
+        private string _combineFile = string.Empty;
+
+        /// <summary>
+        /// Whether the app is monitoring the file list or not.
+        /// </summary>
         private bool _isRunning = false;
+
+        /// <summary>
+        /// A dictionary containing the file name [key] and LastWriteTime [value].
+        /// </summary>
         private Dictionary<string, DateTime> _fileTimes;
 
+        /// <summary>
+        /// Initializes a new instance of the frmMain class.
+        /// </summary>
         public frmMain() {
             InitializeComponent();
             this._fileTimes = new Dictionary<string, DateTime>();
         }
 
+        /// <summary>
+        /// Form closing event
+        /// </summary>
+        private void frmMain_FormClosing( object sender, FormClosingEventArgs e ) {
+            // Hide the tray icon, otherwise they keep piling up
+            if( niTray.Visible == true ) {
+                niTray.Visible = false;
+            }
+        }
+
         #region "Button Events"
-        // Simple text color change on button mouse over
+        /// <summary>
+        /// Simple text color change on button mouse over.
+        /// </summary>
         private void Button_MouseEnter( object sender, EventArgs e ) {
             ControlHover.HoverOver( sender as Control );
         }
 
-        // Simple text color change on button mouse out
+        /// <summary>
+        /// Simple text color change on button mouse out.
+        /// </summary>
         private void Button_MouseLeave( object sender, EventArgs e ) {
             ControlHover.HoverOut( sender as Control );
         }
 
-        // Event for the Minify Single File button
+        /// <summary>
+        /// Event for the Minify Single File button.
+        /// </summary>
         private void btnSingle_Click( object sender, EventArgs e ) {
             string path;
 
@@ -69,26 +106,29 @@ namespace QuickMinCombine {
                 string root = path.Substring( 0, ( path.LastIndexOf( "\\" ) + 1 ) );
 
                 // Get the file name, less the extension (and any other dot notation)
-                string file = ( new FileInfo( path ).Name ).Split( '.' )[ 0 ];
+                string file = new FileInfo( path ).Name.Split( '.' )[ 0 ];
 
                 // If the file already exists, notify the user that it will be replaced
                 // If it doesnt exist skip to the writing
                 if( File.Exists( root + file + ".min.css" ) ) {
                     if( MessageBox.Show( file + ".min.css already exists. This will replace it.", "Confirm Save", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning ) == DialogResult.OK ) {
-                        WriteFile( path, root + file + ".min.css" );
+                        this.WriteFile( path, root + file + ".min.css" );
                     }
                 }
                 else {
-                    WriteFile( path, root + file + ".min.css" );
+                    this.WriteFile( path, root + file + ".min.css" );
                 }
             }
         }
 
-        // Event for the Add Directory button
+        /// <summary>
+        /// Event for the Add Directory button.
+        /// </summary>
         private void btnDirectory_Click( object sender, EventArgs e ) {
             string path;
             if( Dialogs.GetFolderPath( out path, new FolderBrowserDialog(), "Select a directory to watch", false, this._lastDir ) ) {
                 this._lastDir = path;
+
                 // If the list is empty go ahead and just add files
                 // otherwise, check for dupes
                 if( lstFiles.Items.Count == 0 ) {
@@ -104,11 +144,13 @@ namespace QuickMinCombine {
                 }
 
                 btnClear.Enabled = true;
-                CheckReadyState();
+                this.CheckReadyState();
             }
         }
 
-        // Event for the Add Single File button
+        /// <summary>
+        /// Event for the Add Single File button.
+        /// </summary>
         private void btnAddFile_Click( object sender, EventArgs e ) {
             string path;
             if( Dialogs.GetOpenPath( out path, new OpenFileDialog(), "CSS Files (*.css)|*.css", "Open File", this._lastDir ) ) {
@@ -118,12 +160,14 @@ namespace QuickMinCombine {
                     this._lastDir = path.Substring( 0, ( path.LastIndexOf( "\\" ) + 1 ) );
                     lstFiles.Items.Add( path );
                     btnClear.Enabled = true;
-                    CheckReadyState();
+                    this.CheckReadyState();
                 }
             }
         }
 
-        // Event for the Clear List button
+        /// <summary>
+        /// Event for the Clear List button.
+        /// </summary>
         private void btnClear_Click( object sender, EventArgs e ) {
             lstFiles.Items.Clear();
             ( ( Control )sender ).Enabled = false;
@@ -132,37 +176,46 @@ namespace QuickMinCombine {
             smiStart.Enabled = false;
         }
 
-        // Event for the Select Combine To File button
+        /// <summary>
+        /// Event for the Select Combine To File button.
+        /// </summary>
         private void btnCombineTo_Click( object sender, EventArgs e ) {
             if( Dialogs.GetSavePath( out this._combineFile, new SaveFileDialog(), "CSS Files (*.css)|*.css", "Save File", this._lastDir ) ) {
                 txtCombine.Text = this._combineFile;
-                CheckReadyState();
+                this.CheckReadyState();
             }
         }
 
-        /* Start monitoring directory button click event */
+        /// <summary>
+        /// Start monitoring directory button click event.
+        /// </summary>
         private void btnStart_Click( object sender, EventArgs e ) {
             if( lstFiles.Items.Count > 0 && txtCombine.Text != string.Empty ) {
-                StartStopMonitoring();
+                this.StartStopMonitoring();
             }
         }
 
-        /* Stop monitoring directory button click event */
+        /// <summary>
+        /// Stop monitoring directory button click event.
+        /// </summary>
         private void btnStop_Click( object sender, EventArgs e ) {
-            StartStopMonitoring();
+            this.StartStopMonitoring();
         }
         #endregion
 
         #region "List Context Menu Events"
-        // Set the lists selected index to the list item that was clicked
+        /// <summary>
+        /// Set the lists selected index to the list item that was clicked.
+        /// </summary>
         private void lstFiles_MouseDown( object sender, MouseEventArgs e ) {
             if( e.Button == MouseButtons.Right ) {
                 lstFiles.SelectedIndex = lstFiles.IndexFromPoint( e.X, e.Y );
             }
         }
 
-        // Check if there is a selected item and enable/disable context menu
-        // items based on that
+        /// <summary>
+        /// Check if there is a selected item and enable/disable context menu items based on that.
+        /// </summary>
         private void cmsListOps_Opening( object sender, CancelEventArgs e ) {
             if( lstFiles.SelectedIndex == -1 ) {
                 smiRemove.Enabled = false;
@@ -171,20 +224,25 @@ namespace QuickMinCombine {
             }
             else {
                 smiRemove.Enabled = true;
+
                 // Check for start or end of list before enabling up and down
                 smiUp.Enabled = lstFiles.SelectedIndex != 0 ? true : false;
                 smiDown.Enabled = lstFiles.SelectedIndex != lstFiles.Items.Count - 1 ? true : false;
             }
         }
 
-        // Remove item context menu click event
+        /// <summary>
+        /// Remove item context menu click event.
+        /// </summary>
         private void smiRemove_Click( object sender, EventArgs e ) {
             if( MessageBox.Show( "Are you sure you want to remove this item?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning ) == DialogResult.Yes ) {
                 lstFiles.Items.RemoveAt( lstFiles.SelectedIndex );
             }
         }
 
-        // Move list item up context menu click event
+        /// <summary>
+        /// Move list item up context menu click event.
+        /// </summary>
         private void smiUp_Click( object sender, EventArgs e ) {
             int index = lstFiles.SelectedIndex;
             var tmp = lstFiles.Items[ index - 1 ];
@@ -193,7 +251,9 @@ namespace QuickMinCombine {
             lstFiles.SelectedIndex = index - 1;
         }
 
-        // Move list item down context menu click event
+        /// <summary>
+        /// Move list item down context menu click event.
+        /// </summary>
         private void smiDown_Click( object sender, EventArgs e ) {
             int index = lstFiles.SelectedIndex;
             var tmp = lstFiles.Items[ index + 1 ];
@@ -204,7 +264,9 @@ namespace QuickMinCombine {
         #endregion
 
         #region "Tray Icon Related Methods"
-        // Minize to the system tray event
+        /// <summary>
+        /// Minize to the system tray event.
+        /// </summary>
         private void Form1_Resize( object sender, EventArgs e ) {
             if( this.WindowState == FormWindowState.Minimized ) {
                 this.Hide();
@@ -214,45 +276,59 @@ namespace QuickMinCombine {
             }
         }
 
-        // Restore from system tray event
+        /// <summary>
+        /// Restore from system tray event.
+        /// </summary>
         private void niTray_DoubleClick( object sender, EventArgs e ) {
             this.Show();
             this.WindowState = FormWindowState.Normal;
         }
 
-        /* Start monitoring directory contexzt meny click event */
+        /// <summary>
+        /// Start monitoring directory contexzt meny click event.
+        /// </summary>
         private void smiStart_Click( object sender, EventArgs e ) {
             if( lstFiles.Items.Count > 0 && txtCombine.Text != string.Empty ) {
-                StartStopMonitoring();
+                this.StartStopMonitoring();
             }
         }
 
-        /* Stop monitoring directory context menu click event */
+        /// <summary>
+        /// Stop monitoring directory context menu click event.
+        /// </summary>
         private void smiStop_Click( object sender, EventArgs e ) {
-            StartStopMonitoring();
+            this.StartStopMonitoring();
         }
 
-        // Tray icon Close event
+        /// <summary>
+        /// Tray icon Close event.
+        /// </summary>
         private void smiClose_Click( object sender, EventArgs e ) {
             this.Close();
         }
         #endregion
 
+        /// <summary>
+        /// Timer tick event.
+        /// </summary>
         private void timeCheck_Tick( object sender, EventArgs e ) {
             // The stop button turns off the stopwatch but Ill check anyway
-            if( this._isRunning && FilesHaveChanged() ) {
-                ProcessFiles();
+            if( this._isRunning && this.FilesHaveChanged() ) {
+                this.ProcessFiles();
             }
         }
 
-        // Enable the start buttons if all the needed fields are supplied
+        /// <summary>
+        /// Enable the start buttons if all the needed fields are supplied.
+        /// </summary>
         private void CheckReadyState() {
             btnStart.Enabled = ( lstFiles.Items.Count > 0 && txtCombine.Text != string.Empty );
             smiStart.Enabled = ( lstFiles.Items.Count > 0 && txtCombine.Text != string.Empty );
         }
 
-        // Flip the boolean properties related to starting and stopping
-        // the monitoring routine
+        /// <summary>
+        /// Flip the boolean properties related to starting and stopping the monitoring routine.
+        /// </summary>
         private void StartStopMonitoring() {
             // Flip the flag
             this._isRunning = !this._isRunning;
@@ -271,14 +347,14 @@ namespace QuickMinCombine {
             if( this._isRunning ) {
                 // Clear the file time dictionary and then repopulate it
                 // Im lazy and dont feel like doing checks
-                _fileTimes.Clear();
+                this._fileTimes.Clear();
 
-                foreach( string f in lstFiles.Items.Cast<String>().ToList() ) {
+                foreach( string f in lstFiles.Items.Cast<string>().ToList() ) {
                     var info = new FileInfo( f );
-                    _fileTimes.Add( info.Name, info.LastWriteTime );
+                    this._fileTimes.Add( info.Name, info.LastWriteTime );
                 }
 
-                ProcessFiles();
+                this.ProcessFiles();
                 timeCheck.Start();
             }
             else {
@@ -286,54 +362,57 @@ namespace QuickMinCombine {
             }
         }
 
-        // Larger aggrigate for the file handling
+        /// <summary>
+        /// Larger aggrigate for the file handling.
+        /// </summary>
         private void ProcessFiles() {
             // Cast the list items to a string list
-            var files = lstFiles.Items.Cast<String>().ToList();
+            var files = lstFiles.Items.Cast<string>().ToList();
+            Thread thread;
 
             // Determine the operation type by the radio that is checked 
             // then spin a new thread to do the operation on low priority,
             // and wait for the thread to finish to proceed
             if( radCombMin.Checked == true ) {
-                var cmThread = new Thread( () => DoCombineMinify( files ) );
-                cmThread.Priority = ThreadPriority.Lowest;
-                cmThread.Start();
-                cmThread.Join();
+                thread = new Thread( () => this.DoCombineMinify( files ) );
             }
             else {
-                var cThread = new Thread( () => DoCombine( files ) );
-                cThread.Priority = ThreadPriority.Lowest;
-                cThread.Start();
-                cThread.Join();
+                thread = new Thread( () => this.DoCombine( files ) );
             }
+
+            thread.Priority = ThreadPriority.Lowest;
+            thread.Start();
+            thread.Join();
 
             // Get the size of the minified (or combined, albeit, its pointless but better than zeros)
             // and the total combined size of the listed files and then figure the the amount of saves
             // soace after the operation
             long original = 0;
-            long minified = new FileInfo( this._combineFile ).Length; ;
+            long minified = new FileInfo( this._combineFile ).Length;
             foreach( string f in files ) {
                 original += new FileInfo( f ).Length;
             }
 
             // Hope casting to double doesnt bite me but, long/long was returning (rounded)long aka 0
-            double changed = ( ( double )minified / ( double )original ) * 10000;
-            changed = Math.Truncate( changed ) / 100;
+            double changed = ( ( double )minified / ( double )original ) * 100;
 
             tssTotal.Text = "Combined Size: " + AutoFileSize( original );
             tssMini.Text = "Post Size: " + AutoFileSize( minified );
 
             if( changed > 100.0 ) {
-                changed = Math.Truncate( ( changed - 100.0 ) * 1000 ) / 1000;
+                changed = Math.Round( changed - 100.0, 2 );
                 tssReduction.Text = "Change: +" + changed + "%";
             }
             else {
-                tssReduction.Text = "Change: -" + changed + "%";
+                tssReduction.Text = "Change: -" + Math.Round( 100 - changed, 2 ) + "%";
             }
+
             tssLast.Text = "Last: " + DateTime.Now.ToString( "h:mm:ss tt" );
         }
 
-        // Method to perform the combining and minifying using Thread lambda
+        /// <summary>
+        /// Method to perform the combining and minifying using Thread lambda.
+        /// </summary>
         private void DoCombineMinify( List<string> oldFile ) {
             using( var sw = new StreamWriter( this._combineFile, false ) ) {
                 sw.Write( FileOp.MinifyFile( oldFile ) );
@@ -341,7 +420,9 @@ namespace QuickMinCombine {
             }
         }
 
-        // Method to perform the combining using Thread lambda
+        /// <summary>
+        /// Method to perform the combining using Thread lambda.
+        /// </summary>
         private void DoCombine( List<string> oldFile ) {
             using( var sw = new StreamWriter( this._combineFile, false ) ) {
                 sw.Write( FileOp.CombineFile( oldFile ) );
@@ -349,8 +430,10 @@ namespace QuickMinCombine {
             }
         }
 
-        // Used for the single file minify. Read the original file, 
-        // minify, then write to the new file
+        /// <summary>
+        /// Used for the single file minify. 
+        /// Read the original file, minify, then write to the new file.
+        /// </summary>
         private void WriteFile( string oldPath, string newPath ) {
             using( var sw = new StreamWriter( newPath, false ) ) {
                 sw.Write( FileOp.MinifyFile( oldPath ) );
@@ -362,26 +445,28 @@ namespace QuickMinCombine {
             long minified = new FileInfo( newPath ).Length;
 
             // Hope casting to double doesnt bite me but, long/long was returning (rounded)long aka 0
-            double savings = ( ( double )minified / ( double )original ) * 10000;
-            savings = Math.Truncate( savings ) / 100;
+            double savings = ( ( double )minified / ( double )original ) * 100;
+            savings = Math.Round( 100 - savings, 2 );
 
             // Notify user of completion and files sizes/savings
-            MessageBox.Show( "Minification complete\n\nOriginal Size: " + AutoFileSize( original ) +
-                             "\nMinified Size: " + AutoFileSize( minified ) +
+            MessageBox.Show( "Minification complete\n\nOriginal Size: " + this.AutoFileSize( original ) +
+                             "\nMinified Size: " + this.AutoFileSize( minified ) +
                              "\nReduction: " + savings + "%" );
         }
 
-        // Go through the list of files and check to see if they have been 
-        // modified since the last check. If they have flip the flag. No
-        // break since I want all changed times updated
+        /// <summary>
+        /// Go through the list of files and check to see if they have been 
+        /// modified since the last check. If they have flip the flag. No 
+        /// break since I want all changed times updated.
+        /// </summary>
         private bool FilesHaveChanged() {
             bool changed = false;
-            var files = lstFiles.Items.Cast<String>().ToList();
+            var files = lstFiles.Items.Cast<string>().ToList();
 
             foreach( string f in files ) {
                 var info = new FileInfo( f );
-                if( _fileTimes[ info.Name ] < info.LastWriteTime ) {
-                    _fileTimes[ info.Name ] = info.LastWriteTime;
+                if( this._fileTimes[ info.Name ] < info.LastWriteTime ) {
+                    this._fileTimes[ info.Name ] = info.LastWriteTime;
                     changed = true;
                 }
             }
@@ -389,8 +474,11 @@ namespace QuickMinCombine {
             return changed;
         }
 
-        // Formats from bytes to KB, MB, GB, TB - From LiFo's comment on SO
-        // (http://stackoverflow.com/questions/5850596/conversion-of-long-to-decimal-in-c-sharp#answer-5850663)
+        /// <summary>
+        /// Formats from bytes to KB, MB, GB, TB.
+        /// From LiFo's comment on SO 
+        /// (stackoverflow.com/questions/5850596/conversion-of-long-to-decimal-in-c-sharp#answer-5850663)
+        /// </summary>
         private string AutoFileSize( long number ) {
             double tmp = number;
             string suffix = " B ";

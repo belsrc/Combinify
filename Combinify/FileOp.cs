@@ -37,38 +37,10 @@ namespace QuickMinCombine {
     /// Static class for some simple file operations.
     /// </summary>
     public static class FileOp {
-
-        private static List<string> fileList = new List<string>();
-
         /// <summary>
-        /// Retrieve the CSS files in the selected directory and all sub-directories.
+        /// List to hold all of the files found by the ParseDirectory method.
         /// </summary>
-        /// <param name="dir">Base directory.</param>
-        /// <returns>A List&lt;&gt; of strings representing the CSS files in the directory/sub-directories</returns>
-        public static List<string> GetCssFiles( string dir ) {
-            fileList.Clear();
-            return ParseDirectory( dir );
-        }
-
-        // Recursively check each directory for .css files and add them to the list
-        private static List<string> ParseDirectory( string dir ) {
-            if( !String.IsNullOrEmpty( dir ) ) {
-                string[] files = Directory.GetFiles( dir );
-                foreach( var f in files ) {
-                    if( new FileInfo( f ).Extension == ".css" ) {
-                        fileList.Add( f );
-                    }
-                }
-
-                string[] subDir = Directory.GetDirectories( dir );
-                foreach( string d in subDir ) {
-                    if( ( File.GetAttributes( d ) & FileAttributes.ReparsePoint ) != FileAttributes.ReparsePoint )
-                        ParseDirectory( d );
-                }
-            }
-
-            return fileList;
-        }
+        private static List<string> _fileList = new List<string>();
 
         /// <summary>
         /// Minifies a single file.
@@ -127,6 +99,41 @@ namespace QuickMinCombine {
             }
 
             return sb.ToString();
+        }
+
+        /// <summary>
+        /// Retrieve the CSS files in the selected directory and all sub-directories.
+        /// </summary>
+        /// <param name="dir">Base directory.</param>
+        /// <returns>A List&lt;&gt; of strings representing the CSS files in the directory/sub-directories</returns>
+        public static List<string> GetCssFiles( string dir ) {
+            _fileList.Clear();
+            return ParseDirectory( dir );
+        }
+
+        /// <summary>
+        /// Recursively check each directory for .css files and add them to the list
+        /// </summary>
+        /// <param name="dir">The initial directory to start checking.</param>
+        /// <returns>A list of .css file paths</returns>
+        private static List<string> ParseDirectory( string dir ) {
+            if( !String.IsNullOrEmpty( dir ) ) {
+                string[] files = Directory.GetFiles( dir );
+                foreach( var f in files ) {
+                    if( new FileInfo( f ).Extension == ".css" ) {
+                        _fileList.Add( f );
+                    }
+                }
+
+                string[] subDir = Directory.GetDirectories( dir );
+                foreach( string d in subDir ) {
+                    if( ( File.GetAttributes( d ) & FileAttributes.ReparsePoint ) != FileAttributes.ReparsePoint ) {
+                        ParseDirectory( d );
+                    }
+                }
+            }
+
+            return _fileList;
         }
     }
 }

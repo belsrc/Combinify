@@ -3,6 +3,7 @@
 *.user
 *.testsettings
 *.vsmdi
+StyleCop.Cache
 Combinify/bin/*
 Combinify/obj/*
 MinifyTestProject/*

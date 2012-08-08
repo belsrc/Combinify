@@ -32,45 +32,49 @@ namespace QuickMinCombine {
     using System.Windows.Forms;
 
     /// <summary>
-    /// A collection of methods to transform elements of a WinForm control based on mouse over/out conditions
+    /// A collection of methods to transform elements of a WinForm control based on mouse over/out conditions.
     /// </summary>
     public static class ControlHover {
         /// <summary>
-        /// Changes the text color of the control to light blue
+        /// Changes the text color of the control to light blue.
         /// </summary>
-        /// <param name="control">WinForms control name</param>
+        /// <param name="control">WinForms control name.</param>
         public static void HoverOver( Control control ) {
-            if( control.Enabled )
+            if( control.Enabled ) {
                 control.ForeColor = SystemColors.MenuHighlight;
+            }
         }
 
         /// <summary>
-        /// Changes the text color of the control to the specified color
+        /// Changes the text color of the control to the specified color.
         /// </summary>
-        /// <param name="control">WinForms control name</param>
-        /// <param name="color">Color to use</param>
+        /// <param name="control">WinForms control name.</param>
+        /// <param name="color">Color to use.</param>
         public static void HoverOver( Control control, Color color ) {
-            if( control.Enabled )
+            if( control.Enabled ) {
                 control.ForeColor = color;
+            }
         }
 
         /// <summary>
-        /// Changes the text color of the control to black
+        /// Changes the text color of the control to black.
         /// </summary>
-        /// <param name="control">WinForms control name</param>
+        /// <param name="control">WinForms control name.</param>
         public static void HoverOut( Control control ) {
-            if( control.Enabled && control.ForeColor != SystemColors.WindowText )
+            if( control.Enabled && control.ForeColor != SystemColors.WindowText ) {
                 control.ForeColor = SystemColors.WindowText;
+            }
         }
 
         /// <summary>
-        /// Changes the text color of the control to specified color
+        /// Changes the text color of the control to specified color.
         /// </summary>
-        /// <param name="control">WinForms control name</param>
+        /// <param name="control">WinForms control name.</param>
         /// <param name="color">Color to use</param>
         public static void HoverOut( Control control, Color color ) {
-            if( control.Enabled && control.ForeColor != color )
+            if( control.Enabled && control.ForeColor != color ) {
                 control.ForeColor = color;
+            }
         }
     }
 }

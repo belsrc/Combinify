@@ -1,5 +1,8 @@
 ﻿namespace QuickMinCombine {
-    partial class frmMain {
+    /// <summary>
+    /// Application main form class
+    /// </summary>
+    public partial class frmMain {
         /// <summary>
         /// Required designer variable.
         /// </summary>
@@ -13,6 +16,7 @@
             if( disposing && ( components != null ) ) {
                 components.Dispose();
             }
+
             base.Dispose( disposing );
         }
 
@@ -32,6 +36,7 @@
             this.lstFiles = new System.Windows.Forms.ListBox();
             this.cmsListOps = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.smiRemove = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.smiUp = new System.Windows.Forms.ToolStripMenuItem();
             this.smiDown = new System.Windows.Forms.ToolStripMenuItem();
             this.btnDirectory = new System.Windows.Forms.Button();
@@ -60,7 +65,6 @@
             this.smiStart = new System.Windows.Forms.ToolStripMenuItem();
             this.smiStop = new System.Windows.Forms.ToolStripMenuItem();
             this.smiClose = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.cmsListOps.SuspendLayout();
             this.grpOperation.SuspendLayout();
             this.ssStatus.SuspendLayout();
@@ -132,6 +136,11 @@
             this.smiRemove.Size = new System.Drawing.Size(164, 22);
             this.smiRemove.Text = "Remove from list";
             this.smiRemove.Click += new System.EventHandler(this.smiRemove_Click);
+            // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(161, 6);
             // 
             // smiUp
             // 
@@ -387,11 +396,6 @@
             this.smiClose.Text = "Close Combinify";
             this.smiClose.Click += new System.EventHandler(this.smiClose_Click);
             // 
-            // toolStripMenuItem1
-            // 
-            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(161, 6);
-            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -418,6 +422,7 @@
             this.Name = "frmMain";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Combinify";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmMain_FormClosing);
             this.Resize += new System.EventHandler(this.Form1_Resize);
             this.cmsListOps.ResumeLayout(false);
             this.grpOperation.ResumeLayout(false);
