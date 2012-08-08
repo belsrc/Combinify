@@ -78,7 +78,7 @@ namespace QuickMinCombine {
             }
         }
 
-        #region "Button Events"
+        #region "Button Event Handlers"
         /// <summary>
         /// Simple text color change on button mouse over.
         /// </summary>
@@ -122,61 +122,6 @@ namespace QuickMinCombine {
         }
 
         /// <summary>
-        /// Event for the Add Directory button.
-        /// </summary>
-        private void btnDirectory_Click( object sender, EventArgs e ) {
-            string path;
-            if( Dialogs.GetFolderPath( out path, new FolderBrowserDialog(), "Select a directory to watch", false, this._lastDir ) ) {
-                this._lastDir = path;
-
-                // If the list is empty go ahead and just add files
-                // otherwise, check for dupes
-                if( lstFiles.Items.Count == 0 ) {
-                    lstFiles.Items.AddRange( FileOp.GetCssFiles( path ).ToArray() );
-                }
-                else {
-                    var fl = FileOp.GetCssFiles( path );
-                    foreach( string f in fl ) {
-                        if( !lstFiles.Items.Contains( f ) ) {
-                            lstFiles.Items.Add( f );
-                        }
-                    }
-                }
-
-                btnClear.Enabled = true;
-                this.CheckReadyState();
-            }
-        }
-
-        /// <summary>
-        /// Event for the Add Single File button.
-        /// </summary>
-        private void btnAddFile_Click( object sender, EventArgs e ) {
-            string path;
-            if( Dialogs.GetOpenPath( out path, new OpenFileDialog(), "CSS Files (*.css)|*.css", "Open File", this._lastDir ) ) {
-                // Don't add dupes
-                if( !lstFiles.Items.Contains( path ) ) {
-                    // Only want lastDir to be the directory, excluding file name
-                    this._lastDir = path.Substring( 0, ( path.LastIndexOf( "\\" ) + 1 ) );
-                    lstFiles.Items.Add( path );
-                    btnClear.Enabled = true;
-                    this.CheckReadyState();
-                }
-            }
-        }
-
-        /// <summary>
-        /// Event for the Clear List button.
-        /// </summary>
-        private void btnClear_Click( object sender, EventArgs e ) {
-            lstFiles.Items.Clear();
-            ( ( Control )sender ).Enabled = false;
-            btnClear.Enabled = false;
-            btnStart.Enabled = false;
-            smiStart.Enabled = false;
-        }
-
-        /// <summary>
         /// Event for the Select Combine To File button.
         /// </summary>
         private void btnCombineTo_Click( object sender, EventArgs e ) {
@@ -185,85 +130,9 @@ namespace QuickMinCombine {
                 this.CheckReadyState();
             }
         }
-
-        /// <summary>
-        /// Start monitoring directory button click event.
-        /// </summary>
-        private void btnStart_Click( object sender, EventArgs e ) {
-            if( lstFiles.Items.Count > 0 && txtCombine.Text != string.Empty ) {
-                this.StartStopMonitoring();
-            }
-        }
-
-        /// <summary>
-        /// Stop monitoring directory button click event.
-        /// </summary>
-        private void btnStop_Click( object sender, EventArgs e ) {
-            this.StartStopMonitoring();
-        }
         #endregion
 
-        #region "List Context Menu Events"
-        /// <summary>
-        /// Set the lists selected index to the list item that was clicked.
-        /// </summary>
-        private void lstFiles_MouseDown( object sender, MouseEventArgs e ) {
-            if( e.Button == MouseButtons.Right ) {
-                lstFiles.SelectedIndex = lstFiles.IndexFromPoint( e.X, e.Y );
-            }
-        }
-
-        /// <summary>
-        /// Check if there is a selected item and enable/disable context menu items based on that.
-        /// </summary>
-        private void cmsListOps_Opening( object sender, CancelEventArgs e ) {
-            if( lstFiles.SelectedIndex == -1 ) {
-                smiRemove.Enabled = false;
-                smiUp.Enabled = false;
-                smiDown.Enabled = false;
-            }
-            else {
-                smiRemove.Enabled = true;
-
-                // Check for start or end of list before enabling up and down
-                smiUp.Enabled = lstFiles.SelectedIndex != 0 ? true : false;
-                smiDown.Enabled = lstFiles.SelectedIndex != lstFiles.Items.Count - 1 ? true : false;
-            }
-        }
-
-        /// <summary>
-        /// Remove item context menu click event.
-        /// </summary>
-        private void smiRemove_Click( object sender, EventArgs e ) {
-            if( MessageBox.Show( "Are you sure you want to remove this item?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning ) == DialogResult.Yes ) {
-                lstFiles.Items.RemoveAt( lstFiles.SelectedIndex );
-            }
-        }
-
-        /// <summary>
-        /// Move list item up context menu click event.
-        /// </summary>
-        private void smiUp_Click( object sender, EventArgs e ) {
-            int index = lstFiles.SelectedIndex;
-            var tmp = lstFiles.Items[ index - 1 ];
-            lstFiles.Items[ index - 1 ] = lstFiles.Items[ index ];
-            lstFiles.Items[ index ] = tmp;
-            lstFiles.SelectedIndex = index - 1;
-        }
-
-        /// <summary>
-        /// Move list item down context menu click event.
-        /// </summary>
-        private void smiDown_Click( object sender, EventArgs e ) {
-            int index = lstFiles.SelectedIndex;
-            var tmp = lstFiles.Items[ index + 1 ];
-            lstFiles.Items[ index + 1 ] = lstFiles.Items[ index ];
-            lstFiles.Items[ index ] = tmp;
-            lstFiles.SelectedIndex = index + 1;
-        }
-        #endregion
-
-        #region "Tray Icon Related Methods"
+        #region "Tray Icon Event Handlers"
         /// <summary>
         /// Minize to the system tray event.
         /// </summary>
@@ -283,27 +152,147 @@ namespace QuickMinCombine {
             this.Show();
             this.WindowState = FormWindowState.Normal;
         }
+        #endregion
+
+        #region "List Event Handlers"
+        /// <summary>
+        /// Set the lists selected index to the list item that was clicked.
+        /// </summary>
+        private void lstFiles_MouseDown( object sender, MouseEventArgs e ) {
+            if( e.Button == MouseButtons.Right ) {
+                lstFiles.SelectedIndex = lstFiles.IndexFromPoint( e.X, e.Y );
+            }
+        }
 
         /// <summary>
-        /// Start monitoring directory contexzt meny click event.
+        /// Check if there is a selected item and enable/disable menu items based on that.
         /// </summary>
-        private void smiStart_Click( object sender, EventArgs e ) {
+        private void lstFiles_SelectedIndexChanged( object sender, EventArgs e ) {
+            if( lstFiles.SelectedIndex == -1 ) {
+                miListRemove.Enabled = smiRemove.Enabled = false;
+                miListUp.Enabled = smiUp.Enabled = false;
+                miListDown.Enabled = smiDown.Enabled = false;
+            }
+            else {
+                miListRemove.Enabled = smiRemove.Enabled = true;
+
+                // Check for start or end of list before enabling up and down
+                miListUp.Enabled = smiUp.Enabled = lstFiles.SelectedIndex != 0 ? true : false;
+                miListDown.Enabled = smiDown.Enabled = lstFiles.SelectedIndex != lstFiles.Items.Count - 1 ? true : false;
+            }
+        }
+        #endregion
+
+        #region "Shared Menu Event Handlers"
+        /// <summary>
+        /// Add directory menu click event.
+        /// </summary>
+        private void MenuAddDir_Click( object sender, EventArgs e ) {
+            string path;
+            if( Dialogs.GetFolderPath( out path, new FolderBrowserDialog(), "Select a directory to watch", false, this._lastDir ) ) {
+                this._lastDir = path;
+
+                // If the list is empty go ahead and just add files
+                // otherwise, check for dupes
+                if( lstFiles.Items.Count == 0 ) {
+                    lstFiles.Items.AddRange( FileOp.GetCssFiles( path ).ToArray() );
+                }
+                else {
+                    var fl = FileOp.GetCssFiles( path );
+                    foreach( string f in fl ) {
+                        if( !lstFiles.Items.Contains( f ) ) {
+                            lstFiles.Items.Add( f );
+                        }
+                    }
+                }
+
+                miListClear.Enabled = smiClear.Enabled = true;
+                this.CheckReadyState();
+            }
+        }
+
+        /// <summary>
+        /// Add file menu click event.
+        /// </summary>
+        private void MenuAddFile_Click( object sender, EventArgs e ) {
+            string path;
+            if( Dialogs.GetOpenPath( out path, new OpenFileDialog(), "CSS Files (*.css)|*.css", "Open File", this._lastDir ) ) {
+                // Don't add dupes
+                if( !lstFiles.Items.Contains( path ) ) {
+                    // Only want lastDir to be the directory, excluding file name
+                    this._lastDir = path.Substring( 0, ( path.LastIndexOf( "\\" ) + 1 ) );
+                    lstFiles.Items.Add( path );
+                    miListClear.Enabled = smiClear.Enabled = true;
+                    this.CheckReadyState();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Start monitoring menu click event.
+        /// </summary>
+        private void MenuStart_Click( object sender, EventArgs e ) {
             if( lstFiles.Items.Count > 0 && txtCombine.Text != string.Empty ) {
                 this.StartStopMonitoring();
             }
         }
 
         /// <summary>
-        /// Stop monitoring directory context menu click event.
+        /// Stop monitoring menu click event.
         /// </summary>
-        private void smiStop_Click( object sender, EventArgs e ) {
+        private void MenuStop_Click( object sender, EventArgs e ) {
             this.StartStopMonitoring();
         }
 
         /// <summary>
-        /// Tray icon Close event.
+        /// Move list item up menu click event.
         /// </summary>
-        private void smiClose_Click( object sender, EventArgs e ) {
+        private void MenuUp_Click( object sender, EventArgs e ) {
+            int index = lstFiles.SelectedIndex;
+            var tmp = lstFiles.Items[ index - 1 ];
+            lstFiles.Items[ index - 1 ] = lstFiles.Items[ index ];
+            lstFiles.Items[ index ] = tmp;
+            lstFiles.SelectedIndex = index - 1;
+        }
+
+        /// <summary>
+        /// Move list item down menu click event.
+        /// </summary>
+        private void MenuDown_Click( object sender, EventArgs e ) {
+            int index = lstFiles.SelectedIndex;
+            var tmp = lstFiles.Items[ index + 1 ];
+            lstFiles.Items[ index + 1 ] = lstFiles.Items[ index ];
+            lstFiles.Items[ index ] = tmp;
+            lstFiles.SelectedIndex = index + 1;
+        }
+
+        /// <summary>
+        /// Remove item menu click event.
+        /// </summary>
+        private void MenuRemove_Click( object sender, EventArgs e ) {
+            if( MessageBox.Show( "Are you sure you want to remove this item?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning ) == DialogResult.Yes ) {
+                lstFiles.Items.RemoveAt( lstFiles.SelectedIndex );
+            }
+        }
+
+        /// <summary>
+        /// Clear list menu click event.
+        /// </summary>
+        private void MenuClear_Click( object sender, EventArgs e ) {
+            if( MessageBox.Show( "Are you sure you want to clear the entire list?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning ) == DialogResult.Yes ) {
+                lstFiles.Items.Clear();
+                miListClear.Enabled = smiClear.Enabled = false;
+                miMonitorStart.Enabled = smiStart.Enabled = false;
+                miListRemove.Enabled = smiRemove.Enabled = false;
+                miListUp.Enabled = smiUp.Enabled = false;
+                miListDown.Enabled = smiDown.Enabled = false;
+            }
+        }
+
+        /// <summary>
+        /// Exit app menu click event.
+        /// </summary>
+        private void MenuExit_Click( object sender, EventArgs e ) {
             this.Close();
         }
         #endregion
@@ -322,7 +311,7 @@ namespace QuickMinCombine {
         /// Enable the start buttons if all the needed fields are supplied.
         /// </summary>
         private void CheckReadyState() {
-            btnStart.Enabled = ( lstFiles.Items.Count > 0 && txtCombine.Text != string.Empty );
+            miMonitorStart.Enabled = ( lstFiles.Items.Count > 0 && txtCombine.Text != string.Empty );
             smiStart.Enabled = ( lstFiles.Items.Count > 0 && txtCombine.Text != string.Empty );
         }
 
@@ -333,15 +322,14 @@ namespace QuickMinCombine {
             // Flip the flag
             this._isRunning = !this._isRunning;
 
-            // Flip the control properties
-            btnStart.Visible = !btnStart.Visible;
-            btnStop.Visible = !btnStop.Visible;
-            btnDirectory.Enabled = !btnDirectory.Enabled;
-            btnClear.Enabled = !btnClear.Enabled;
-            btnAddFile.Enabled = !btnAddFile.Enabled;
+            // Flip the Enabled control properties
             btnCombineTo.Enabled = !btnCombineTo.Enabled;
-            smiStart.Enabled = !smiStart.Enabled;
-            smiStop.Enabled = !smiStop.Enabled;
+            miListDir.Enabled = smiDir.Enabled = !smiDir.Enabled;
+            miListFile.Enabled = smiFile.Enabled = !smiFile.Enabled;
+            miMonitorStart.Enabled = smiStart.Enabled = !smiStart.Enabled;
+            miMonitorStop.Enabled = smiStop.Enabled = !smiStop.Enabled;
+            miListClear.Enabled = smiClear.Enabled = !smiClear.Enabled;
+
 
             // Flip the stopwatch
             if( this._isRunning ) {
@@ -365,6 +353,9 @@ namespace QuickMinCombine {
         /// <summary>
         /// Larger aggrigate for the file handling.
         /// </summary>
+        /// <remarks>
+        /// Ugly method is ugly. Clean me PLEASE
+        /// </remarks>
         private void ProcessFiles() {
             // Cast the list items to a string list
             var files = lstFiles.Items.Cast<string>().ToList();
@@ -373,41 +364,61 @@ namespace QuickMinCombine {
             // Determine the operation type by the radio that is checked 
             // then spin a new thread to do the operation on low priority,
             // and wait for the thread to finish to proceed
-            if( radCombMin.Checked == true ) {
+            if( radCombine.Checked ) {
+                thread = new Thread( () => this.DoCombine( files ) );
+            }
+            else if( radCombMin.Checked ) {
                 thread = new Thread( () => this.DoCombineMinify( files ) );
             }
             else {
-                thread = new Thread( () => this.DoCombine( files ) );
+                thread = new Thread( () => this.DoMinify( files ) );
             }
 
             thread.Priority = ThreadPriority.Lowest;
             thread.Start();
             thread.Join();
 
-            // Get the size of the minified (or combined, albeit, its pointless but better than zeros)
-            // and the total combined size of the listed files and then figure the the amount of saves
-            // soace after the operation
-            long original = 0;
-            long minified = new FileInfo( this._combineFile ).Length;
-            foreach( string f in files ) {
-                original += new FileInfo( f ).Length;
-            }
+            if( !radMinify.Checked ) {
+                // Get the size of the minified (or combined, albeit, its pointless but better than zeros)
+                // and the total combined size of the listed files and then figure the the amount of saves
+                // soace after the operation
+                long original = 0;
+                long minified = new FileInfo( this._combineFile ).Length;
+                foreach( string f in files ) {
+                    original += new FileInfo( f ).Length;
+                }
 
-            // Hope casting to double doesnt bite me but, long/long was returning (rounded)long aka 0
-            double changed = ( ( double )minified / ( double )original ) * 100;
+                // Hope casting to double doesnt bite me but, long/long was returning (rounded)long aka 0
+                double changed = ( ( double )minified / ( double )original ) * 100;
 
-            tssTotal.Text = "Combined Size: " + AutoFileSize( original );
-            tssMini.Text = "Post Size: " + AutoFileSize( minified );
+                tssTotal.Text = "Combined Size: " + AutoFileSize( original );
+                tssMini.Text = "Post Size: " + AutoFileSize( minified );
 
-            if( changed > 100.0 ) {
-                changed = Math.Round( changed - 100.0, 2 );
-                tssReduction.Text = "Change: +" + changed + "%";
+                if( changed > 100.0 ) {
+                    changed = Math.Round( changed - 100.0, 2 );
+                    tssReduction.Text = "Change: +" + changed + "%";
+                }
+                else {
+                    tssReduction.Text = "Change: -" + Math.Round( 100 - changed, 2 ) + "%";
+                }
             }
             else {
-                tssReduction.Text = "Change: -" + Math.Round( 100 - changed, 2 ) + "%";
+                tssTotal.Text = "Combined Size: ---";
+                tssMini.Text = "Post Size: ---";
+                tssReduction.Text = "Change: ---";
             }
 
             tssLast.Text = "Last: " + DateTime.Now.ToString( "h:mm:ss tt" );
+        }
+
+        /// <summary>
+        /// Method to perform the combining using Thread lambda.
+        /// </summary>
+        private void DoCombine( List<string> oldFile ) {
+            using( var sw = new StreamWriter( this._combineFile, false ) ) {
+                sw.Write( FileOp.CombineFile( oldFile ) );
+                sw.Close();
+            }
         }
 
         /// <summary>
@@ -421,13 +432,12 @@ namespace QuickMinCombine {
         }
 
         /// <summary>
-        /// Method to perform the combining using Thread lambda.
+        /// Method to perform the minifying using Thread lambda.
         /// </summary>
-        private void DoCombine( List<string> oldFile ) {
-            using( var sw = new StreamWriter( this._combineFile, false ) ) {
-                sw.Write( FileOp.CombineFile( oldFile ) );
-                sw.Close();
-            }
+        private void DoMinify( List<string> oldFile ) {
+            // parse the file times again,
+            //  faster than mini all files when just one prolly changed
+            // pass each changed one to the single mini
         }
 
         /// <summary>
@@ -489,6 +499,26 @@ namespace QuickMinCombine {
             if( tmp > 1024 ) { tmp = tmp / 1024; suffix = " TB"; }
 
             return tmp.ToString( "n" ) + suffix;
+        }
+
+        private void miProjectNewFile_Click( object sender, EventArgs e ) {
+
+        }
+
+        private void miProjectNewDir_Click( object sender, EventArgs e ) {
+
+        }
+
+        private void miProjectOpen_Click( object sender, EventArgs e ) {
+
+        }
+
+        private void miProjectSave_Click( object sender, EventArgs e ) {
+
+        }
+
+        private void miProjectSaveAs_Click( object sender, EventArgs e ) {
+
         }
     }
 }

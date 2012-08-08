@@ -124,6 +124,7 @@ namespace QuickMinCombine {
                 return CONTENT_REPLACE;
             } );
 
+            // Clean the rest of the css file
             InitialCleaning( ref contents );
             CleanSelectors( ref contents );
             CleanBraces( ref contents );
