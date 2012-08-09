@@ -156,10 +156,9 @@ namespace QuickMinCombine {
         /// <param name="rgb">A byte array containing the R, G, B values</param>
         /// <returns>A hexadecimal value representing the supplied RGB values.</returns>
         public string ConvertRgbToHex( byte[] rgb ) {
-            string s = "#";
-            s += BitConverter.ToString( rgb ).Replace( "-", string.Empty );
+            string s = BitConverter.ToString( rgb ).Replace( "-", string.Empty );
 
-            return s.ToLower();
+            return CompressHex(  s.ToLower() );
         }
 
         /// <summary>
