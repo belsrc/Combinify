@@ -14,6 +14,7 @@
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -26,7 +27,6 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
@@ -105,6 +105,24 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="icon.ico" />
+    <Content Include="Resources\add-file-grey.png" />
+    <Content Include="Resources\add-folder-grey.png" />
+    <Content Include="Resources\arrow-down-grey.png" />
+    <Content Include="Resources\arrow-up-grey.png" />
+    <Content Include="Resources\cross-grey.png" />
+    <Content Include="Resources\file-blank-grey.png" />
+    <Content Include="Resources\file-grey.png" />
+    <Content Include="Resources\minus-grey.png" />
+    <None Include="Resources\stop.png" />
+    <None Include="Resources\play.png" />
+    <None Include="Resources\file-blank.png" />
+    <None Include="Resources\file.png" />
+    <None Include="Resources\cross.png" />
+    <None Include="Resources\minus.png" />
+    <None Include="Resources\add-file.png" />
+    <None Include="Resources\add-folder.png" />
+    <None Include="Resources\arrow-down.png" />
+    <None Include="Resources\arrow-up.png" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0">

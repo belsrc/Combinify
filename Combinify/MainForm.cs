@@ -29,6 +29,7 @@
 */
 namespace QuickMinCombine {
     using System;
+    using System.Drawing;
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.IO;
@@ -78,59 +79,52 @@ namespace QuickMinCombine {
             }
         }
 
-        #region "Button Event Handlers"
         /// <summary>
-        /// Simple text color change on button mouse over.
+        /// This is so ugly, have to find a better way
+        /// Preferably not making individual event handles
         /// </summary>
-        private void Button_MouseEnter( object sender, EventArgs e ) {
-            ControlHover.HoverOver( sender as Control );
-        }
+        private void Button_EnabledChanged( object sender, EventArgs e ) {
+            string name = ( sender as Button ).Name;
 
-        /// <summary>
-        /// Simple text color change on button mouse out.
-        /// </summary>
-        private void Button_MouseLeave( object sender, EventArgs e ) {
-            ControlHover.HoverOut( sender as Control );
-        }
+            if( !( sender as Button ).Enabled ) {
+                switch( name ) {
+                    case "btnUp":
+                        ( sender as Button ).BackgroundImage = ( Image )Properties.Resources.ResourceManager.GetObject( "arrow_up_grey" );
+                        break;
 
-        /// <summary>
-        /// Event for the Minify Single File button.
-        /// </summary>
-        private void btnSingle_Click( object sender, EventArgs e ) {
-            string path;
+                    case "btnDown":
+                        ( sender as Button ).BackgroundImage = ( Image )Properties.Resources.ResourceManager.GetObject( "arrow_down_grey" );
+                        break;
 
-            if( Dialogs.GetOpenPath( out path, new OpenFileDialog(), "CSS Files (*.css)|*.css", "Open File", this._lastDir ) ) {
-                txtSingle.Text = path;
+                    case "btnRemove":
+                        ( sender as Button ).BackgroundImage = ( Image )Properties.Resources.ResourceManager.GetObject( "minus_grey" );
+                        break;
 
-                // Get the root of the file, from the start of the string to the last '\'
-                string root = path.Substring( 0, ( path.LastIndexOf( "\\" ) + 1 ) );
+                    case "btnClear":
+                        ( sender as Button ).BackgroundImage = ( Image )Properties.Resources.ResourceManager.GetObject( "cross_grey" );
+                        break;
+                };
+            }
+            else {
+                switch( name ) {
+                    case "btnUp":
+                        ( sender as Button ).BackgroundImage = ( Image )Properties.Resources.ResourceManager.GetObject( "arrow-up" );
+                        break;
 
-                // Get the file name, less the extension (and any other dot notation)
-                string file = new FileInfo( path ).Name.Split( '.' )[ 0 ];
+                    case "btnDown":
+                        ( sender as Button ).BackgroundImage = ( Image )Properties.Resources.ResourceManager.GetObject( "arrow-down" );
+                        break;
 
-                // If the file already exists, notify the user that it will be replaced
-                // If it doesnt exist skip to the writing
-                if( File.Exists( root + file + ".min.css" ) ) {
-                    if( MessageBox.Show( file + ".min.css already exists. This will replace it.", "Confirm Save", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning ) == DialogResult.OK ) {
-                        this.WriteFile( path, root + file + ".min.css" );
-                    }
-                }
-                else {
-                    this.WriteFile( path, root + file + ".min.css" );
-                }
+                    case "btnRemove":
+                        ( sender as Button ).BackgroundImage = ( Image )Properties.Resources.ResourceManager.GetObject( "minus" );
+                        break;
+
+                    case "btnClear":
+                        ( sender as Button ).BackgroundImage = ( Image )Properties.Resources.ResourceManager.GetObject( "cross" );
+                        break;
+                };
             }
         }
-
-        /// <summary>
-        /// Event for the Select Combine To File button.
-        /// </summary>
-        private void btnCombineTo_Click( object sender, EventArgs e ) {
-            if( Dialogs.GetSavePath( out this._combineFile, new SaveFileDialog(), "CSS Files (*.css)|*.css", "Save File", this._lastDir ) ) {
-                txtCombine.Text = this._combineFile;
-                this.CheckReadyState();
-            }
-        }
-        #endregion
 
         #region "Tray Icon Event Handlers"
         /// <summary>
@@ -169,25 +163,63 @@ namespace QuickMinCombine {
         /// </summary>
         private void lstFiles_SelectedIndexChanged( object sender, EventArgs e ) {
             if( lstFiles.SelectedIndex == -1 ) {
-                miListRemove.Enabled = smiRemove.Enabled = false;
-                miListUp.Enabled = smiUp.Enabled = false;
-                miListDown.Enabled = smiDown.Enabled = false;
+                miListRemove.Enabled = smiRemove.Enabled = btnRemove.Enabled = false;
+                miListUp.Enabled = smiUp.Enabled = btnUp.Enabled =  false;
+                miListDown.Enabled = smiDown.Enabled = btnDown.Enabled = false;
             }
             else {
-                miListRemove.Enabled = smiRemove.Enabled = true;
+                miListRemove.Enabled = smiRemove.Enabled = btnRemove.Enabled = true;
 
                 // Check for start or end of list before enabling up and down
-                miListUp.Enabled = smiUp.Enabled = lstFiles.SelectedIndex != 0 ? true : false;
-                miListDown.Enabled = smiDown.Enabled = lstFiles.SelectedIndex != lstFiles.Items.Count - 1 ? true : false;
+                miListUp.Enabled = smiUp.Enabled = btnUp.Enabled = lstFiles.SelectedIndex != 0 ? true : false;
+                miListDown.Enabled = smiDown.Enabled = btnDown.Enabled = lstFiles.SelectedIndex != lstFiles.Items.Count - 1 ? true : false;
             }
         }
         #endregion
 
-        #region "Shared Menu Event Handlers"
+        #region "Click Event Handlers"
         /// <summary>
-        /// Add directory menu click event.
+        /// Minify Single File click event.
         /// </summary>
-        private void MenuAddDir_Click( object sender, EventArgs e ) {
+        private void SingleFile_Click( object sender, EventArgs e ) {
+            string path;
+
+            if( Dialogs.GetOpenPath( out path, new OpenFileDialog(), "CSS Files (*.css)|*.css", "Open File", this._lastDir ) ) {
+                txtSingle.Text = this._lastDir = path;
+
+                // Get the root of the file, from the start of the string to the last '\'
+                string root = path.Substring( 0, ( path.LastIndexOf( "\\" ) + 1 ) );
+
+                // Get the file name, less the extension (and any other dot notation)
+                string file = new FileInfo( path ).Name.Split( '.' )[ 0 ];
+
+                // If the file already exists, notify the user that it will be replaced
+                // If it doesnt exist skip to the writing
+                if( File.Exists( root + file + ".min.css" ) ) {
+                    if( MessageBox.Show( file + ".min.css already exists. This will replace it.", "Confirm Save", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning ) == DialogResult.OK ) {
+                        this.WriteFile( path, root + file + ".min.css" );
+                    }
+                }
+                else {
+                    this.WriteFile( path, root + file + ".min.css" );
+                }
+            }
+        }
+
+        /// <summary>
+        /// Combine To File click event.
+        /// </summary>
+        private void CombineTo_Click( object sender, EventArgs e ) {
+            if( Dialogs.GetSavePath( out this._combineFile, new SaveFileDialog(), "CSS Files (*.css)|*.css", "Save File", this._lastDir ) ) {
+                txtCombine.Text = this._combineFile;
+                this.CheckReadyState();
+            }
+        }
+
+        /// <summary>
+        /// Add directory click event.
+        /// </summary>
+        private void AddDirectory_Click( object sender, EventArgs e ) {
             string path;
             if( Dialogs.GetFolderPath( out path, new FolderBrowserDialog(), "Select a directory to watch", false, this._lastDir ) ) {
                 this._lastDir = path;
@@ -206,15 +238,15 @@ namespace QuickMinCombine {
                     }
                 }
 
-                miListClear.Enabled = smiClear.Enabled = true;
+                miListClear.Enabled = smiClear.Enabled = btnClear.Enabled = true;
                 this.CheckReadyState();
             }
         }
 
         /// <summary>
-        /// Add file menu click event.
+        /// Add file click event.
         /// </summary>
-        private void MenuAddFile_Click( object sender, EventArgs e ) {
+        private void AddFile_Click( object sender, EventArgs e ) {
             string path;
             if( Dialogs.GetOpenPath( out path, new OpenFileDialog(), "CSS Files (*.css)|*.css", "Open File", this._lastDir ) ) {
                 // Don't add dupes
@@ -222,32 +254,32 @@ namespace QuickMinCombine {
                     // Only want lastDir to be the directory, excluding file name
                     this._lastDir = path.Substring( 0, ( path.LastIndexOf( "\\" ) + 1 ) );
                     lstFiles.Items.Add( path );
-                    miListClear.Enabled = smiClear.Enabled = true;
+                    miListClear.Enabled = smiClear.Enabled = btnClear.Enabled = true;
                     this.CheckReadyState();
                 }
             }
         }
 
         /// <summary>
-        /// Start monitoring menu click event.
+        /// Start monitoring click event.
         /// </summary>
-        private void MenuStart_Click( object sender, EventArgs e ) {
+        private void StartMon_Click( object sender, EventArgs e ) {
             if( lstFiles.Items.Count > 0 && txtCombine.Text != string.Empty ) {
                 this.StartStopMonitoring();
             }
         }
 
         /// <summary>
-        /// Stop monitoring menu click event.
+        /// Stop monitoring click event.
         /// </summary>
-        private void MenuStop_Click( object sender, EventArgs e ) {
+        private void StopMon_Click( object sender, EventArgs e ) {
             this.StartStopMonitoring();
         }
 
         /// <summary>
-        /// Move list item up menu click event.
+        /// Move list item up click event.
         /// </summary>
-        private void MenuUp_Click( object sender, EventArgs e ) {
+        private void FileUp_Click( object sender, EventArgs e ) {
             int index = lstFiles.SelectedIndex;
             var tmp = lstFiles.Items[ index - 1 ];
             lstFiles.Items[ index - 1 ] = lstFiles.Items[ index ];
@@ -256,9 +288,9 @@ namespace QuickMinCombine {
         }
 
         /// <summary>
-        /// Move list item down menu click event.
+        /// Move list item down click event.
         /// </summary>
-        private void MenuDown_Click( object sender, EventArgs e ) {
+        private void FileDown_Click( object sender, EventArgs e ) {
             int index = lstFiles.SelectedIndex;
             var tmp = lstFiles.Items[ index + 1 ];
             lstFiles.Items[ index + 1 ] = lstFiles.Items[ index ];
@@ -267,32 +299,32 @@ namespace QuickMinCombine {
         }
 
         /// <summary>
-        /// Remove item menu click event.
+        /// Remove item click event.
         /// </summary>
-        private void MenuRemove_Click( object sender, EventArgs e ) {
+        private void RemoveFile_Click( object sender, EventArgs e ) {
             if( MessageBox.Show( "Are you sure you want to remove this item?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning ) == DialogResult.Yes ) {
                 lstFiles.Items.RemoveAt( lstFiles.SelectedIndex );
             }
         }
 
         /// <summary>
-        /// Clear list menu click event.
+        /// Clear list click event.
         /// </summary>
-        private void MenuClear_Click( object sender, EventArgs e ) {
+        private void ClearList_Click( object sender, EventArgs e ) {
             if( MessageBox.Show( "Are you sure you want to clear the entire list?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning ) == DialogResult.Yes ) {
                 lstFiles.Items.Clear();
-                miListClear.Enabled = smiClear.Enabled = false;
                 miMonitorStart.Enabled = smiStart.Enabled = false;
-                miListRemove.Enabled = smiRemove.Enabled = false;
-                miListUp.Enabled = smiUp.Enabled = false;
-                miListDown.Enabled = smiDown.Enabled = false;
+                miListClear.Enabled = smiClear.Enabled = btnClear.Enabled = false;
+                miListRemove.Enabled = smiRemove.Enabled = btnRemove.Enabled = false;
+                miListUp.Enabled = smiUp.Enabled = btnUp.Enabled = false;
+                miListDown.Enabled = smiDown.Enabled = btnDown.Enabled = false;
             }
         }
 
         /// <summary>
-        /// Exit app menu click event.
+        /// Exit app click event.
         /// </summary>
-        private void MenuExit_Click( object sender, EventArgs e ) {
+        private void ExitApp_Click( object sender, EventArgs e ) {
             this.Close();
         }
         #endregion
@@ -311,8 +343,7 @@ namespace QuickMinCombine {
         /// Enable the start buttons if all the needed fields are supplied.
         /// </summary>
         private void CheckReadyState() {
-            miMonitorStart.Enabled = ( lstFiles.Items.Count > 0 && txtCombine.Text != string.Empty );
-            smiStart.Enabled = ( lstFiles.Items.Count > 0 && txtCombine.Text != string.Empty );
+            miMonitorStart.Enabled = smiStart.Enabled = ( lstFiles.Items.Count > 0 && txtCombine.Text != string.Empty );
         }
 
         /// <summary>
@@ -324,12 +355,11 @@ namespace QuickMinCombine {
 
             // Flip the Enabled control properties
             btnCombineTo.Enabled = !btnCombineTo.Enabled;
-            miListDir.Enabled = smiDir.Enabled = !smiDir.Enabled;
-            miListFile.Enabled = smiFile.Enabled = !smiFile.Enabled;
             miMonitorStart.Enabled = smiStart.Enabled = !smiStart.Enabled;
             miMonitorStop.Enabled = smiStop.Enabled = !smiStop.Enabled;
-            miListClear.Enabled = smiClear.Enabled = !smiClear.Enabled;
-
+            miListDir.Enabled = smiDir.Enabled = btnAddDir.Enabled = !btnAddDir.Enabled;
+            miListFile.Enabled = smiFile.Enabled = btnAddFile.Enabled = !btnAddFile.Enabled;
+            miListClear.Enabled = smiClear.Enabled = btnClear.Enabled = !btnClear.Enabled;
 
             // Flip the stopwatch
             if( this._isRunning ) {
