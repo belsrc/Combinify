@@ -103,6 +103,18 @@ namespace QuickMinCombine {
                     case "btnClear":
                         ( sender as Button ).BackgroundImage = ( Image )Properties.Resources.ResourceManager.GetObject( "cross_grey" );
                         break;
+
+                    case "btnCombineTo":
+                        ( sender as Button ).BackgroundImage = ( Image )Properties.Resources.ResourceManager.GetObject( "file_blank_grey" );
+                        break;
+
+                    case "btnAddDir":
+                        ( sender as Button ).BackgroundImage = ( Image )Properties.Resources.ResourceManager.GetObject( "add_folder_grey" );
+                        break;
+
+                    case "btnAddFile":
+                        ( sender as Button ).BackgroundImage = ( Image )Properties.Resources.ResourceManager.GetObject( "add_file_grey" );
+                        break;
                 };
             }
             else {
@@ -122,8 +134,37 @@ namespace QuickMinCombine {
                     case "btnClear":
                         ( sender as Button ).BackgroundImage = ( Image )Properties.Resources.ResourceManager.GetObject( "cross" );
                         break;
+
+                    case "btnCombineTo":
+                        ( sender as Button ).BackgroundImage = ( Image )Properties.Resources.ResourceManager.GetObject( "file-blank" );
+                        break;
+
+                    case "btnAddDir":
+                        ( sender as Button ).BackgroundImage = ( Image )Properties.Resources.ResourceManager.GetObject( "add-folder" );
+                        break;
+
+                    case "btnAddFile":
+                        ( sender as Button ).BackgroundImage = ( Image )Properties.Resources.ResourceManager.GetObject( "add-file" );
+                        break;
                 };
             }
+        }
+
+        /// <summary>
+        /// Warn user of possible file replacement
+        /// Disable/Enable Controls
+        /// </summary>
+        private void radMinify_CheckedChanged( object sender, EventArgs e ) {
+            if( radMinify.Checked ) {
+                MessageBox.Show( "This will replace any files with the name <file name>.min.css without further warning.",
+                    "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning );
+                txtCombine.Enabled = btnCombineTo.Enabled = false;
+            }
+            else {
+                txtCombine.Enabled = btnCombineTo.Enabled = true;
+            }
+
+            CheckReadyState();
         }
 
         #region "Tray Icon Event Handlers"
@@ -164,7 +205,7 @@ namespace QuickMinCombine {
         private void lstFiles_SelectedIndexChanged( object sender, EventArgs e ) {
             if( lstFiles.SelectedIndex == -1 ) {
                 miListRemove.Enabled = smiRemove.Enabled = btnRemove.Enabled = false;
-                miListUp.Enabled = smiUp.Enabled = btnUp.Enabled =  false;
+                miListUp.Enabled = smiUp.Enabled = btnUp.Enabled = false;
                 miListDown.Enabled = smiDown.Enabled = btnDown.Enabled = false;
             }
             else {
@@ -177,31 +218,45 @@ namespace QuickMinCombine {
         }
         #endregion
 
-        #region "Click Event Handlers"
+        #region "Common Click Event Handlers"
         /// <summary>
         /// Minify Single File click event.
         /// </summary>
         private void SingleFile_Click( object sender, EventArgs e ) {
             string path;
+            bool wasSuccess = false;
 
             if( Dialogs.GetOpenPath( out path, new OpenFileDialog(), "CSS Files (*.css)|*.css", "Open File", this._lastDir ) ) {
-                txtSingle.Text = this._lastDir = path;
+                txtSingle.Text = path;
+                FileInfo info = new FileInfo( path );
 
                 // Get the root of the file, from the start of the string to the last '\'
-                string root = path.Substring( 0, ( path.LastIndexOf( "\\" ) + 1 ) );
+                string root = this._lastDir = info.DirectoryName + "\\";
 
                 // Get the file name, less the extension (and any other dot notation)
-                string file = new FileInfo( path ).Name.Split( '.' )[ 0 ];
+                string file = info.Name.Split( '.' )[ 0 ];
 
                 // If the file already exists, notify the user that it will be replaced
                 // If it doesnt exist skip to the writing
                 if( File.Exists( root + file + ".min.css" ) ) {
                     if( MessageBox.Show( file + ".min.css already exists. This will replace it.", "Confirm Save", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning ) == DialogResult.OK ) {
                         this.WriteFile( path, root + file + ".min.css" );
+                        wasSuccess = true;
                     }
                 }
                 else {
                     this.WriteFile( path, root + file + ".min.css" );
+                    wasSuccess = true;
+                }
+
+                // Since they could have denied the overwrite, have to check a flag
+                if( wasSuccess ) {
+                    string[] comp = this.GetFileComparison( path, root + file + ".min.css" );
+
+                    // Notify user of completion and files sizes/savings
+                    MessageBox.Show( "Minification complete\n\nOriginal Size: " + comp[ 0 ] +
+                                     "\nMinified Size: " + comp[ 1 ] +
+                                     "\nReduction: " + comp[ 2 ] + "%" );
                 }
             }
         }
@@ -264,7 +319,9 @@ namespace QuickMinCombine {
         /// Start monitoring click event.
         /// </summary>
         private void StartMon_Click( object sender, EventArgs e ) {
-            if( lstFiles.Items.Count > 0 && txtCombine.Text != string.Empty ) {
+            if( lstFiles.Items.Count > 0 && 
+              ( txtCombine.Text != string.Empty || radMinify.Checked ) )
+            {
                 this.StartStopMonitoring();
             }
         }
@@ -343,7 +400,8 @@ namespace QuickMinCombine {
         /// Enable the start buttons if all the needed fields are supplied.
         /// </summary>
         private void CheckReadyState() {
-            miMonitorStart.Enabled = smiStart.Enabled = ( lstFiles.Items.Count > 0 && txtCombine.Text != string.Empty );
+            miMonitorStart.Enabled = smiStart.Enabled = ( lstFiles.Items.Count > 0 && 
+                                                        ( txtCombine.Text != string.Empty || radMinify.Checked ) );
         }
 
         /// <summary>
@@ -354,12 +412,12 @@ namespace QuickMinCombine {
             this._isRunning = !this._isRunning;
 
             // Flip the Enabled control properties
-            btnCombineTo.Enabled = !btnCombineTo.Enabled;
-            miMonitorStart.Enabled = smiStart.Enabled = !smiStart.Enabled;
-            miMonitorStop.Enabled = smiStop.Enabled = !smiStop.Enabled;
-            miListDir.Enabled = smiDir.Enabled = btnAddDir.Enabled = !btnAddDir.Enabled;
-            miListFile.Enabled = smiFile.Enabled = btnAddFile.Enabled = !btnAddFile.Enabled;
-            miListClear.Enabled = smiClear.Enabled = btnClear.Enabled = !btnClear.Enabled;
+            btnCombineTo.Enabled = ( !this._isRunning && !radMinify.Checked );
+            miMonitorStart.Enabled = smiStart.Enabled = !this._isRunning;
+            miMonitorStop.Enabled = smiStop.Enabled = this._isRunning;
+            miListDir.Enabled = smiDir.Enabled = btnAddDir.Enabled = !this._isRunning;
+            miListFile.Enabled = smiFile.Enabled = btnAddFile.Enabled = !this._isRunning;
+            miListClear.Enabled = smiClear.Enabled = btnClear.Enabled = !this._isRunning;
 
             // Flip the stopwatch
             if( this._isRunning ) {
@@ -465,9 +523,20 @@ namespace QuickMinCombine {
         /// Method to perform the minifying using Thread lambda.
         /// </summary>
         private void DoMinify( List<string> oldFile ) {
-            // parse the file times again,
-            //  faster than mini all files when just one prolly changed
-            // pass each changed one to the single mini
+            var files = lstFiles.Items.Cast<string>().ToList();
+
+            foreach( string f in files ) {
+                var info = new FileInfo( f );
+                string root = info.DirectoryName + "\\";
+                string file = info.Name.Split( '.' )[ 0 ];
+
+                if( this._fileTimes[ info.Name ] < info.LastWriteTime || 
+                    !File.Exists( root + file + ".min.css" ) )
+                {
+                    this._fileTimes[ info.Name ] = info.LastWriteTime;
+                    WriteFile( f, root + file + ".min.css" );
+                }
+            }
         }
 
         /// <summary>
@@ -479,19 +548,24 @@ namespace QuickMinCombine {
                 sw.Write( FileOp.MinifyFile( oldPath ) );
                 sw.Close();
             }
+        }
+
+        private string[] GetFileComparison( string older, string newer ) {
+            string[] tmp = new string[ 3 ];
 
             // Get the size of the original and new file (in bytes as long data type)
-            long original = new FileInfo( oldPath ).Length;
-            long minified = new FileInfo( newPath ).Length;
+            long original = new FileInfo( older ).Length;
+            long minified = new FileInfo( newer ).Length;
 
             // Hope casting to double doesnt bite me but, long/long was returning (rounded)long aka 0
             double savings = ( ( double )minified / ( double )original ) * 100;
             savings = Math.Round( 100 - savings, 2 );
 
-            // Notify user of completion and files sizes/savings
-            MessageBox.Show( "Minification complete\n\nOriginal Size: " + this.AutoFileSize( original ) +
-                             "\nMinified Size: " + this.AutoFileSize( minified ) +
-                             "\nReduction: " + savings + "%" );
+            tmp[ 0 ] = this.AutoFileSize( original );
+            tmp[ 1 ] = this.AutoFileSize( minified );
+            tmp[ 2 ] = savings.ToString();
+
+            return tmp;
         }
 
         /// <summary>

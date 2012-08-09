@@ -606,7 +606,6 @@
             // radMinify
             // 
             this.radMinify.AutoSize = true;
-            this.radMinify.Enabled = false;
             this.radMinify.Location = new System.Drawing.Point(362, 422);
             this.radMinify.Name = "radMinify";
             this.radMinify.Size = new System.Drawing.Size(98, 17);
@@ -615,6 +614,7 @@
             this.radMinify.Text = "Minify Seperate";
             this.ttMainTip.SetToolTip(this.radMinify, "Minify each listed file seperately");
             this.radMinify.UseVisualStyleBackColor = true;
+            this.radMinify.CheckedChanged += new System.EventHandler(this.radMinify_CheckedChanged);
             // 
             // btnCombineTo
             // 
