@@ -89,9 +89,9 @@ namespace QuickMinCombine {
                     using( StreamReader sr = new StreamReader( p ) ) {
                         string css = sr.ReadToEnd();
                         css.Trim();
-                        sb.Append( "/* ==========================================================================\n" );
-                        sb.Append( "   From " + p.Substring( ( p.LastIndexOf( "\\" ) + 1 ) ) + "\n" );
-                        sb.Append( "   ========================================================================== */\n\n" );
+                        sb.Append( "/*\n" );
+                        sb.Append( " From " + new FileInfo( p ).Name + "\n" );
+                        sb.Append( " ========================================================================== */\n\n" );
                         sb.Append( css );
                         sb.Append( "\n\n" );
                     }
@@ -109,6 +109,38 @@ namespace QuickMinCombine {
         public static List<string> GetCssFiles( string dir ) {
             _fileList.Clear();
             return ParseDirectory( dir );
+        }
+
+        /// <summary>
+        /// Writes a project file to the supllied path using the dir and 
+        /// list to populate the project file.
+        /// </summary>
+        /// <param name="path">Path to save the project file.</param>
+        /// <param name="dir">String representing the last directory open in the project.</param>
+        /// <param name="list">A list of files that were being watched.</param>
+        public static void WriteProject( string path, string dir, List<string> list ) {
+            /* 
+            *      Take _prjPath, _lastDir, List<string> list
+            *        and write to file of path
+            */
+        }
+
+        /// <summary>
+        /// Reads a project file from disks and returns the files to watch.
+        /// </summary>
+        /// <param name="dir">String representing the last directory open in the project.</param>
+        /// <param name="path">The path of the project file.</param>
+        /// <returns>A list of files to start watching.</returns>
+        public static List<string> ReadProject( out string dir, string path ) {
+            dir = string.Empty;
+            /*
+             * Open XML file at _prjPath
+             *      Read/set _lastDir
+             *      Read each file node into list
+             *      Return list
+             */
+
+            return null;
         }
 
         /// <summary>

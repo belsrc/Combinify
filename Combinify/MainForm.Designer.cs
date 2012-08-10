@@ -73,6 +73,8 @@
             this.miFileSave = new System.Windows.Forms.ToolStripMenuItem();
             this.miFileSaveAs = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem6 = new System.Windows.Forms.ToolStripSeparator();
+            this.miProjectClose = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem10 = new System.Windows.Forms.ToolStripSeparator();
             this.miFileExit = new System.Windows.Forms.ToolStripMenuItem();
             this.miList = new System.Windows.Forms.ToolStripMenuItem();
             this.miListDir = new System.Windows.Forms.ToolStripMenuItem();
@@ -403,6 +405,8 @@
             this.miFileSave,
             this.miFileSaveAs,
             this.toolStripMenuItem6,
+            this.miProjectClose,
+            this.toolStripMenuItem10,
             this.miFileExit});
             this.miFile.Name = "miFile";
             this.miFile.Size = new System.Drawing.Size(37, 20);
@@ -438,7 +442,6 @@
             // 
             // miProjectOpen
             // 
-            this.miProjectOpen.Enabled = false;
             this.miProjectOpen.Name = "miProjectOpen";
             this.miProjectOpen.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
             this.miProjectOpen.Size = new System.Drawing.Size(196, 22);
@@ -452,7 +455,6 @@
             // 
             // miFileSave
             // 
-            this.miFileSave.Enabled = false;
             this.miFileSave.Name = "miFileSave";
             this.miFileSave.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
             this.miFileSave.Size = new System.Drawing.Size(196, 22);
@@ -461,7 +463,6 @@
             // 
             // miFileSaveAs
             // 
-            this.miFileSaveAs.Enabled = false;
             this.miFileSaveAs.Name = "miFileSaveAs";
             this.miFileSaveAs.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.A)));
             this.miFileSaveAs.Size = new System.Drawing.Size(196, 22);
@@ -472,6 +473,18 @@
             // 
             this.toolStripMenuItem6.Name = "toolStripMenuItem6";
             this.toolStripMenuItem6.Size = new System.Drawing.Size(193, 6);
+            // 
+            // miProjectClose
+            // 
+            this.miProjectClose.Name = "miProjectClose";
+            this.miProjectClose.Size = new System.Drawing.Size(196, 22);
+            this.miProjectClose.Text = "Close Project";
+            this.miProjectClose.Click += new System.EventHandler(this.miProjectClose_Click);
+            // 
+            // toolStripMenuItem10
+            // 
+            this.toolStripMenuItem10.Name = "toolStripMenuItem10";
+            this.toolStripMenuItem10.Size = new System.Drawing.Size(193, 6);
             // 
             // miFileExit
             // 
@@ -848,6 +861,8 @@
         private System.Windows.Forms.Button btnClear;
         private System.Windows.Forms.Button btnSingle;
         private System.Windows.Forms.ToolTip ttMainTip;
+        private System.Windows.Forms.ToolStripMenuItem miProjectClose;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem10;
     }
 }
 

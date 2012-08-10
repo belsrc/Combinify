@@ -41,10 +41,26 @@ namespace QuickMinCombine {
     /// Partial class for the main form.
     /// </summary>
     public partial class frmMain : Form {
+        #region "Class Variables"
         /// <summary>
         /// The last directory to be used.
         /// </summary>
         private string _lastDir = string.Empty;
+
+        /// <summary>
+        /// Whether theres a current working project
+        /// </summary>
+        private bool _hasPrj = false;
+
+        /// <summary>
+        /// The file path for current working project
+        /// </summary>
+        private string _prjPath = string.Empty;
+
+        /// <summary>
+        /// Flag for if the user needs to save the current project
+        /// </summary>
+        private bool _needSaved = false;
 
         /// <summary>
         /// Path for the combined file.
@@ -60,6 +76,7 @@ namespace QuickMinCombine {
         /// A dictionary containing the file name [key] and LastWriteTime [value].
         /// </summary>
         private Dictionary<string, DateTime> _fileTimes;
+        #endregion
 
         /// <summary>
         /// Initializes a new instance of the frmMain class.
@@ -76,6 +93,21 @@ namespace QuickMinCombine {
             // Hide the tray icon, otherwise they keep piling up
             if( niTray.Visible == true ) {
                 niTray.Visible = false;
+            }
+
+            // Check if the project needs to be saved
+            if( this._needSaved ) {
+                var result = SaveBeforeClose();
+
+                // Yes or No result in the same effect 
+                // at this level so go ahead and empty the values
+                if( result == DialogResult.Yes ||
+                    result == DialogResult.No ) {
+                    this.Close();
+                }
+                else {
+                    e.Cancel = true;
+                }
             }
         }
 
@@ -165,6 +197,16 @@ namespace QuickMinCombine {
             }
 
             CheckReadyState();
+        }
+
+        /// <summary>
+        /// Timer tick event.
+        /// </summary>
+        private void timeCheck_Tick( object sender, EventArgs e ) {
+            // The stop button turns off the stopwatch but Ill check anyway
+            if( this._isRunning && this.FilesHaveChanged() ) {
+                this.ProcessFiles();
+            }
         }
 
         #region "Tray Icon Event Handlers"
@@ -294,6 +336,7 @@ namespace QuickMinCombine {
                 }
 
                 miListClear.Enabled = smiClear.Enabled = btnClear.Enabled = true;
+                this._needSaved = this._hasPrj;
                 this.CheckReadyState();
             }
         }
@@ -311,6 +354,7 @@ namespace QuickMinCombine {
                     lstFiles.Items.Add( path );
                     miListClear.Enabled = smiClear.Enabled = btnClear.Enabled = true;
                     this.CheckReadyState();
+                    this._needSaved = this._hasPrj;
                 }
             }
         }
@@ -319,9 +363,8 @@ namespace QuickMinCombine {
         /// Start monitoring click event.
         /// </summary>
         private void StartMon_Click( object sender, EventArgs e ) {
-            if( lstFiles.Items.Count > 0 && 
-              ( txtCombine.Text != string.Empty || radMinify.Checked ) )
-            {
+            if( lstFiles.Items.Count > 0 &&
+              ( txtCombine.Text != string.Empty || radMinify.Checked ) ) {
                 this.StartStopMonitoring();
             }
         }
@@ -342,6 +385,7 @@ namespace QuickMinCombine {
             lstFiles.Items[ index - 1 ] = lstFiles.Items[ index ];
             lstFiles.Items[ index ] = tmp;
             lstFiles.SelectedIndex = index - 1;
+            this._needSaved = this._hasPrj;
         }
 
         /// <summary>
@@ -353,6 +397,7 @@ namespace QuickMinCombine {
             lstFiles.Items[ index + 1 ] = lstFiles.Items[ index ];
             lstFiles.Items[ index ] = tmp;
             lstFiles.SelectedIndex = index + 1;
+            this._needSaved = this._hasPrj;
         }
 
         /// <summary>
@@ -361,6 +406,7 @@ namespace QuickMinCombine {
         private void RemoveFile_Click( object sender, EventArgs e ) {
             if( MessageBox.Show( "Are you sure you want to remove this item?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning ) == DialogResult.Yes ) {
                 lstFiles.Items.RemoveAt( lstFiles.SelectedIndex );
+                this._needSaved = this._hasPrj;
             }
         }
 
@@ -370,6 +416,7 @@ namespace QuickMinCombine {
         private void ClearList_Click( object sender, EventArgs e ) {
             if( MessageBox.Show( "Are you sure you want to clear the entire list?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning ) == DialogResult.Yes ) {
                 lstFiles.Items.Clear();
+                this._needSaved = this._hasPrj;
                 miMonitorStart.Enabled = smiStart.Enabled = false;
                 miListClear.Enabled = smiClear.Enabled = btnClear.Enabled = false;
                 miListRemove.Enabled = smiRemove.Enabled = btnRemove.Enabled = false;
@@ -386,21 +433,106 @@ namespace QuickMinCombine {
         }
         #endregion
 
+        #region "Project Event Handlers"
         /// <summary>
-        /// Timer tick event.
+        /// Open project click event
         /// </summary>
-        private void timeCheck_Tick( object sender, EventArgs e ) {
-            // The stop button turns off the stopwatch but Ill check anyway
-            if( this._isRunning && this.FilesHaveChanged() ) {
-                this.ProcessFiles();
+        private void miProjectOpen_Click( object sender, EventArgs e ) {
+            string path = string.Empty;
+
+            if( Dialogs.GetOpenPath( out path, new OpenFileDialog(), "Combinify Project (*.cpj)|*.cpj", "Save Project", this._lastDir ) ) {
+                // Set the project fields
+                this._hasPrj = true;
+                this._prjPath = path;
+
+                // Clear the list of any files
+                lstFiles.Items.Clear();
+
+                // Add the watched files from the project
+                lstFiles.Items.AddRange( FileOp.ReadProject( out this._lastDir, this._prjPath ).ToArray() );
             }
         }
+
+        /// <summary>
+        /// Save project click event
+        /// </summary>
+        private void miProjectSave_Click( object sender, EventArgs e ) {
+            // If theres a current working project save to that one
+            // else call the new save method
+            if( this._hasPrj && this._prjPath != string.Empty ) {
+                this.SaveProject();
+            }
+            else {
+                this.SaveNewProject();
+            }
+        }
+
+        /// <summary>
+        /// Save project as click event
+        /// </summary>
+        private void miProjectSaveAs_Click( object sender, EventArgs e ) {
+            this.SaveNewProject();
+        }
+
+        /// <summary>
+        /// Close project click event
+        /// </summary>
+        private void miProjectClose_Click( object sender, EventArgs e ) {
+            // Check if it actually has a working project
+            if( this._hasPrj ) {
+
+                // Check if the project needs to be saved
+                if( this._needSaved ) {
+                    var result = SaveBeforeClose();
+
+                    // Yes or No result in the same effect 
+                    // at this level so go ahead and empty the values
+                    if( result == DialogResult.Yes ||
+                        result == DialogResult.No ) {
+                        this._hasPrj = false;
+                        this._prjPath = string.Empty;
+                        lstFiles.Items.Clear();
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// New project from file click event
+        /// </summary>
+        private void miProjectNewFile_Click( object sender, EventArgs e ) {
+            string path = string.Empty;
+
+            if( Dialogs.GetOpenPath( out path, new OpenFileDialog(), "CSS Files (*.css)|*.css", "Open File", this._lastDir ) ) {
+                lstFiles.Items.Clear();
+                lstFiles.Items.Add( path );
+                this._lastDir = new FileInfo( path ).DirectoryName + "\\";
+                this._hasPrj = true;
+                this._needSaved = true;
+            }
+        }
+
+        /// <summary>
+        /// New project from folder click event
+        /// </summary>
+        private void miProjectNewDir_Click( object sender, EventArgs e ) {
+            string path;
+
+            if( Dialogs.GetFolderPath( out path, new FolderBrowserDialog(), "Select a directory to watch", false, this._lastDir ) ) {
+                lstFiles.Items.Clear();
+                lstFiles.Items.AddRange( FileOp.GetCssFiles( path ).ToArray() );
+                this._lastDir = path;
+                this._hasPrj = true;
+                this._needSaved = true;
+            }
+        }
+        #endregion
 
         /// <summary>
         /// Enable the start buttons if all the needed fields are supplied.
         /// </summary>
         private void CheckReadyState() {
-            miMonitorStart.Enabled = smiStart.Enabled = ( lstFiles.Items.Count > 0 && 
+            miMonitorStart.Enabled = smiStart.Enabled = ( lstFiles.Items.Count > 0 &&
                                                         ( txtCombine.Text != string.Empty || radMinify.Checked ) );
         }
 
@@ -439,7 +571,7 @@ namespace QuickMinCombine {
         }
 
         /// <summary>
-        /// Larger aggrigate for the file handling.
+        /// Larger aggregate for the file handling.
         /// </summary>
         /// <remarks>
         /// Ugly method is ugly. Clean me PLEASE
@@ -502,6 +634,7 @@ namespace QuickMinCombine {
         /// <summary>
         /// Method to perform the combining using Thread lambda.
         /// </summary>
+        /// <param name="oldFile">A list of file paths to combine.</param>
         private void DoCombine( List<string> oldFile ) {
             using( var sw = new StreamWriter( this._combineFile, false ) ) {
                 sw.Write( FileOp.CombineFile( oldFile ) );
@@ -512,6 +645,7 @@ namespace QuickMinCombine {
         /// <summary>
         /// Method to perform the combining and minifying using Thread lambda.
         /// </summary>
+        /// <param name="oldFile">A list of file paths to combine and minify.</param>
         private void DoCombineMinify( List<string> oldFile ) {
             using( var sw = new StreamWriter( this._combineFile, false ) ) {
                 sw.Write( FileOp.MinifyFile( oldFile ) );
@@ -522,6 +656,7 @@ namespace QuickMinCombine {
         /// <summary>
         /// Method to perform the minifying using Thread lambda.
         /// </summary>
+        /// <param name="oldFile">A list of file paths to minify.</param>
         private void DoMinify( List<string> oldFile ) {
             var files = lstFiles.Items.Cast<string>().ToList();
 
@@ -530,9 +665,8 @@ namespace QuickMinCombine {
                 string root = info.DirectoryName + "\\";
                 string file = info.Name.Split( '.' )[ 0 ];
 
-                if( this._fileTimes[ info.Name ] < info.LastWriteTime || 
-                    !File.Exists( root + file + ".min.css" ) )
-                {
+                if( this._fileTimes[ info.Name ] < info.LastWriteTime ||
+                    !File.Exists( root + file + ".min.css" ) ) {
                     this._fileTimes[ info.Name ] = info.LastWriteTime;
                     WriteFile( f, root + file + ".min.css" );
                 }
@@ -543,6 +677,8 @@ namespace QuickMinCombine {
         /// Used for the single file minify. 
         /// Read the original file, minify, then write to the new file.
         /// </summary>
+        /// <param name="newPath">The file path of the original file.</param>
+        /// <param name="oldPath">The file path of the new file.</param>
         private void WriteFile( string oldPath, string newPath ) {
             using( var sw = new StreamWriter( newPath, false ) ) {
                 sw.Write( FileOp.MinifyFile( oldPath ) );
@@ -550,6 +686,16 @@ namespace QuickMinCombine {
             }
         }
 
+        /// <summary>
+        /// Determines the file size of the the new file and old file and 
+        /// determines the difference in file size.
+        /// </summary>
+        /// <param name="older">The path to the old version of the file.</param>
+        /// <param name="newer">The path to the new version of the file.</param>
+        /// <returns>
+        /// A string array containing the original file size [0], 
+        /// the new file size [1], and the difference between the sizes [2].
+        /// </returns>
         private string[] GetFileComparison( string older, string newer ) {
             string[] tmp = new string[ 3 ];
 
@@ -557,7 +703,8 @@ namespace QuickMinCombine {
             long original = new FileInfo( older ).Length;
             long minified = new FileInfo( newer ).Length;
 
-            // Hope casting to double doesnt bite me but, long/long was returning (rounded)long aka 0
+            // Hope casting to double doesnt bite me in the ass but,
+            // long/long was returning (rounded)long aka 0
             double savings = ( ( double )minified / ( double )original ) * 100;
             savings = Math.Round( 100 - savings, 2 );
 
@@ -593,6 +740,8 @@ namespace QuickMinCombine {
         /// From LiFo's comment on SO 
         /// (stackoverflow.com/questions/5850596/conversion-of-long-to-decimal-in-c-sharp#answer-5850663)
         /// </summary>
+        /// <param name="number">A long int representing the bytes of a file.</param>
+        /// <returns>A string representing  bytes in KB, MB, GB, TB.</returns>
         private string AutoFileSize( long number ) {
             double tmp = number;
             string suffix = " B ";
@@ -605,24 +754,46 @@ namespace QuickMinCombine {
             return tmp.ToString( "n" ) + suffix;
         }
 
-        private void miProjectNewFile_Click( object sender, EventArgs e ) {
+        /// <summary>
+        /// Saves the contents of the watch list before closing or clearing.
+        /// </summary>
+        /// <returns>
+        /// Users choice of YES, NO, CANCEL
+        /// Yes causes the project to save. No and Cancel are
+        /// handled by the calling method
+        /// </returns>
+        private DialogResult SaveBeforeClose() {
+            var result = MessageBox.Show( "Do you want to save the changes to the current project?",
+                "Combinify", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question );
 
+            if( result == DialogResult.Yes ) {
+                SaveProject();
+            }
+
+            return result;
         }
 
-        private void miProjectNewDir_Click( object sender, EventArgs e ) {
+        /// <summary>
+        /// Saves the contents of the watch list to a new project.
+        /// </summary>
+        private void SaveNewProject() {
+            string path = string.Empty;
 
+            if( Dialogs.GetSavePath( out path, new SaveFileDialog(), "Combinify Project (*.cpj)|*.cpj", "Save Project", this._lastDir ) ) {
+                // Set the project fields
+                this._hasPrj = true;
+                this._prjPath = path;
+
+                this.SaveProject();
+            }
         }
 
-        private void miProjectOpen_Click( object sender, EventArgs e ) {
-
-        }
-
-        private void miProjectSave_Click( object sender, EventArgs e ) {
-
-        }
-
-        private void miProjectSaveAs_Click( object sender, EventArgs e ) {
-
+        /// <summary>
+        /// Saves the contents of the watch list to the current project.
+        /// </summary>
+        private void SaveProject() {
+            FileOp.WriteProject( this._prjPath, this._lastDir, lstFiles.Items.Cast<string>().ToList() );
+            this._needSaved = false;
         }
     }
 }
