@@ -47,7 +47,6 @@ namespace QuickMinCombine {
     using System;
     using System.Collections.Generic;
     using System.Text.RegularExpressions;
-    using System.Windows.Forms;
 
     /// <summary>
     /// A class to handle the minification of CSS files.
@@ -104,32 +103,10 @@ namespace QuickMinCombine {
             _data.Clear();
             _contents.Clear();
 
-            /* Replace some characters/strings that we dont want to get ran through the minifier.
-             * ================================================================================== */
-            // Pull out each css data url, do the needed minification, store in a list and put in a placeholder
-            css = Regex.Replace( css, "(?<=[:;\\s]+)url\\(\\s?[\\'\\\\\"]?data:(.*?)[\\'\\\\\"]?\\s?\\)(?=[;\\}\\s]+)", m => {
-                _data.Add( CleanDataUrls( m.Value ) );
-                return DATA_REPLACE;
-            } );
+            // Insert placeholders
+            SwapForPlaceholders( ref css );
 
-            // Pull out each css url, do the needed minification, store in a list and put in a placeholder
-            css = Regex.Replace( css, "(?<=[:;\\s]+)url\\(\\s?[\\'\\\\\"]?(?!\\w+:)(.*?)[\\'\\\\\"]?\\s?\\)(?=[;\\}\\s]+)", m => {
-                _urls.Add( CleanNormUrls( m.Value ) );
-                return URL_REPLACE;
-            } );
-
-            // Replace pseudo-class colons with an arbitrary character (thats not in the css spec)
-            css = Regex.Replace( css, "(^|\\})(([^\\{:])+:)+([^\\{]*\\{)", m => {
-                return m.Value.Replace( ":", PSEUDO_REPLACE );
-            } );
-
-            // Pull out each css content property, do the needed minification, store in a list and put in a placeholder
-            css = Regex.Replace( css, "(?<=content\\s*:).*?(?=;)", m => {
-                _contents.Add( CleanContents( m.Value ) );
-                return CONTENT_REPLACE;
-            } );
-
-            // Clean the rest of the css file
+            // Run through the rest of the minify methods
             InitialCleaning( ref css );
             CleanSelectors( ref css );
             CleanBraces( ref css );
@@ -140,29 +117,73 @@ namespace QuickMinCombine {
             FixIllFormedHsl( ref css );
 
             // 'transparent' == rgba(0,0,0,0) == hsla(0,0%,0%,0)
-            // Should be fine, if it supports Alpha should support the 'transparent' color literal, right?
-            css = css.Replace( "rgba(0,0,0,0)", "transparent" ).Replace( "hsla(0,0%,0%,0)", "transparent" );
+            // Should be fine, if it supports Alpha should support the 'transparent' color literal
+            // ...right?
+            css = css.Replace( "rgba(0,0,0,0)", "transparent" )
+                     .Replace( "hsla(0,0%,0%,0)", "transparent" );
 
+            // Replace placeholders
+            ReplacePlaceholders( ref css );
+
+            // Return the string after trimming any leading or trailing spaces
+            return css.Trim();
+        }
+
+        /// <summary>
+        /// Replace some characters/strings that we dont want to run through the general minify methods.
+        /// </summary>
+        private static void SwapForPlaceholders( ref string source ) {
+            // Pull out each css data url, do the needed minification, 
+            // store in a list and put in a placeholder
+            source = Regex.Replace( source, "(?<=[:;\\s]+)url\\(\\s?[\\'\\\\\"]?data:(.*?)[\\'\\\\\"]?" +
+                                    "\\s?\\)(?=[;\\}\\s]+)", m => {
+                                        _data.Add( CleanDataUrls( m.Value ) );
+                                        return DATA_REPLACE;
+                                    } );
+
+            // Pull out each css url, do the needed minification, 
+            // store in a list and put in a placeholder
+            source = Regex.Replace( source,
+                                    "(?<=[:;\\s]+)url\\(\\s?[\\'\\\\\"]?(?!\\w+:)(.*?)[\\'\\\\\"]?" +
+                                    "\\s?\\)(?=[;\\}\\s]+)", m => {
+                                        _urls.Add( CleanNormUrls( m.Value ) );
+                                        return URL_REPLACE;
+                                    } );
+
+            // Replace pseudo-class colons with an arbitrary character
+            source = Regex.Replace( source, "(^|\\})(([^\\{:])+:)+([^\\{]*\\{)", m => {
+                return m.Value.Replace( ":", PSEUDO_REPLACE );
+            } );
+
+            // Pull out each css content property, do the needed minification, 
+            // store in a list and put in a placeholder
+            source = Regex.Replace( source, "(?<=content\\s*:).*?(?=;)", m => {
+                _contents.Add( CleanContents( m.Value ) );
+                return CONTENT_REPLACE;
+            } );
+        }
+
+        /// <summary>
+        /// Replace the characters/strings that we took out at the start
+        /// </summary>
+        private static void ReplacePlaceholders( ref string source ) {
             // Put url(data)'s back how they were
             for( int i = 0; i < _data.Count; i++ ) {
-                css = ReplaceFirst( css, DATA_REPLACE, _data[ i ] );
+                source = ReplaceFirst( source, DATA_REPLACE, _data[ i ] );
             }
 
             // Put url()'s back how they were
             for( int i = 0; i < _urls.Count; i++ ) {
-                css = ReplaceFirst( css, URL_REPLACE, _urls[ i ] );
+                source = ReplaceFirst( source, URL_REPLACE, _urls[ i ] );
             }
 
             // Put pseudo-class colons back how they were
-            css = css.Replace( PSEUDO_REPLACE, ":" );
+            source = source.Replace( PSEUDO_REPLACE, ":" );
 
             // Put content:'s back how they were
             for( int i = 0; i < _contents.Count; i++ ) {
-                css = ReplaceFirst( css, CONTENT_REPLACE, _contents[ i ] );
+                source = ReplaceFirst( source, CONTENT_REPLACE, _contents[ i ] );
             }
-
-            // Return the string after trimming any leading or trailing spaces
-            return css.Trim();
         }
 
         /// <summary>
@@ -181,7 +202,8 @@ namespace QuickMinCombine {
         /// ( : ; ,  * > + ~ = ^= $= *= |= ~= ! )
         /// </summary>
         private static void CleanSelectors( ref string source ) {
-            source = Regex.Replace( source, "\\s*(?<Selector>(:|;|,|\\*|>|\\+|=|~|/|(\\^=)|(\\$=)|(\\*=)|(\\|=)|(~=)|!))\\s*", "${Selector}" );
+            source = Regex.Replace( source, "\\s*(?<Selector>(:|;|,|\\*|>|\\+|=|~|/|(\\^=)|" +
+                                            "(\\$=)|(\\*=)|(\\|=)|(~=)|!))\\s*", "${Selector}" );
         }
 
         /// <summary>
@@ -209,10 +231,12 @@ namespace QuickMinCombine {
             source = Regex.Replace( source, "(?<=[:,\\s\\(])0+(?<Value>\\.\\d+)", "${Value}" );
             source = Regex.Replace( source, "(?<=[:,\\s\\(])0+(%|in|[cme]m|ex|p[tcx]|rem)", "0" );
             source = Regex.Replace( source, ":(0 0 0 0|0 0)(?=;|\\})", ":0" );
-            source = Regex.Replace( source, "(?<Borders>(border(-top|-right|-bottom|-left)?|outline|background)):none", "${Borders}:0" );
+            source = Regex.Replace( source, "(?<Borders>(border(-top|-right|-bottom|-left)?" +
+                                            "|outline|background)):none", "${Borders}:0" );
 
-            // Removed the box|text shadow replacement since, apparently, its illegal set those to zero, which would be nice. Especially since you can do
-            // it with borders and a number of other props. Hopefully it eventually changes so I can put it back in and save more space.
+            // Removed the box|text shadow replacement since, apparently, its illegal set those to zero, 
+            // which would be nice. Especially since you can do it with borders and a number of other props.
+            // Hopefully it eventually changes so I can put it back in and save more space.
 
             source = Regex.Replace( source, "progid:DXImageTransform\\.Microsoft\\.Alpha\\(Opacity=", "alpha(opacity=" );
             source = Regex.Replace( source, "[^\\};\\{\\/]+\\{\\}", string.Empty );
@@ -279,11 +303,13 @@ namespace QuickMinCombine {
         /// Put it back together with the '%'
         /// </summary>
         private static void FixIllFormedHsl( ref string source ) {
-            source = Regex.Replace( source, "(?<=hsla?\\(\\d{1,3},)\\d{1,3}%?,\\d{1,3}%?(?=(,(0|1)?(\\.\\d+)?)?\\))", m => {
-                string[] tmp = m.Value.Split( ',' );
-                return tmp[ 0 ].Replace( "%", string.Empty ) + "%," + tmp[ 1 ].Replace( "%", string.Empty ) + "%";
-                // Kind of hack-ish I admit
-            } );
+            source = Regex.Replace( source, "(?<=hsla?\\(\\d{1,3},)\\d{1,3}%?,\\d{1,3}%?" +
+                                    "(?=(,(0|1)?(\\.\\d+)?)?\\))", m => {
+                                        string[] tmp = m.Value.Split( ',' );
+                                        return tmp[ 0 ].Replace( "%", string.Empty ) + "%," + tmp[ 1 ]
+                                                       .Replace( "%", string.Empty ) + "%";
+                                        // Kind of hack-ish I admit
+                                    } );
         }
 
         /// <summary>

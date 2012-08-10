@@ -110,10 +110,14 @@ namespace QuickMinCombine {
         }
 
         /// <summary>
-        /// Compresses a six character hexadecimal value to its three character representation if possible.
+        /// Compresses a six character hexadecimal value to its 
+        /// three character representation if possible.
         /// </summary>
         /// <param name="hex">A hexadecimal value.</param>
-        /// <returns>If possible, returns the compressed hex value. Otherwise, returns the original hex.</returns>
+        /// <returns>
+        /// If possible, returns the compressed hex value. 
+        /// Otherwise, returns the original hex.
+        /// </returns>
         public string CompressHex( string hex ) {
             if( hex[ 0 ] == hex[ 1 ] && hex[ 2 ] == hex[ 3 ] && hex[ 4 ] == hex[ 5 ] ) {
                 return ( "#" + hex[ 0 ] + hex[ 2 ] + hex[ 4 ] ).ToLower();
@@ -127,7 +131,9 @@ namespace QuickMinCombine {
         /// Swaps out a hexadecimal color value for its smaller literal color name.
         /// </summary>
         /// <param name="hex">A compressed hexadecimal value.</param>
-        /// <returns>Literal color name, it a smaller one exists. Otherwise, returns the hex value.</returns>
+        /// <returns>
+        /// Literal color name, it a smaller one exists. Otherwise, returns the hex value.
+        /// </returns>
         public string SwapOutHex( string hex ) {
             if( this._nameSmallerList.Keys.Contains( hex ) ) {
                 return this._nameSmallerList[ hex ];
@@ -141,7 +147,9 @@ namespace QuickMinCombine {
         /// Swaps out a literal color name for its smaller hexadecimal color value.
         /// </summary>
         /// <param name="css">The string of the css file to parse.</param>
-        /// <returns>The supplied string with the literal names converted to hex if possible.</returns>
+        /// <returns>
+        /// The supplied string with the literal names converted to hex if possible.
+        /// </returns>
         public string SwapOutNames( string css ) {
             foreach( var kvp in this._hexSmallerList ) {
                 css = Regex.Replace( css, "(?<=[: ,])" + kvp.Key + "(?=[;,\\} \\)])", kvp.Value );
@@ -158,7 +166,7 @@ namespace QuickMinCombine {
         public string ConvertRgbToHex( byte[] rgb ) {
             string s = BitConverter.ToString( rgb ).Replace( "-", string.Empty );
 
-            return CompressHex(  s.ToLower() );
+            return CompressHex( s.ToLower() );
         }
 
         /// <summary>

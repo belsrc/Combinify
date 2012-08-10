@@ -33,7 +33,10 @@ namespace QuickMinCombine {
     using System.Windows.Forms;
 
     /// <summary>
-    /// Class for easily calling the Open and Save file dialog in WinForms and getting the return path string.
+    /// Class for easily calling the Open and Save file dialog in WinForms and 
+    /// getting the return path string.
+    /// Originally from the my CGUM library but there wasnt much point including 
+    /// the whole thing just for this class
     /// </summary>
     public static class Dialogs {
         /// <summary>
@@ -44,15 +47,25 @@ namespace QuickMinCombine {
         /// <param name="fileFilter"><c>(Optional)</c> File filter string.</param>
         /// <param name="msgTitle"><c>(Optional)</c>Title of the dialog window.</param>
         /// <param name="startDir">The initial directory to open the control at.</param>
-        /// <returns>If the user clicks the OK button of the dialog that is displayed and the path is not <see langword="null"/>, <see langword="true"/>; otherwise, <see langword="false"/>.</returns>
+        /// <returns>
+        /// If the user clicks the OK button of the dialog that is displayed and the path 
+        /// is not <see langword="null"/>, <see langword="true"/>; otherwise, <see langword="false"/>.
+        /// </returns>
         /// <exception cref="ArgumentNullException">openFile is null.</exception>
-        public static bool GetOpenPath( out string path, OpenFileDialog openFile, string fileFilter = "All Files (*.*)|*.*", string msgTitle = "Open File", string startDir = "" ) {
+        public static bool GetOpenPath( out string path,
+                                        OpenFileDialog openFile,
+                                        string fileFilter = "All Files (*.*)|*.*",
+                                        string msgTitle = "Open File",
+                                        string startDir = "" ) 
+        {
             if( openFile == null ) {
-                throw new ArgumentNullException( "openFile was null" );
+                throw new ArgumentNullException( "OpenFileDialog was null" );
             }
 
             openFile.Title = msgTitle;
-            openFile.InitialDirectory = startDir == string.Empty ? Directory.GetCurrentDirectory() : startDir;
+            openFile.InitialDirectory = startDir == string.Empty ?
+                                                    Directory.GetCurrentDirectory() :
+                                                    startDir;
             openFile.FileName = string.Empty;
             openFile.Filter = fileFilter;
 
@@ -74,15 +87,25 @@ namespace QuickMinCombine {
         /// <param name="fileFilter"><c>(Optional)</c> File filter string.</param>
         /// <param name="msgTitle"><c>(Optional)</c>Title of the dialog window.</param>
         /// <param name="startDir">The initial directory to open the control at.</param>
-        /// <returns>If the user clicks the OK button of the dialog that is displayed and the path is not <see langword="null"/>, <see langword="true"/>; otherwise, <see langword="false"/>.</returns>
+        /// <returns>
+        /// If the user clicks the OK button of the dialog that is displayed and the path 
+        /// is not <see langword="null"/>, <see langword="true"/>; otherwise, <see langword="false"/>.
+        /// </returns>
         /// <exception cref="ArgumentNullException">saveFile is null.</exception>
-        public static bool GetSavePath( out string path, SaveFileDialog saveFile, string fileFilter = "All Files (*.*)|*.*", string msgTitle = "Save File", string startDir = "" ) {
+        public static bool GetSavePath( out string path,
+                                        SaveFileDialog saveFile,
+                                        string fileFilter = "All Files (*.*)|*.*",
+                                        string msgTitle = "Save File",
+                                        string startDir = "" ) 
+        {
             if( saveFile == null ) {
-                throw new ArgumentNullException( "saveFile was null" );
+                throw new ArgumentNullException( "SaveFileDialog was null" );
             }
 
             saveFile.Title = msgTitle;
-            saveFile.InitialDirectory = startDir == string.Empty ? Directory.GetCurrentDirectory() : startDir;
+            saveFile.InitialDirectory = startDir == string.Empty ?
+                                                    Directory.GetCurrentDirectory() :
+                                                    startDir;
             saveFile.FileName = string.Empty;
             saveFile.Filter = fileFilter;
 
@@ -104,15 +127,25 @@ namespace QuickMinCombine {
         /// <param name="msgTitle"><c>Optional</c>Title of the dialog window.</param>
         /// <param name="hasNewBtn"><c>(Optional)</c> Whether to allow 'New Folder' button.</param>
         /// <param name="startDir">The initial directory to open the control at.</param>
-        /// <returns>If the user clicks the OK button of the dialog that is displayed and the path is not <see langword="null"/>, <see langword="true"/>; otherwise, <see langword="false"/>.</returns>
-        public static bool GetFolderPath( out string path, FolderBrowserDialog folderBrowse, string msgTitle = "Open Folder", bool hasNewBtn = true, string startDir = "" ) {
+        /// <returns>
+        /// If the user clicks the OK button of the dialog that is displayed and the path 
+        /// is not <see langword="null"/>, <see langword="true"/>; otherwise, <see langword="false"/>.
+        /// </returns>
+        public static bool GetFolderPath( out string path, 
+                                          FolderBrowserDialog folderBrowse, 
+                                          string msgTitle = "Open Folder", 
+                                          bool hasNewBtn = true, 
+                                          string startDir = "" ) 
+        {
             if( folderBrowse == null ) {
-                throw new ArgumentNullException( "folderBrowse was null" );
+                throw new ArgumentNullException( "FolderBrowserDialog was null" );
             }
 
             folderBrowse.Description = msgTitle;
             folderBrowse.ShowNewFolderButton = hasNewBtn;
-            folderBrowse.SelectedPath = startDir == string.Empty ? Directory.GetCurrentDirectory() : startDir;
+            folderBrowse.SelectedPath = startDir == string.Empty ? 
+                                                    Directory.GetCurrentDirectory() : 
+                                                    startDir;
 
             if( folderBrowse.ShowDialog() == DialogResult.OK && !string.IsNullOrEmpty( folderBrowse.SelectedPath ) ) {
                 path = folderBrowse.SelectedPath;
