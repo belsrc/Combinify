@@ -10,8 +10,10 @@ Combinify is a simple C# (.Net4) app that monitors a list of css files and then 
   * Add single file to watch list
   * Move file up or down watch list (Files are processed in order)
   * Remove file from watch list
-* Combine all watched files on file save
-* Combine and minify all watched files on file save
+* Combine all watched files on css file save
+* Combine and minify all watched files on css file save
+* Save all listed css files as a project
+* Load project to populate watch list
 
 ### License
 Combinify is released under a BSD 3-Clause License
