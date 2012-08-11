@@ -423,7 +423,6 @@
             // 
             // miFileNewFile
             // 
-            this.miFileNewFile.Enabled = false;
             this.miFileNewFile.Name = "miFileNewFile";
             this.miFileNewFile.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
             this.miFileNewFile.Size = new System.Drawing.Size(228, 22);
@@ -432,7 +431,6 @@
             // 
             // miFileNewDir
             // 
-            this.miFileNewDir.Enabled = false;
             this.miFileNewDir.Name = "miFileNewDir";
             this.miFileNewDir.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
             | System.Windows.Forms.Keys.N)));

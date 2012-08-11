@@ -69,7 +69,7 @@ namespace QuickMinCombine {
             openFile.FileName = string.Empty;
             openFile.Filter = fileFilter;
 
-            if( openFile.ShowDialog() == DialogResult.OK && !string.IsNullOrEmpty( openFile.FileName ) ) {
+            if( openFile.ShowDialog() == DialogResult.OK ) {
                 path = openFile.FileName;
                 return true;
             }
@@ -109,7 +109,7 @@ namespace QuickMinCombine {
             saveFile.FileName = string.Empty;
             saveFile.Filter = fileFilter;
 
-            if( saveFile.ShowDialog() == DialogResult.OK && !string.IsNullOrEmpty( saveFile.FileName ) ) {
+            if( saveFile.ShowDialog() == DialogResult.OK ) {
                 path = saveFile.FileName;
                 return true;
             }
@@ -147,7 +147,7 @@ namespace QuickMinCombine {
                                                     Directory.GetCurrentDirectory() : 
                                                     startDir;
 
-            if( folderBrowse.ShowDialog() == DialogResult.OK && !string.IsNullOrEmpty( folderBrowse.SelectedPath ) ) {
+            if( folderBrowse.ShowDialog() == DialogResult.OK ) {
                 path = folderBrowse.SelectedPath;
                 return true;
             }

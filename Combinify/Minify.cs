@@ -362,15 +362,20 @@ namespace QuickMinCombine {
         }
 
         /// <summary>
-        /// Returns a new string in which only the first occurrence of a specified string in the current instance is replaced with another specified string.
+        /// Returns a new string in which only the first occurrence of a specified string in 
+        /// the current instance is replaced with another specified string.
         /// </summary>
         /// <param name="source">String source</param>
         /// <param name="oldValue">The string to be replaced.</param>
         /// <param name="newValue">The string to replace all occurrences of oldValue.</param>
-        /// <returns>A string that is equivalent to the current string except that the first instance of oldValue is replaced with newValue.</returns>
+        /// <returns>
+        /// A string that is equivalent to the current string except that the first 
+        /// instance of oldValue is replaced with newValue.
+        /// </returns>
         /// <remarks>
-        /// This method performs an ordinal (case-sensitive and culture-insensitive) search to find oldValue. 
-        /// Original code from DotNetPerls - www.dotnetperls.com/replace-extension
+        /// This method performs an ordinal (case-sensitive and culture-insensitive) 
+        /// search to find oldValue. Original code from DotNetPerls - 
+        /// www.dotnetperls.com/replace-extension
         /// </remarks>
         private static string ReplaceFirst( string source, string oldValue, string newValue ) {
             int index = source.IndexOf( oldValue );

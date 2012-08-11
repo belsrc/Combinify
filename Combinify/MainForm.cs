@@ -100,12 +100,8 @@ namespace QuickMinCombine {
                 var result = SaveBeforeClose();
 
                 // Yes or No result in the same effect 
-                // at this level so go ahead and empty the values
-                if( result == DialogResult.Yes ||
-                    result == DialogResult.No ) {
-                    this.Close();
-                }
-                else {
+                // at this level so let the event continue
+                if( result == DialogResult.Cancel ) {
                     e.Cancel = true;
                 }
             }
@@ -449,7 +445,7 @@ namespace QuickMinCombine {
                 lstFiles.Items.Clear();
 
                 // Add the watched files from the project
-                lstFiles.Items.AddRange( FileOp.ReadProject( out this._lastDir, this._prjPath ).ToArray() );
+                lstFiles.Items.AddRange( FileOp.ReadProject( out this._lastDir, this._prjPath ) );
             }
         }
 
@@ -489,10 +485,11 @@ namespace QuickMinCombine {
                     // at this level so go ahead and empty the values
                     if( result == DialogResult.Yes ||
                         result == DialogResult.No ) {
-                        this._hasPrj = false;
-                        this._prjPath = string.Empty;
-                        lstFiles.Items.Clear();
+                        CloseExistingProject();
                     }
+                }
+                else {
+                    CloseExistingProject();
                 }
             }
         }
@@ -504,11 +501,8 @@ namespace QuickMinCombine {
             string path = string.Empty;
 
             if( Dialogs.GetOpenPath( out path, new OpenFileDialog(), "CSS Files (*.css)|*.css", "Open File", this._lastDir ) ) {
-                lstFiles.Items.Clear();
+                SetNewProject( new FileInfo( path ).DirectoryName + "\\" );
                 lstFiles.Items.Add( path );
-                this._lastDir = new FileInfo( path ).DirectoryName + "\\";
-                this._hasPrj = true;
-                this._needSaved = true;
             }
         }
 
@@ -519,11 +513,8 @@ namespace QuickMinCombine {
             string path;
 
             if( Dialogs.GetFolderPath( out path, new FolderBrowserDialog(), "Select a directory to watch", false, this._lastDir ) ) {
-                lstFiles.Items.Clear();
+                SetNewProject( path );
                 lstFiles.Items.AddRange( FileOp.GetCssFiles( path ).ToArray() );
-                this._lastDir = path;
-                this._hasPrj = true;
-                this._needSaved = true;
             }
         }
         #endregion
@@ -755,6 +746,28 @@ namespace QuickMinCombine {
         }
 
         /// <summary>
+        /// Sets various fields for the a new project
+        /// </summary>
+        /// <param name="path">Path of the selected file/folder.</param>
+        private void SetNewProject( string path ) {
+            this._lastDir = path;
+            this._hasPrj = true;
+            this._needSaved = true;
+            lstFiles.Items.Clear();
+            miListClear.Enabled = smiClear.Enabled = btnClear.Enabled = true;
+        }
+
+        /// <summary>
+        /// Sets various fields when a project gets closed
+        /// </summary>
+        private void CloseExistingProject() {
+            this._hasPrj = false;
+            this._prjPath = string.Empty;
+            this._needSaved = false;
+            lstFiles.Items.Clear();
+        }
+
+        /// <summary>
         /// Saves the contents of the watch list before closing or clearing.
         /// </summary>
         /// <returns>
@@ -767,7 +780,13 @@ namespace QuickMinCombine {
                 "Combinify", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question );
 
             if( result == DialogResult.Yes ) {
-                SaveProject();
+                if( this._hasPrj && this._prjPath != string.Empty ) {
+                    this.SaveProject();
+                }
+                else {
+                    bool test = this.SaveNewProject();
+                    result = test ? DialogResult.Yes : DialogResult.Cancel;
+                }
             }
 
             return result;
@@ -776,7 +795,11 @@ namespace QuickMinCombine {
         /// <summary>
         /// Saves the contents of the watch list to a new project.
         /// </summary>
-        private void SaveNewProject() {
+        /// <return>
+        /// Returns <see langword="true"/> if the user selects a save path;
+        /// otherwise, <see langword="false"/>.
+        /// </return>
+        private bool SaveNewProject() {
             string path = string.Empty;
 
             if( Dialogs.GetSavePath( out path, new SaveFileDialog(), "Combinify Project (*.cpj)|*.cpj", "Save Project", this._lastDir ) ) {
@@ -785,7 +808,10 @@ namespace QuickMinCombine {
                 this._prjPath = path;
 
                 this.SaveProject();
+                return true;
             }
+
+            return false;
         }
 
         /// <summary>
