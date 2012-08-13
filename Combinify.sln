@@ -12,6 +12,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		TraceAndTestImpact.testsettings = TraceAndTestImpact.testsettings
 	EndProjectSection
 EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "CombiInstaller", "CombiInstaller\CombiInstaller.vdproj", "{F2AB9E86-1658-463C-9AC5-C9C07DD1B6E3}"
+EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = Combinify.vsmdi
@@ -45,6 +47,12 @@ Global
 		{1F867E82-5AEA-4D33-972E-1F27AD0DD7BB}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{1F867E82-5AEA-4D33-972E-1F27AD0DD7BB}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{1F867E82-5AEA-4D33-972E-1F27AD0DD7BB}.Release|x86.ActiveCfg = Release|Any CPU
+		{F2AB9E86-1658-463C-9AC5-C9C07DD1B6E3}.Debug|Any CPU.ActiveCfg = Debug
+		{F2AB9E86-1658-463C-9AC5-C9C07DD1B6E3}.Debug|Mixed Platforms.ActiveCfg = Release
+		{F2AB9E86-1658-463C-9AC5-C9C07DD1B6E3}.Debug|x86.ActiveCfg = Debug
+		{F2AB9E86-1658-463C-9AC5-C9C07DD1B6E3}.Release|Any CPU.ActiveCfg = Release
+		{F2AB9E86-1658-463C-9AC5-C9C07DD1B6E3}.Release|Mixed Platforms.ActiveCfg = Release
+		{F2AB9E86-1658-463C-9AC5-C9C07DD1B6E3}.Release|x86.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
