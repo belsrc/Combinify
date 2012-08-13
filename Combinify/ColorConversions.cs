@@ -119,12 +119,13 @@ namespace QuickMinCombine {
         /// Otherwise, returns the original hex.
         /// </returns>
         public string CompressHex( string hex ) {
-            if( hex[ 0 ] == hex[ 1 ] && hex[ 2 ] == hex[ 3 ] && hex[ 4 ] == hex[ 5 ] ) {
-                return ( "#" + hex[ 0 ] + hex[ 2 ] + hex[ 4 ] ).ToLower();
+            if( hex.Length == 6 ) {
+                if( hex[ 0 ] == hex[ 1 ] && hex[ 2 ] == hex[ 3 ] && hex[ 4 ] == hex[ 5 ] ) {
+                    return ( "#" + hex[ 0 ] + hex[ 2 ] + hex[ 4 ] ).ToLower();
+                }
             }
-            else {
-                return ( "#" + hex ).ToLower();
-            }
+
+            return ( "#" + hex ).ToLower();
         }
 
         /// <summary>

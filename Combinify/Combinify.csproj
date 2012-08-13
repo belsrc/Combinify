@@ -82,7 +82,7 @@
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -111,7 +111,9 @@
     <Content Include="Resources\cross-grey.png" />
     <Content Include="Resources\file-blank-grey.png" />
     <Content Include="Resources\file-grey.png" />
+    <None Include="Resources\icon2.ico" />
     <Content Include="Resources\minus-grey.png" />
+    <None Include="Resources\project.ico" />
     <None Include="Resources\stop.png" />
     <None Include="Resources\play.png" />
     <None Include="Resources\file-blank.png" />

@@ -99,8 +99,7 @@ namespace QuickMinCombine {
             if( this._needSaved ) {
                 var result = SaveBeforeClose();
 
-                // Yes or No result in the same effect 
-                // at this level so let the event continue
+                // Yes or No result in the same effect at this level
                 if( result == DialogResult.Cancel ) {
                     e.Cancel = true;
                 }
@@ -114,6 +113,7 @@ namespace QuickMinCombine {
         private void Button_EnabledChanged( object sender, EventArgs e ) {
             string name = ( sender as Button ).Name;
 
+            // Big ugly case
             if( !( sender as Button ).Enabled ) {
                 switch( name ) {
                     case "btnUp":

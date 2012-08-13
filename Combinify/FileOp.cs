@@ -53,10 +53,15 @@ namespace QuickMinCombine {
             string mini = string.Empty;
 
             if( File.Exists( path ) ) {
-                using( var sr = new StreamReader( path ) ) {
-                    string css = sr.ReadToEnd();
-                    sr.Close();
-                    mini = Minify.MakeItUgly( css );
+                try {
+                    using( var sr = new StreamReader( path ) ) {
+                        string css = sr.ReadToEnd();
+                        sr.Close();
+                        mini = Minify.MakeItUgly( css );
+                    }
+                }
+                catch( IOException e ) {
+                    Dialogs.ErrorDialog( e );
                 }
             }
 
@@ -86,18 +91,23 @@ namespace QuickMinCombine {
         public static string CombineFile( List<string> paths ) {
             var sb = new StringBuilder();
 
-            foreach( string p in paths ) {
-                if( File.Exists( p ) ) {
-                    using( var sr = new StreamReader( p ) ) {
-                        string css = sr.ReadToEnd();
-                        css.Trim();
-                        sb.Append( "/*\n" );
-                        sb.Append( " From " + new FileInfo( p ).Name + "\n" );
-                        sb.Append( " ========================================================================== */\n\n" );
-                        sb.Append( css );
-                        sb.Append( "\n\n" );
+            try {
+                foreach( string p in paths ) {
+                    if( File.Exists( p ) ) {
+                        using( var sr = new StreamReader( p ) ) {
+                            string css = sr.ReadToEnd();
+                            css.Trim();
+                            sb.Append( "/*\n" );
+                            sb.Append( " From " + new FileInfo( p ).Name + "\n" );
+                            sb.Append( " ========================================================================== */\n\n" );
+                            sb.Append( css );
+                            sb.Append( "\n\n" );
+                        }
                     }
                 }
+            }
+            catch( IOException e ) {
+                Dialogs.ErrorDialog( e );
             }
 
             return sb.ToString();
@@ -121,32 +131,37 @@ namespace QuickMinCombine {
         /// <param name="dir">String representing the last directory open in the project.</param>
         /// <param name="list">A list of files that were being watched.</param>
         public static void WriteProject( string path, string dir, List<string> list ) {
-            // Create a new XDoc
-            var xdoc = new XDocument();
+            try {
+                // Create a new XDoc
+                var xdoc = new XDocument();
 
-            // Create the Project root element with the 
-            // LastDir child element
-            var proj = new XElement( "Project",
-                    new XElement( "LastDir", dir )
-                );
+                // Create the Project root element with the 
+                // LastDir child element
+                var proj = new XElement( "Project",
+                        new XElement( "LastDir", dir )
+                    );
 
-            // Create the Files element that will contain the
-            // project file list
-            var files = new XElement( "Files" );
+                // Create the Files element that will contain the
+                // project file list
+                var files = new XElement( "Files" );
 
-            // Add the Files children
-            foreach( string s in list ) {
-                files.Add( new XElement( "Path", s ) );
+                // Add the Files children
+                foreach( string s in list ) {
+                    files.Add( new XElement( "Path", s ) );
+                }
+
+                // Add Files to the Project element
+                proj.Add( files );
+
+                // Add the whole tree to the document
+                xdoc.Add( proj );
+
+                // Save the document
+                xdoc.Save( path );
             }
-
-            // Add Files to the Project element
-            proj.Add( files );
-
-            // Add the whole tree to the document
-            xdoc.Add( proj );
-
-            // Save the document
-            xdoc.Save( path );
+            catch( IOException e ) {
+                Dialogs.ErrorDialog( e );
+            }
         }
 
         /// <summary>
@@ -157,35 +172,40 @@ namespace QuickMinCombine {
         /// <returns>An array of files to start watching.</returns>
         public static string[] ReadProject( out string dir, string path ) {
             if( File.Exists( path ) ) {
-                // Create the XDoc from the file
-                var xdoc = XDocument.Load( path );
+                try {
+                    // Create the XDoc from the file
+                    var xdoc = XDocument.Load( path );
 
-                // Get the LastDir value
-                dir = xdoc.Element( "Project" ).Element( "LastDir" ).Value;
+                    // Get the LastDir value
+                    dir = xdoc.Element( "Project" ).Element( "LastDir" ).Value;
 
-                // Get the Files descendants
-                var files = xdoc.Element( "Project" ).Descendants( "Files" );
-                var list = new List<string>();
-                var broken = new StringBuilder( "" );
+                    // Get the Files descendants
+                    var files = xdoc.Element( "Project" ).Descendants( "Files" );
+                    var list = new List<string>();
+                    var broken = new StringBuilder( "" );
 
-                // For each of the paths, check if it exists than
-                // add it to the list, otherwise add to the broken string
-                foreach( var f in files.Elements( "Path" ) ) {
-                    if( File.Exists( f.Value ) ) {
-                        list.Add( f.Value );
+                    // For each of the paths, check if it exists than
+                    // add it to the list, otherwise add to the broken string
+                    foreach( var f in files.Elements( "Path" ) ) {
+                        if( File.Exists( f.Value ) ) {
+                            list.Add( f.Value );
+                        }
+                        else {
+                            broken.Append( f.Value + "\n" );
+                        }
                     }
-                    else {
-                        broken.Append( f.Value + "\n" );
+
+                    // Notify the user that there was broken links
+                    if( broken.ToString() != string.Empty ) {
+                        MessageBox.Show( "One or more files from the project could not be found\n\n" +
+                                            broken.ToString() );
                     }
-                }
 
-                // Notify the user that there was broken links
-                if( broken.ToString() != string.Empty ) {
-                    MessageBox.Show( "One or more files from the project could not be found\n\n" +
-                                        broken.ToString() );
+                    return list.ToArray();
                 }
-
-                return list.ToArray();
+                catch( IOException e ) {
+                    Dialogs.ErrorDialog( e );
+                }
             }
 
             // File doesnt exist
@@ -199,20 +219,25 @@ namespace QuickMinCombine {
         /// <param name="dir">The initial directory to start checking.</param>
         /// <returns>A list of .css file paths</returns>
         private static List<string> ParseDirectory( string dir ) {
-            if( !String.IsNullOrEmpty( dir ) ) {
-                string[] files = Directory.GetFiles( dir );
-                foreach( var f in files ) {
-                    if( new FileInfo( f ).Extension == ".css" ) {
-                        _fileList.Add( f );
+            try {
+                if( !String.IsNullOrEmpty( dir ) ) {
+                    string[] files = Directory.GetFiles( dir );
+                    foreach( var f in files ) {
+                        if( new FileInfo( f ).Extension == ".css" ) {
+                            _fileList.Add( f );
+                        }
                     }
-                }
 
-                string[] subDir = Directory.GetDirectories( dir );
-                foreach( string d in subDir ) {
-                    if( ( File.GetAttributes( d ) & FileAttributes.ReparsePoint ) != FileAttributes.ReparsePoint ) {
-                        ParseDirectory( d );
+                    string[] subDir = Directory.GetDirectories( dir );
+                    foreach( string d in subDir ) {
+                        if( ( File.GetAttributes( d ) & FileAttributes.ReparsePoint ) != FileAttributes.ReparsePoint ) {
+                            ParseDirectory( d );
+                        }
                     }
                 }
+            }
+            catch( Exception e ) {
+                Dialogs.ErrorDialog( e );
             }
 
             return _fileList;

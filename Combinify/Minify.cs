@@ -47,6 +47,7 @@ namespace QuickMinCombine {
     using System;
     using System.Collections.Generic;
     using System.Text.RegularExpressions;
+    using System.Windows.Forms;
 
     /// <summary>
     /// A class to handle the minification of CSS files.
@@ -253,14 +254,27 @@ namespace QuickMinCombine {
 
             source = Regex.Replace( source, "rgba?\\(\\d{1,3},\\d{1,3},\\d{1,3}(,1)?\\)", m => {
                 nums = m.Value.Split( parens )[ 1 ].Split( ',' );
-
-                byte[] rgb = { 
+                try {
+                    byte[] rgb = { 
                                  Byte.Parse( nums[ 0 ] ),
                                  Byte.Parse( nums[ 1 ] ),
                                  Byte.Parse( nums[ 2 ] )
                              };
 
-                return m.Value.Replace( m.Value, colors.ConvertRgbToHex( rgb ) );
+                    return m.Value.Replace( m.Value, colors.ConvertRgbToHex( rgb ) );
+                }
+                catch( Exception e ) {
+                    if( e is ArgumentNullException ||
+                        e is FormatException ||
+                        e is OverflowException ) {
+                        MessageBox.Show( "Failed to parse " + m.Value, "Parse Error" );
+                    }
+                    else {
+                        throw;
+                    }
+                }
+
+                return m.Value;
             } );
 
             // Have to '{0,1}' the '%' since they may have been removed in a previous step
@@ -268,11 +282,25 @@ namespace QuickMinCombine {
                 nums = m.Value.Replace( "%", string.Empty ).Split( parens )[ 1 ].Split( ',' );
                 double h, s, l;
 
-                h = Double.Parse( nums[ 0 ] ) / 360;
-                s = Double.Parse( nums[ 1 ] ) / 100;
-                l = Double.Parse( nums[ 2 ] ) / 100;
+                try {
+                    h = Double.Parse( nums[ 0 ] ) / 360;
+                    s = Double.Parse( nums[ 1 ] ) / 100;
+                    l = Double.Parse( nums[ 2 ] ) / 100;
 
-                return m.Value.Replace( m.Value, colors.ConvertHslToHex( h, s, l ) );
+                    return m.Value.Replace( m.Value, colors.ConvertHslToHex( h, s, l ) );
+                }
+                catch( Exception ex ) {
+                    if( ex is ArgumentNullException ||
+                        ex is FormatException ||
+                        ex is OverflowException ) {
+                        MessageBox.Show( "Failed to parse " + m.Value, "Parse Error" );
+                    }
+                    else {
+                        throw;
+                    }
+                }
+
+                return m.Value;
             } );
         }
 

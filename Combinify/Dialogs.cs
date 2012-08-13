@@ -156,5 +156,23 @@ namespace QuickMinCombine {
                 return false;
             }
         }
+        
+        /// <summary>
+        /// Displays a detailed error message.
+        /// </summary>
+        /// <param name="e">Exception to construct the message from.</param>
+        public static void ErrorDialog( Exception e ) {
+            string message = string.Format(
+                                    "{0} Error\n\nError Message:\n{1}\n\nInner Exception:\n{2}\n\n" +
+                                    "Error Target Site:\n{3}\n\nStack Trace:\n{4}\n\n\nWould you " +
+                                    "like to create an error report?",
+                                    e.Source,
+                                    e.Message,
+                                    e.InnerException,
+                                    e.TargetSite.ToString(),
+                                    e.StackTrace );
+            MessageBox.Show( message, e.GetType().FullName, MessageBoxButtons.OKCancel, MessageBoxIcon.Error );
+        }
+    
     }
 }
