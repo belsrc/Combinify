@@ -1,6 +1,7 @@
 # Combinify
 
-Combinify is a simple C# (.Net4) app that monitors a list of css files and then combines and minifies them when their LastWriteTime attribute changes.
+Combinify is a simple C# (.Net4) app that monitors a list of css files and then combines and minifies them when their LastWriteTime attribute changes. 
+Setup file can be found [here](https://github.com/belsrc/Combinify/downloads "Setup file download")
 
 ### Very basic feature set
 
