@@ -84,6 +84,13 @@ namespace QuickMinCombine {
         public frmMain() {
             InitializeComponent();
             this._fileTimes = new Dictionary<string, DateTime>();
+            string[] args = Environment.GetCommandLineArgs();
+
+            // Check if the user dbl-clicked a project file
+            // if so, load it
+            if( args.Length > 1 ) {
+                OpenProject( args[ 1 ].Replace( "\"", string.Empty ) );
+            }
         }
 
         /// <summary>
@@ -437,15 +444,7 @@ namespace QuickMinCombine {
             string path = string.Empty;
 
             if( Dialogs.GetOpenPath( out path, new OpenFileDialog(), "Combinify Project (*.cpj)|*.cpj", "Save Project", this._lastDir ) ) {
-                // Set the project fields
-                this._hasPrj = true;
-                this._prjPath = path;
-
-                // Clear the list of any files
-                lstFiles.Items.Clear();
-
-                // Add the watched files from the project
-                lstFiles.Items.AddRange( FileOp.ReadProject( out this._lastDir, this._prjPath ) );
+                OpenProject( path );
             }
         }
 
@@ -743,6 +742,22 @@ namespace QuickMinCombine {
             if( tmp > 1024 ) { tmp = tmp / 1024; suffix = " TB"; }
 
             return tmp.ToString( "n" ) + suffix;
+        }
+
+        /// <summary>
+        /// Opens an existing project.
+        /// </summary>
+        /// <param name="path">Project file path.</param>
+        private void OpenProject( string path ) {
+            // Set the project fields
+            this._hasPrj = true;
+            this._prjPath = path;
+
+            // Clear the list of any files
+            lstFiles.Items.Clear();
+
+            // Add the watched files from the project
+            lstFiles.Items.AddRange( FileOp.ReadProject( out this._lastDir, this._prjPath ) );
         }
 
         /// <summary>

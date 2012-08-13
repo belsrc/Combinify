@@ -3,9 +3,11 @@
 *.user
 *.testsettings
 *.vsmdi
+*.sdf
 StyleCop.Cache
 Combinify/bin/*
 Combinify/obj/*
 MinifyTestProject/*
 TestResults/*
 CombiInstaller/*
+IcoList/*

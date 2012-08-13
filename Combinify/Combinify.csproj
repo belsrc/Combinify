@@ -51,7 +51,11 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>icon.ico</ApplicationIcon>
+    <ApplicationIcon>
+    </ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup>
+    <Win32Resource>E:\Programming\!Csharp\!COMPLETED\Combinify\IcoList\Debug\IcoList.res</Win32Resource>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />

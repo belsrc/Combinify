@@ -33,6 +33,7 @@ namespace QuickMinCombine {
     using System.IO;
     using System.Text;
     using System.Windows.Forms;
+    using System.Xml;
     using System.Xml.Linq;
 
     /// <summary>
@@ -203,7 +204,7 @@ namespace QuickMinCombine {
 
                     return list.ToArray();
                 }
-                catch( IOException e ) {
+                catch( XmlException e ) {
                     Dialogs.ErrorDialog( e );
                 }
             }
