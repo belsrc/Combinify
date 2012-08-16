@@ -60,72 +60,100 @@ namespace QuickMinCombine.Properties {
             }
         }
         
-        public static System.Drawing.Bitmap add_file {
+        public static System.Drawing.Bitmap btnAddDir {
             get {
-                object obj = ResourceManager.GetObject("add-file", resourceCulture);
+                object obj = ResourceManager.GetObject("btnAddDir", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
         
-        public static System.Drawing.Bitmap add_file_grey {
+        public static System.Drawing.Bitmap btnAddDir_grey {
             get {
-                object obj = ResourceManager.GetObject("add_file_grey", resourceCulture);
+                object obj = ResourceManager.GetObject("btnAddDir_grey", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
         
-        public static System.Drawing.Bitmap add_folder {
+        public static System.Drawing.Bitmap btnAddFile {
             get {
-                object obj = ResourceManager.GetObject("add-folder", resourceCulture);
+                object obj = ResourceManager.GetObject("btnAddFile", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
         
-        public static System.Drawing.Bitmap add_folder_grey {
+        public static System.Drawing.Bitmap btnAddFile_grey {
             get {
-                object obj = ResourceManager.GetObject("add_folder_grey", resourceCulture);
+                object obj = ResourceManager.GetObject("btnAddFile_grey", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
         
-        public static System.Drawing.Bitmap arrow_down {
+        public static System.Drawing.Bitmap btnClear {
             get {
-                object obj = ResourceManager.GetObject("arrow-down", resourceCulture);
+                object obj = ResourceManager.GetObject("btnClear", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
         
-        public static System.Drawing.Bitmap arrow_down_grey {
+        public static System.Drawing.Bitmap btnClear_grey {
             get {
-                object obj = ResourceManager.GetObject("arrow_down_grey", resourceCulture);
+                object obj = ResourceManager.GetObject("btnClear_grey", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
         
-        public static System.Drawing.Bitmap arrow_up {
+        public static System.Drawing.Bitmap btnCombineTo {
             get {
-                object obj = ResourceManager.GetObject("arrow-up", resourceCulture);
+                object obj = ResourceManager.GetObject("btnCombineTo", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
         
-        public static System.Drawing.Bitmap arrow_up_grey {
+        public static System.Drawing.Bitmap btnCombineTo_grey {
             get {
-                object obj = ResourceManager.GetObject("arrow_up_grey", resourceCulture);
+                object obj = ResourceManager.GetObject("btnCombineTo_grey", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
         
-        public static System.Drawing.Bitmap cross {
+        public static System.Drawing.Bitmap btnDown {
             get {
-                object obj = ResourceManager.GetObject("cross", resourceCulture);
+                object obj = ResourceManager.GetObject("btnDown", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
         
-        public static System.Drawing.Bitmap cross_grey {
+        public static System.Drawing.Bitmap btnDown_grey {
             get {
-                object obj = ResourceManager.GetObject("cross_grey", resourceCulture);
+                object obj = ResourceManager.GetObject("btnDown_grey", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        public static System.Drawing.Bitmap btnRemove {
+            get {
+                object obj = ResourceManager.GetObject("btnRemove", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        public static System.Drawing.Bitmap btnRemove_grey {
+            get {
+                object obj = ResourceManager.GetObject("btnRemove_grey", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        public static System.Drawing.Bitmap btnUp {
+            get {
+                object obj = ResourceManager.GetObject("btnUp", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        public static System.Drawing.Bitmap btnUp_grey {
+            get {
+                object obj = ResourceManager.GetObject("btnUp_grey", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -133,20 +161,6 @@ namespace QuickMinCombine.Properties {
         public static System.Drawing.Bitmap file {
             get {
                 object obj = ResourceManager.GetObject("file", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        public static System.Drawing.Bitmap file_blank {
-            get {
-                object obj = ResourceManager.GetObject("file-blank", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        public static System.Drawing.Bitmap file_blank_grey {
-            get {
-                object obj = ResourceManager.GetObject("file_blank_grey", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -162,20 +176,6 @@ namespace QuickMinCombine.Properties {
             get {
                 object obj = ResourceManager.GetObject("icon2", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
-            }
-        }
-        
-        public static System.Drawing.Bitmap minus {
-            get {
-                object obj = ResourceManager.GetObject("minus", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        public static System.Drawing.Bitmap minus_grey {
-            get {
-                object obj = ResourceManager.GetObject("minus_grey", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
             }
         }
         

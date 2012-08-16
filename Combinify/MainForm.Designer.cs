@@ -100,6 +100,8 @@
             this.btnSingle = new System.Windows.Forms.Button();
             this.btnDown = new System.Windows.Forms.Button();
             this.btnUp = new System.Windows.Forms.Button();
+            this.lblMonitoring = new System.Windows.Forms.Label();
+            this.lblStopped = new System.Windows.Forms.Label();
             this.cmsListOps.SuspendLayout();
             this.ssStatus.SuspendLayout();
             this.cmsTray.SuspendLayout();
@@ -248,6 +250,7 @@
             this.radCombMin.Text = "Combine && Minify";
             this.ttMainTip.SetToolTip(this.radCombMin, "Combine all listed files into a single file than minify");
             this.radCombMin.UseVisualStyleBackColor = true;
+            this.radCombMin.CheckedChanged += new System.EventHandler(this.Radio_CheckedChanged);
             // 
             // radCombine
             // 
@@ -259,6 +262,7 @@
             this.radCombine.Text = "Combine";
             this.ttMainTip.SetToolTip(this.radCombine, "Combine all listed files into a single file");
             this.radCombine.UseVisualStyleBackColor = true;
+            this.radCombine.CheckedChanged += new System.EventHandler(this.Radio_CheckedChanged);
             // 
             // timeCheck
             // 
@@ -621,15 +625,14 @@
             this.radMinify.Name = "radMinify";
             this.radMinify.Size = new System.Drawing.Size(98, 17);
             this.radMinify.TabIndex = 21;
-            this.radMinify.TabStop = true;
             this.radMinify.Text = "Minify Seperate";
             this.ttMainTip.SetToolTip(this.radMinify, "Minify each listed file seperately");
             this.radMinify.UseVisualStyleBackColor = true;
-            this.radMinify.CheckedChanged += new System.EventHandler(this.radMinify_CheckedChanged);
+            this.radMinify.CheckedChanged += new System.EventHandler(this.Radio_CheckedChanged);
             // 
             // btnCombineTo
             // 
-            this.btnCombineTo.BackgroundImage = global::QuickMinCombine.Properties.Resources.file_blank;
+            this.btnCombineTo.BackgroundImage = global::QuickMinCombine.Properties.Resources.btnCombineTo;
             this.btnCombineTo.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.btnCombineTo.Location = new System.Drawing.Point(466, 375);
             this.btnCombineTo.Name = "btnCombineTo";
@@ -643,7 +646,7 @@
             // btnAddFile
             // 
             this.btnAddFile.BackColor = System.Drawing.SystemColors.ControlLight;
-            this.btnAddFile.BackgroundImage = global::QuickMinCombine.Properties.Resources.add_file;
+            this.btnAddFile.BackgroundImage = global::QuickMinCombine.Properties.Resources.btnAddFile;
             this.btnAddFile.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.btnAddFile.Location = new System.Drawing.Point(466, 164);
             this.btnAddFile.Name = "btnAddFile";
@@ -657,7 +660,7 @@
             // btnClear
             // 
             this.btnClear.BackColor = System.Drawing.SystemColors.ControlLight;
-            this.btnClear.BackgroundImage = global::QuickMinCombine.Properties.Resources.cross_grey;
+            this.btnClear.BackgroundImage = global::QuickMinCombine.Properties.Resources.btnClear_grey;
             this.btnClear.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.btnClear.Enabled = false;
             this.btnClear.Location = new System.Drawing.Point(466, 311);
@@ -672,7 +675,7 @@
             // btnRemove
             // 
             this.btnRemove.BackColor = System.Drawing.SystemColors.ControlLight;
-            this.btnRemove.BackgroundImage = global::QuickMinCombine.Properties.Resources.minus_grey;
+            this.btnRemove.BackgroundImage = global::QuickMinCombine.Properties.Resources.btnRemove_grey;
             this.btnRemove.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.btnRemove.Enabled = false;
             this.btnRemove.Location = new System.Drawing.Point(466, 282);
@@ -687,7 +690,7 @@
             // btnAddDir
             // 
             this.btnAddDir.BackColor = System.Drawing.SystemColors.ControlLight;
-            this.btnAddDir.BackgroundImage = global::QuickMinCombine.Properties.Resources.add_folder;
+            this.btnAddDir.BackgroundImage = global::QuickMinCombine.Properties.Resources.btnAddFile;
             this.btnAddDir.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.btnAddDir.Location = new System.Drawing.Point(466, 135);
             this.btnAddDir.Name = "btnAddDir";
@@ -715,7 +718,7 @@
             // btnDown
             // 
             this.btnDown.BackColor = System.Drawing.SystemColors.ControlLight;
-            this.btnDown.BackgroundImage = global::QuickMinCombine.Properties.Resources.arrow_down_grey;
+            this.btnDown.BackgroundImage = global::QuickMinCombine.Properties.Resources.btnDown_grey;
             this.btnDown.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.btnDown.Enabled = false;
             this.btnDown.Location = new System.Drawing.Point(466, 237);
@@ -730,7 +733,7 @@
             // btnUp
             // 
             this.btnUp.BackColor = System.Drawing.SystemColors.ControlLight;
-            this.btnUp.BackgroundImage = global::QuickMinCombine.Properties.Resources.arrow_up_grey;
+            this.btnUp.BackgroundImage = global::QuickMinCombine.Properties.Resources.btnUp_grey;
             this.btnUp.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.btnUp.Enabled = false;
             this.btnUp.Location = new System.Drawing.Point(466, 208);
@@ -742,12 +745,36 @@
             this.btnUp.EnabledChanged += new System.EventHandler(this.Button_EnabledChanged);
             this.btnUp.Click += new System.EventHandler(this.FileUp_Click);
             // 
+            // lblMonitoring
+            // 
+            this.lblMonitoring.AutoSize = true;
+            this.lblMonitoring.ForeColor = System.Drawing.Color.LimeGreen;
+            this.lblMonitoring.Location = new System.Drawing.Point(349, 113);
+            this.lblMonitoring.Name = "lblMonitoring";
+            this.lblMonitoring.Size = new System.Drawing.Size(111, 13);
+            this.lblMonitoring.TabIndex = 29;
+            this.lblMonitoring.Text = "Monitoring Listed Files";
+            this.lblMonitoring.Visible = false;
+            // 
+            // lblStopped
+            // 
+            this.lblStopped.AutoSize = true;
+            this.lblStopped.ForeColor = System.Drawing.Color.Red;
+            this.lblStopped.Location = new System.Drawing.Point(316, 113);
+            this.lblStopped.Name = "lblStopped";
+            this.lblStopped.Size = new System.Drawing.Size(144, 13);
+            this.lblStopped.TabIndex = 30;
+            this.lblStopped.Text = "Monitoring has been stopped";
+            this.lblStopped.Visible = false;
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(250)))), ((int)(((byte)(250)))), ((int)(((byte)(250)))));
             this.ClientSize = new System.Drawing.Size(501, 478);
+            this.Controls.Add(this.lblStopped);
+            this.Controls.Add(this.lblMonitoring);
             this.Controls.Add(this.ssStatus);
             this.Controls.Add(this.msMainMenu);
             this.Controls.Add(this.label4);
@@ -790,77 +817,80 @@
 
         #endregion
 
-        private System.Windows.Forms.TextBox txtSingle;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.ListBox lstFiles;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.TextBox txtCombine;
-        private System.Windows.Forms.Button btnCombineTo;
-        private System.Windows.Forms.RadioButton radCombMin;
-        private System.Windows.Forms.RadioButton radCombine;
-        private System.Windows.Forms.ContextMenuStrip cmsListOps;
-        private System.Windows.Forms.ToolStripMenuItem smiRemove;
-        private System.Windows.Forms.Timer timeCheck;
-        private System.Windows.Forms.ToolStripMenuItem smiUp;
-        private System.Windows.Forms.ToolStripMenuItem smiDown;
-        private System.Windows.Forms.StatusStrip ssStatus;
-        private System.Windows.Forms.ToolStripStatusLabel tssTotal;
-        private System.Windows.Forms.ToolStripStatusLabel tssMini;
-        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
-        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel2;
-        private System.Windows.Forms.ToolStripStatusLabel tssLast;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.ToolStripStatusLabel tssReduction;
-        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel3;
-        private System.Windows.Forms.NotifyIcon niTray;
-        private System.Windows.Forms.ContextMenuStrip cmsTray;
-        private System.Windows.Forms.ToolStripMenuItem smiStart;
-        private System.Windows.Forms.ToolStripMenuItem smiStop;
-        private System.Windows.Forms.ToolStripMenuItem smiExit;
-        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
-        private System.Windows.Forms.MenuStrip msMainMenu;
-        private System.Windows.Forms.ToolStripMenuItem miFile;
-        private System.Windows.Forms.ToolStripMenuItem miProjectOpen;
-        private System.Windows.Forms.ToolStripMenuItem miFileSave;
-        private System.Windows.Forms.ToolStripMenuItem miFileSaveAs;
-        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem2;
-        private System.Windows.Forms.ToolStripMenuItem miList;
-        private System.Windows.Forms.ToolStripMenuItem miListDir;
-        private System.Windows.Forms.ToolStripMenuItem miListFile;
-        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem3;
-        private System.Windows.Forms.ToolStripMenuItem miListUp;
-        private System.Windows.Forms.ToolStripMenuItem miListDown;
-        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem4;
-        private System.Windows.Forms.ToolStripMenuItem miListRemove;
-        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem5;
-        private System.Windows.Forms.ToolStripMenuItem miListClear;
-        private System.Windows.Forms.ToolStripMenuItem miFileNew;
-        private System.Windows.Forms.ToolStripMenuItem miFileNewFile;
-        private System.Windows.Forms.ToolStripMenuItem miFileNewDir;
-        private System.Windows.Forms.ToolStripMenuItem miMonitor;
-        private System.Windows.Forms.ToolStripMenuItem miMonitorStart;
-        private System.Windows.Forms.ToolStripMenuItem miMonitorStop;
-        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem6;
-        private System.Windows.Forms.ToolStripMenuItem miFileExit;
-        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem7;
-        private System.Windows.Forms.ToolStripMenuItem smiClear;
-        private System.Windows.Forms.ToolStripMenuItem smiDir;
-        private System.Windows.Forms.ToolStripMenuItem smiFile;
-        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem9;
-        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem8;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.RadioButton radMinify;
-        private System.Windows.Forms.Button btnUp;
-        private System.Windows.Forms.Button btnDown;
-        private System.Windows.Forms.Button btnAddDir;
-        private System.Windows.Forms.Button btnAddFile;
-        private System.Windows.Forms.Button btnRemove;
-        private System.Windows.Forms.Button btnClear;
-        private System.Windows.Forms.Button btnSingle;
-        private System.Windows.Forms.ToolTip ttMainTip;
-        private System.Windows.Forms.ToolStripMenuItem miProjectClose;
-        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem10;
+        internal System.Windows.Forms.TextBox txtSingle;
+        internal System.Windows.Forms.Label label1;
+        internal System.Windows.Forms.Label label2;
+        internal System.Windows.Forms.ListBox lstFiles;
+        internal System.Windows.Forms.Label label3;
+        internal System.Windows.Forms.TextBox txtCombine;
+        internal System.Windows.Forms.Button btnCombineTo;
+        internal System.Windows.Forms.RadioButton radCombMin;
+        internal System.Windows.Forms.RadioButton radCombine;
+        internal System.Windows.Forms.ContextMenuStrip cmsListOps;
+        internal System.Windows.Forms.ToolStripMenuItem smiRemove;
+        internal System.Windows.Forms.Timer timeCheck;
+        internal System.Windows.Forms.ToolStripMenuItem smiUp;
+        internal System.Windows.Forms.ToolStripMenuItem smiDown;
+        internal System.Windows.Forms.StatusStrip ssStatus;
+        internal System.Windows.Forms.ToolStripStatusLabel tssTotal;
+        internal System.Windows.Forms.ToolStripStatusLabel tssMini;
+        internal System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
+        internal System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel2;
+        internal System.Windows.Forms.ToolStripStatusLabel tssLast;
+        internal System.Windows.Forms.Label label4;
+        internal System.Windows.Forms.ToolStripStatusLabel tssReduction;
+        internal System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel3;
+        internal System.Windows.Forms.NotifyIcon niTray;
+        internal System.Windows.Forms.ContextMenuStrip cmsTray;
+        internal System.Windows.Forms.ToolStripMenuItem smiStart;
+        internal System.Windows.Forms.ToolStripMenuItem smiStop;
+        internal System.Windows.Forms.ToolStripMenuItem smiExit;
+        internal System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
+        internal System.Windows.Forms.MenuStrip msMainMenu;
+        internal System.Windows.Forms.ToolStripMenuItem miFile;
+        internal System.Windows.Forms.ToolStripMenuItem miProjectOpen;
+        internal System.Windows.Forms.ToolStripMenuItem miFileSave;
+        internal System.Windows.Forms.ToolStripMenuItem miFileSaveAs;
+        internal System.Windows.Forms.ToolStripSeparator toolStripMenuItem2;
+        internal System.Windows.Forms.ToolStripMenuItem miList;
+        internal System.Windows.Forms.ToolStripMenuItem miListDir;
+        internal System.Windows.Forms.ToolStripMenuItem miListFile;
+        internal System.Windows.Forms.ToolStripSeparator toolStripMenuItem3;
+        internal System.Windows.Forms.ToolStripMenuItem miListUp;
+        internal System.Windows.Forms.ToolStripMenuItem miListDown;
+        internal System.Windows.Forms.ToolStripSeparator toolStripMenuItem4;
+        internal System.Windows.Forms.ToolStripMenuItem miListRemove;
+        internal System.Windows.Forms.ToolStripSeparator toolStripMenuItem5;
+        internal System.Windows.Forms.ToolStripMenuItem miListClear;
+        internal System.Windows.Forms.ToolStripMenuItem miFileNew;
+        internal System.Windows.Forms.ToolStripMenuItem miFileNewFile;
+        internal System.Windows.Forms.ToolStripMenuItem miFileNewDir;
+        internal System.Windows.Forms.ToolStripMenuItem miMonitor;
+        internal System.Windows.Forms.ToolStripMenuItem miMonitorStart;
+        internal System.Windows.Forms.ToolStripMenuItem miMonitorStop;
+        internal System.Windows.Forms.ToolStripSeparator toolStripMenuItem6;
+        internal System.Windows.Forms.ToolStripMenuItem miFileExit;
+        internal System.Windows.Forms.ToolStripSeparator toolStripMenuItem7;
+        internal System.Windows.Forms.ToolStripMenuItem smiClear;
+        internal System.Windows.Forms.ToolStripMenuItem smiDir;
+        internal System.Windows.Forms.ToolStripMenuItem smiFile;
+        internal System.Windows.Forms.ToolStripSeparator toolStripMenuItem9;
+        internal System.Windows.Forms.ToolStripSeparator toolStripMenuItem8;
+        internal System.Windows.Forms.Label label5;
+        internal System.Windows.Forms.RadioButton radMinify;
+        internal System.Windows.Forms.Button btnUp;
+        internal System.Windows.Forms.Button btnDown;
+        internal System.Windows.Forms.Button btnAddDir;
+        internal System.Windows.Forms.Button btnAddFile;
+        internal System.Windows.Forms.Button btnRemove;
+        internal System.Windows.Forms.Button btnClear;
+        internal System.Windows.Forms.Button btnSingle;
+        internal System.Windows.Forms.ToolTip ttMainTip;
+        internal System.Windows.Forms.ToolStripMenuItem miProjectClose;
+        internal System.Windows.Forms.ToolStripSeparator toolStripMenuItem10;
+        private System.Windows.Forms.Label lblMonitoring;
+        private System.Windows.Forms.Label lblStopped;
+
     }
 }
 

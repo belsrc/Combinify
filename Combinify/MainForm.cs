@@ -60,7 +60,7 @@ namespace QuickMinCombine {
         /// <summary>
         /// Flag for if the user needs to save the current project
         /// </summary>
-        private bool _needSaved = false;
+        private bool _needsSaved = false;
 
         /// <summary>
         /// Path for the combined file.
@@ -89,7 +89,13 @@ namespace QuickMinCombine {
             // Check if the user dbl-clicked a project file
             // if so, load it
             if( args.Length > 1 ) {
-                OpenProject( args[ 1 ].Replace( "\"", string.Empty ) );
+                OpenProject( args[ 1 ] );
+                ChangeTitle();
+
+                // I suppose you could technically have a project with no files
+                if( lstFiles.Items.Count > 0 ) {
+                    ChangeClearEnable( true );
+                }
             }
         }
 
@@ -103,7 +109,7 @@ namespace QuickMinCombine {
             }
 
             // Check if the project needs to be saved
-            if( this._needSaved ) {
+            if( this._needsSaved ) {
                 var result = SaveBeforeClose();
 
                 // Yes or No result in the same effect at this level
@@ -119,77 +125,20 @@ namespace QuickMinCombine {
         /// </summary>
         private void Button_EnabledChanged( object sender, EventArgs e ) {
             string name = ( sender as Button ).Name;
-
-            // Big ugly case
-            if( !( sender as Button ).Enabled ) {
-                switch( name ) {
-                    case "btnUp":
-                        ( sender as Button ).BackgroundImage = ( Image )Properties.Resources.ResourceManager.GetObject( "arrow_up_grey" );
-                        break;
-
-                    case "btnDown":
-                        ( sender as Button ).BackgroundImage = ( Image )Properties.Resources.ResourceManager.GetObject( "arrow_down_grey" );
-                        break;
-
-                    case "btnRemove":
-                        ( sender as Button ).BackgroundImage = ( Image )Properties.Resources.ResourceManager.GetObject( "minus_grey" );
-                        break;
-
-                    case "btnClear":
-                        ( sender as Button ).BackgroundImage = ( Image )Properties.Resources.ResourceManager.GetObject( "cross_grey" );
-                        break;
-
-                    case "btnCombineTo":
-                        ( sender as Button ).BackgroundImage = ( Image )Properties.Resources.ResourceManager.GetObject( "file_blank_grey" );
-                        break;
-
-                    case "btnAddDir":
-                        ( sender as Button ).BackgroundImage = ( Image )Properties.Resources.ResourceManager.GetObject( "add_folder_grey" );
-                        break;
-
-                    case "btnAddFile":
-                        ( sender as Button ).BackgroundImage = ( Image )Properties.Resources.ResourceManager.GetObject( "add_file_grey" );
-                        break;
-                };
-            }
-            else {
-                switch( name ) {
-                    case "btnUp":
-                        ( sender as Button ).BackgroundImage = ( Image )Properties.Resources.ResourceManager.GetObject( "arrow-up" );
-                        break;
-
-                    case "btnDown":
-                        ( sender as Button ).BackgroundImage = ( Image )Properties.Resources.ResourceManager.GetObject( "arrow-down" );
-                        break;
-
-                    case "btnRemove":
-                        ( sender as Button ).BackgroundImage = ( Image )Properties.Resources.ResourceManager.GetObject( "minus" );
-                        break;
-
-                    case "btnClear":
-                        ( sender as Button ).BackgroundImage = ( Image )Properties.Resources.ResourceManager.GetObject( "cross" );
-                        break;
-
-                    case "btnCombineTo":
-                        ( sender as Button ).BackgroundImage = ( Image )Properties.Resources.ResourceManager.GetObject( "file-blank" );
-                        break;
-
-                    case "btnAddDir":
-                        ( sender as Button ).BackgroundImage = ( Image )Properties.Resources.ResourceManager.GetObject( "add-folder" );
-                        break;
-
-                    case "btnAddFile":
-                        ( sender as Button ).BackgroundImage = ( Image )Properties.Resources.ResourceManager.GetObject( "add-file" );
-                        break;
-                };
-            }
+            name += ( sender as Button ).Enabled ? string.Empty : "_grey";
+            ( sender as Button ).BackgroundImage = ( Image )Properties.Resources.ResourceManager.GetObject( name );
         }
 
         /// <summary>
         /// Warn user of possible file replacement
         /// Disable/Enable Controls
         /// </summary>
-        private void radMinify_CheckedChanged( object sender, EventArgs e ) {
+        private void Radio_CheckedChanged( object sender, EventArgs e ) {
+            // Kill monitoring
+            if( this._isRunning ) {
+                StartStopMonitoring();
+            }
+            
             if( radMinify.Checked ) {
                 MessageBox.Show( "This will replace any files with the name <file name>.min.css without further warning.",
                     "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning );
@@ -248,17 +197,20 @@ namespace QuickMinCombine {
         /// Check if there is a selected item and enable/disable menu items based on that.
         /// </summary>
         private void lstFiles_SelectedIndexChanged( object sender, EventArgs e ) {
-            if( lstFiles.SelectedIndex == -1 ) {
-                miListRemove.Enabled = smiRemove.Enabled = btnRemove.Enabled = false;
-                miListUp.Enabled = smiUp.Enabled = btnUp.Enabled = false;
-                miListDown.Enabled = smiDown.Enabled = btnDown.Enabled = false;
-            }
-            else {
-                miListRemove.Enabled = smiRemove.Enabled = btnRemove.Enabled = true;
+            // Make sure it isnt currently watching
+            if( !this._isRunning ) {
+                int index = lstFiles.SelectedIndex;
 
-                // Check for start or end of list before enabling up and down
-                miListUp.Enabled = smiUp.Enabled = btnUp.Enabled = lstFiles.SelectedIndex != 0 ? true : false;
-                miListDown.Enabled = smiDown.Enabled = btnDown.Enabled = lstFiles.SelectedIndex != lstFiles.Items.Count - 1 ? true : false;
+                if( index == -1 ) {
+                    ChangeMovementEnabled( false );
+                }
+                else {
+                    miListRemove.Enabled = smiRemove.Enabled = btnRemove.Enabled = true;
+
+                    // Check for start or end of list before enabling up and down
+                    miListUp.Enabled = smiUp.Enabled = btnUp.Enabled = index != 0 ? true : false;
+                    miListDown.Enabled = smiDown.Enabled = btnDown.Enabled = index != lstFiles.Items.Count - 1 ? true : false;
+                }
             }
         }
         #endregion
@@ -269,7 +221,7 @@ namespace QuickMinCombine {
         /// </summary>
         private void SingleFile_Click( object sender, EventArgs e ) {
             string path;
-            bool wasSuccess = false;
+            bool wasSuccessful = false;
 
             if( Dialogs.GetOpenPath( out path, new OpenFileDialog(), "CSS Files (*.css)|*.css", "Open File", this._lastDir ) ) {
                 txtSingle.Text = path;
@@ -284,18 +236,20 @@ namespace QuickMinCombine {
                 // If the file already exists, notify the user that it will be replaced
                 // If it doesnt exist skip to the writing
                 if( File.Exists( root + file + ".min.css" ) ) {
-                    if( MessageBox.Show( file + ".min.css already exists. This will replace it.", "Confirm Save", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning ) == DialogResult.OK ) {
+                    if( MessageBox.Show( file + ".min.css already exists. This will replace it.", "Confirm Save", 
+                        MessageBoxButtons.OKCancel, MessageBoxIcon.Warning ) == DialogResult.OK )
+                    {
                         this.WriteFile( path, root + file + ".min.css" );
-                        wasSuccess = true;
+                        wasSuccessful = true;
                     }
                 }
                 else {
                     this.WriteFile( path, root + file + ".min.css" );
-                    wasSuccess = true;
+                    wasSuccessful = true;
                 }
 
                 // Since they could have denied the overwrite, have to check a flag
-                if( wasSuccess ) {
+                if( wasSuccessful ) {
                     string[] comp = this.GetFileComparison( path, root + file + ".min.css" );
 
                     // Notify user of completion and files sizes/savings
@@ -321,6 +275,7 @@ namespace QuickMinCombine {
         /// </summary>
         private void AddDirectory_Click( object sender, EventArgs e ) {
             string path;
+
             if( Dialogs.GetFolderPath( out path, new FolderBrowserDialog(), "Select a directory to watch", false, this._lastDir ) ) {
                 this._lastDir = path;
 
@@ -338,8 +293,8 @@ namespace QuickMinCombine {
                     }
                 }
 
-                miListClear.Enabled = smiClear.Enabled = btnClear.Enabled = true;
-                this._needSaved = this._hasPrj;
+                ChangeClearEnable( true );
+                this._needsSaved = this._hasPrj;
                 this.CheckReadyState();
             }
         }
@@ -349,15 +304,16 @@ namespace QuickMinCombine {
         /// </summary>
         private void AddFile_Click( object sender, EventArgs e ) {
             string path;
+
             if( Dialogs.GetOpenPath( out path, new OpenFileDialog(), "CSS Files (*.css)|*.css", "Open File", this._lastDir ) ) {
                 // Don't add dupes
                 if( !lstFiles.Items.Contains( path ) ) {
                     // Only want lastDir to be the directory, excluding file name
                     this._lastDir = path.Substring( 0, ( path.LastIndexOf( "\\" ) + 1 ) );
                     lstFiles.Items.Add( path );
-                    miListClear.Enabled = smiClear.Enabled = btnClear.Enabled = true;
+                    ChangeClearEnable( true );
+                    this._needsSaved = this._hasPrj;
                     this.CheckReadyState();
-                    this._needSaved = this._hasPrj;
                 }
             }
         }
@@ -388,7 +344,7 @@ namespace QuickMinCombine {
             lstFiles.Items[ index - 1 ] = lstFiles.Items[ index ];
             lstFiles.Items[ index ] = tmp;
             lstFiles.SelectedIndex = index - 1;
-            this._needSaved = this._hasPrj;
+            this._needsSaved = this._hasPrj;
         }
 
         /// <summary>
@@ -400,7 +356,7 @@ namespace QuickMinCombine {
             lstFiles.Items[ index + 1 ] = lstFiles.Items[ index ];
             lstFiles.Items[ index ] = tmp;
             lstFiles.SelectedIndex = index + 1;
-            this._needSaved = this._hasPrj;
+            this._needsSaved = this._hasPrj;
         }
 
         /// <summary>
@@ -409,22 +365,23 @@ namespace QuickMinCombine {
         private void RemoveFile_Click( object sender, EventArgs e ) {
             if( MessageBox.Show( "Are you sure you want to remove this item?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning ) == DialogResult.Yes ) {
                 lstFiles.Items.RemoveAt( lstFiles.SelectedIndex );
-                this._needSaved = this._hasPrj;
+                this._needsSaved = this._hasPrj;
             }
         }
 
         /// <summary>
         /// Clear list click event.
+        /// Should be disabled when isRunning but Ill put a check anyway
         /// </summary>
         private void ClearList_Click( object sender, EventArgs e ) {
-            if( MessageBox.Show( "Are you sure you want to clear the entire list?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning ) == DialogResult.Yes ) {
-                lstFiles.Items.Clear();
-                this._needSaved = this._hasPrj;
-                miMonitorStart.Enabled = smiStart.Enabled = false;
-                miListClear.Enabled = smiClear.Enabled = btnClear.Enabled = false;
-                miListRemove.Enabled = smiRemove.Enabled = btnRemove.Enabled = false;
-                miListUp.Enabled = smiUp.Enabled = btnUp.Enabled = false;
-                miListDown.Enabled = smiDown.Enabled = btnDown.Enabled = false;
+            if( !this._isRunning ) {
+                if( MessageBox.Show( "Are you sure you want to clear the entire list?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning ) == DialogResult.Yes ) {
+                    lstFiles.Items.Clear();
+                    this._needsSaved = this._hasPrj;
+                    miMonitorStart.Enabled = smiStart.Enabled = false;
+                    this.ChangeClearEnable( false );
+                    this.ChangeMovementEnabled( false );
+                }
             }
         }
 
@@ -443,8 +400,18 @@ namespace QuickMinCombine {
         private void miProjectOpen_Click( object sender, EventArgs e ) {
             string path = string.Empty;
 
-            if( Dialogs.GetOpenPath( out path, new OpenFileDialog(), "Combinify Project (*.cpj)|*.cpj", "Save Project", this._lastDir ) ) {
+            // Kill monitoring
+            if( this._isRunning ) {
+                StartStopMonitoring();
+            }
+
+            if( Dialogs.GetOpenPath( out path, new OpenFileDialog(), "Combinify Project (*.cpj)|*.cpj", "Open Project", this._lastDir ) ) {
                 OpenProject( path );
+
+                // I suppose you could technically have a project with no files
+                if( lstFiles.Items.Count > 0 ) {
+                    ChangeClearEnable( true );
+                }
             }
         }
 
@@ -477,7 +444,7 @@ namespace QuickMinCombine {
             if( this._hasPrj ) {
 
                 // Check if the project needs to be saved
-                if( this._needSaved ) {
+                if( this._needsSaved ) {
                     var result = SaveBeforeClose();
 
                     // Yes or No result in the same effect 
@@ -490,6 +457,12 @@ namespace QuickMinCombine {
                 else {
                     CloseExistingProject();
                 }
+
+                // Stop monitoring
+                if( this._isRunning ) {
+                    StartStopMonitoring();
+                    miMonitorStart.Enabled = btnClear.Enabled = false;
+                }
             }
         }
 
@@ -498,6 +471,11 @@ namespace QuickMinCombine {
         /// </summary>
         private void miProjectNewFile_Click( object sender, EventArgs e ) {
             string path = string.Empty;
+
+            // Kill monitoring
+            if( this._isRunning ) {
+                StartStopMonitoring();
+            }
 
             if( Dialogs.GetOpenPath( out path, new OpenFileDialog(), "CSS Files (*.css)|*.css", "Open File", this._lastDir ) ) {
                 SetNewProject( new FileInfo( path ).DirectoryName + "\\" );
@@ -511,6 +489,11 @@ namespace QuickMinCombine {
         private void miProjectNewDir_Click( object sender, EventArgs e ) {
             string path;
 
+            // Kill monitoring
+            if( this._isRunning ) {
+                StartStopMonitoring();
+            }
+
             if( Dialogs.GetFolderPath( out path, new FolderBrowserDialog(), "Select a directory to watch", false, this._lastDir ) ) {
                 SetNewProject( path );
                 lstFiles.Items.AddRange( FileOp.GetCssFiles( path ).ToArray() );
@@ -518,323 +501,6 @@ namespace QuickMinCombine {
         }
         #endregion
 
-        /// <summary>
-        /// Enable the start buttons if all the needed fields are supplied.
-        /// </summary>
-        private void CheckReadyState() {
-            miMonitorStart.Enabled = smiStart.Enabled = ( lstFiles.Items.Count > 0 &&
-                                                        ( txtCombine.Text != string.Empty || radMinify.Checked ) );
-        }
 
-        /// <summary>
-        /// Flip the boolean properties related to starting and stopping the monitoring routine.
-        /// </summary>
-        private void StartStopMonitoring() {
-            // Flip the flag
-            this._isRunning = !this._isRunning;
-
-            // Flip the Enabled control properties
-            btnCombineTo.Enabled = ( !this._isRunning && !radMinify.Checked );
-            miMonitorStart.Enabled = smiStart.Enabled = !this._isRunning;
-            miMonitorStop.Enabled = smiStop.Enabled = this._isRunning;
-            miListDir.Enabled = smiDir.Enabled = btnAddDir.Enabled = !this._isRunning;
-            miListFile.Enabled = smiFile.Enabled = btnAddFile.Enabled = !this._isRunning;
-            miListClear.Enabled = smiClear.Enabled = btnClear.Enabled = !this._isRunning;
-
-            // Flip the stopwatch
-            if( this._isRunning ) {
-                // Clear the file time dictionary and then repopulate it
-                // Im lazy and dont feel like doing checks
-                this._fileTimes.Clear();
-
-                foreach( string f in lstFiles.Items.Cast<string>().ToList() ) {
-                    var info = new FileInfo( f );
-                    this._fileTimes.Add( info.Name, info.LastWriteTime );
-                }
-
-                this.ProcessFiles();
-                timeCheck.Start();
-            }
-            else {
-                timeCheck.Stop();
-            }
-        }
-
-        /// <summary>
-        /// Larger aggregate for the file handling.
-        /// </summary>
-        /// <remarks>
-        /// Ugly method is ugly. Clean me PLEASE
-        /// </remarks>
-        private void ProcessFiles() {
-            // Cast the list items to a string list
-            var files = lstFiles.Items.Cast<string>().ToList();
-            Thread thread;
-
-            // Determine the operation type by the radio that is checked 
-            // then spin a new thread to do the operation on low priority,
-            // and wait for the thread to finish to proceed
-            if( radCombine.Checked ) {
-                thread = new Thread( () => this.DoCombine( files ) );
-            }
-            else if( radCombMin.Checked ) {
-                thread = new Thread( () => this.DoCombineMinify( files ) );
-            }
-            else {
-                thread = new Thread( () => this.DoMinify( files ) );
-            }
-
-            thread.Priority = ThreadPriority.Lowest;
-            thread.Start();
-            thread.Join();
-
-            if( !radMinify.Checked ) {
-                // Get the size of the minified (or combined, albeit, its pointless but better than zeros)
-                // and the total combined size of the listed files and then figure the the amount of saves
-                // soace after the operation
-                long original = 0;
-                long minified = new FileInfo( this._combineFile ).Length;
-                foreach( string f in files ) {
-                    original += new FileInfo( f ).Length;
-                }
-
-                // Hope casting to double doesnt bite me but, long/long was returning (rounded)long aka 0
-                double changed = ( ( double )minified / ( double )original ) * 100;
-
-                tssTotal.Text = "Combined Size: " + AutoFileSize( original );
-                tssMini.Text = "Post Size: " + AutoFileSize( minified );
-
-                if( changed > 100.0 ) {
-                    changed = Math.Round( changed - 100.0, 2 );
-                    tssReduction.Text = "Change: +" + changed + "%";
-                }
-                else {
-                    tssReduction.Text = "Change: -" + Math.Round( 100 - changed, 2 ) + "%";
-                }
-            }
-            else {
-                tssTotal.Text = "Combined Size: ---";
-                tssMini.Text = "Post Size: ---";
-                tssReduction.Text = "Change: ---";
-            }
-
-            tssLast.Text = "Last: " + DateTime.Now.ToString( "h:mm:ss tt" );
-        }
-
-        /// <summary>
-        /// Method to perform the combining using Thread lambda.
-        /// </summary>
-        /// <param name="oldFile">A list of file paths to combine.</param>
-        private void DoCombine( List<string> oldFile ) {
-            using( var sw = new StreamWriter( this._combineFile, false ) ) {
-                sw.Write( FileOp.CombineFile( oldFile ) );
-                sw.Close();
-            }
-        }
-
-        /// <summary>
-        /// Method to perform the combining and minifying using Thread lambda.
-        /// </summary>
-        /// <param name="oldFile">A list of file paths to combine and minify.</param>
-        private void DoCombineMinify( List<string> oldFile ) {
-            using( var sw = new StreamWriter( this._combineFile, false ) ) {
-                sw.Write( FileOp.MinifyFile( oldFile ) );
-                sw.Close();
-            }
-        }
-
-        /// <summary>
-        /// Method to perform the minifying using Thread lambda.
-        /// </summary>
-        /// <param name="oldFile">A list of file paths to minify.</param>
-        private void DoMinify( List<string> oldFile ) {
-            var files = lstFiles.Items.Cast<string>().ToList();
-
-            foreach( string f in files ) {
-                var info = new FileInfo( f );
-                string root = info.DirectoryName + "\\";
-                string file = info.Name.Split( '.' )[ 0 ];
-
-                if( this._fileTimes[ info.Name ] < info.LastWriteTime ||
-                    !File.Exists( root + file + ".min.css" ) ) {
-                    this._fileTimes[ info.Name ] = info.LastWriteTime;
-                    WriteFile( f, root + file + ".min.css" );
-                }
-            }
-        }
-
-        /// <summary>
-        /// Used for the single file minify. 
-        /// Read the original file, minify, then write to the new file.
-        /// </summary>
-        /// <param name="newPath">The file path of the original file.</param>
-        /// <param name="oldPath">The file path of the new file.</param>
-        private void WriteFile( string oldPath, string newPath ) {
-            using( var sw = new StreamWriter( newPath, false ) ) {
-                sw.Write( FileOp.MinifyFile( oldPath ) );
-                sw.Close();
-            }
-        }
-
-        /// <summary>
-        /// Determines the file size of the the new file and old file and 
-        /// determines the difference in file size.
-        /// </summary>
-        /// <param name="older">The path to the old version of the file.</param>
-        /// <param name="newer">The path to the new version of the file.</param>
-        /// <returns>
-        /// A string array containing the original file size [0], 
-        /// the new file size [1], and the difference between the sizes [2].
-        /// </returns>
-        private string[] GetFileComparison( string older, string newer ) {
-            string[] tmp = new string[ 3 ];
-
-            // Get the size of the original and new file (in bytes as long data type)
-            long original = new FileInfo( older ).Length;
-            long minified = new FileInfo( newer ).Length;
-
-            // Hope casting to double doesnt bite me in the ass but,
-            // long/long was returning (rounded)long aka 0
-            double savings = ( ( double )minified / ( double )original ) * 100;
-            savings = Math.Round( 100 - savings, 2 );
-
-            tmp[ 0 ] = this.AutoFileSize( original );
-            tmp[ 1 ] = this.AutoFileSize( minified );
-            tmp[ 2 ] = savings.ToString();
-
-            return tmp;
-        }
-
-        /// <summary>
-        /// Go through the list of files and check to see if they have been 
-        /// modified since the last check. If they have flip the flag. No 
-        /// break since I want all changed times updated.
-        /// </summary>
-        private bool FilesHaveChanged() {
-            bool changed = false;
-            var files = lstFiles.Items.Cast<string>().ToList();
-
-            foreach( string f in files ) {
-                var info = new FileInfo( f );
-                if( this._fileTimes[ info.Name ] < info.LastWriteTime ) {
-                    this._fileTimes[ info.Name ] = info.LastWriteTime;
-                    changed = true;
-                }
-            }
-
-            return changed;
-        }
-
-        /// <summary>
-        /// Formats from bytes to KB, MB, GB, TB.
-        /// From LiFo's comment on SO 
-        /// (stackoverflow.com/questions/5850596/conversion-of-long-to-decimal-in-c-sharp#answer-5850663)
-        /// </summary>
-        /// <param name="number">A long int representing the bytes of a file.</param>
-        /// <returns>A string representing  bytes in KB, MB, GB, TB.</returns>
-        private string AutoFileSize( long number ) {
-            double tmp = number;
-            string suffix = " B ";
-
-            if( tmp > 1024 ) { tmp = tmp / 1024; suffix = " KB"; }
-            if( tmp > 1024 ) { tmp = tmp / 1024; suffix = " MB"; }
-            if( tmp > 1024 ) { tmp = tmp / 1024; suffix = " GB"; }
-            if( tmp > 1024 ) { tmp = tmp / 1024; suffix = " TB"; }
-
-            return tmp.ToString( "n" ) + suffix;
-        }
-
-        /// <summary>
-        /// Opens an existing project.
-        /// </summary>
-        /// <param name="path">Project file path.</param>
-        private void OpenProject( string path ) {
-            // Set the project fields
-            this._hasPrj = true;
-            this._prjPath = path;
-
-            // Clear the list of any files
-            lstFiles.Items.Clear();
-
-            // Add the watched files from the project
-            lstFiles.Items.AddRange( FileOp.ReadProject( out this._lastDir, this._prjPath ) );
-        }
-
-        /// <summary>
-        /// Sets various fields for the a new project
-        /// </summary>
-        /// <param name="path">Path of the selected file/folder.</param>
-        private void SetNewProject( string path ) {
-            this._lastDir = path;
-            this._hasPrj = true;
-            this._needSaved = true;
-            lstFiles.Items.Clear();
-            miListClear.Enabled = smiClear.Enabled = btnClear.Enabled = true;
-        }
-
-        /// <summary>
-        /// Sets various fields when a project gets closed
-        /// </summary>
-        private void CloseExistingProject() {
-            this._hasPrj = false;
-            this._prjPath = string.Empty;
-            this._needSaved = false;
-            lstFiles.Items.Clear();
-        }
-
-        /// <summary>
-        /// Saves the contents of the watch list before closing or clearing.
-        /// </summary>
-        /// <returns>
-        /// Users choice of YES, NO, CANCEL
-        /// Yes causes the project to save. No and Cancel are
-        /// handled by the calling method
-        /// </returns>
-        private DialogResult SaveBeforeClose() {
-            var result = MessageBox.Show( "Do you want to save the changes to the current project?",
-                "Combinify", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question );
-
-            if( result == DialogResult.Yes ) {
-                if( this._hasPrj && this._prjPath != string.Empty ) {
-                    this.SaveProject();
-                }
-                else {
-                    bool test = this.SaveNewProject();
-                    result = test ? DialogResult.Yes : DialogResult.Cancel;
-                }
-            }
-
-            return result;
-        }
-
-        /// <summary>
-        /// Saves the contents of the watch list to a new project.
-        /// </summary>
-        /// <return>
-        /// Returns <see langword="true"/> if the user selects a save path;
-        /// otherwise, <see langword="false"/>.
-        /// </return>
-        private bool SaveNewProject() {
-            string path = string.Empty;
-
-            if( Dialogs.GetSavePath( out path, new SaveFileDialog(), "Combinify Project (*.cpj)|*.cpj", "Save Project", this._lastDir ) ) {
-                // Set the project fields
-                this._hasPrj = true;
-                this._prjPath = path;
-
-                this.SaveProject();
-                return true;
-            }
-
-            return false;
-        }
-
-        /// <summary>
-        /// Saves the contents of the watch list to the current project.
-        /// </summary>
-        private void SaveProject() {
-            FileOp.WriteProject( this._prjPath, this._lastDir, lstFiles.Items.Cast<string>().ToList() );
-            this._needSaved = false;
-        }
     }
 }

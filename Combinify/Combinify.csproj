@@ -79,6 +79,9 @@
     <Compile Include="MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="MainForm.UiHelpers.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Minify.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -108,26 +111,26 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="icon.ico" />
-    <Content Include="Resources\add-file-grey.png" />
-    <Content Include="Resources\add-folder-grey.png" />
-    <Content Include="Resources\arrow-down-grey.png" />
-    <Content Include="Resources\arrow-up-grey.png" />
-    <Content Include="Resources\cross-grey.png" />
-    <Content Include="Resources\file-blank-grey.png" />
+    <Content Include="Resources\btnAddFile_grey.png" />
+    <Content Include="Resources\btnAddDir_grey.png" />
+    <Content Include="Resources\btnDown_grey.png" />
+    <Content Include="Resources\btnUp_grey.png" />
+    <Content Include="Resources\btnClear_grey.png" />
+    <Content Include="Resources\btnCombineTo_grey.png" />
     <Content Include="Resources\file-grey.png" />
     <None Include="Resources\icon2.ico" />
-    <Content Include="Resources\minus-grey.png" />
+    <Content Include="Resources\btnRemove_grey.png" />
     <None Include="Resources\project.ico" />
     <None Include="Resources\stop.png" />
     <None Include="Resources\play.png" />
-    <None Include="Resources\file-blank.png" />
+    <None Include="Resources\btnCombineTo.png" />
     <None Include="Resources\file.png" />
-    <None Include="Resources\cross.png" />
-    <None Include="Resources\minus.png" />
-    <None Include="Resources\add-file.png" />
-    <None Include="Resources\add-folder.png" />
-    <None Include="Resources\arrow-down.png" />
-    <None Include="Resources\arrow-up.png" />
+    <None Include="Resources\btnClear.png" />
+    <None Include="Resources\btnRemove.png" />
+    <None Include="Resources\btnAddFile.png" />
+    <None Include="Resources\btnAddDir.png" />
+    <None Include="Resources\btnDown.png" />
+    <None Include="Resources\btnUp.png" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0">
