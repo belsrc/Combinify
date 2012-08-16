@@ -28,20 +28,12 @@
     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 /*
-    Some RE's were pulled from YUI as is, ones that could be shortened were 
-    shortened, others were verified against YUI and some are new (where I 
-    thought I could go a little more in depth), as such I think it correct 
-    to include their header comments...
-*/
-/*
-    YUI Compressor
-    developer.yahoo.com/yui/compressor/
-    Author: Julien Lecomte -  julienlecomte.net/
-    Author: Isaac Schlueter - foohack.com/
-    Author: Stoyan Stefanov - phpied.com/
-    Copyright (c) 2011 Yahoo! Inc.  All rights reserved.
-    The copyrights embodied in the content of this file are licensed
-    by Yahoo! Inc. under the BSD (revised) open source license.
+    Some RE's were pulled from Isaac Schlueter's rules list as is, 
+    others (most) were shortened or modified in some manner and 
+    some are new (where I thought I could go a little more in depth)
+    
+    Isaac's list can me found on github
+    github.com/isaacs/cssmin/blob/master/rules.txt
 */
 namespace QuickMinCombine {
     using System;

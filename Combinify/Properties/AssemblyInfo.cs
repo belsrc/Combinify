@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle( "Combinify" )]
 [assembly: AssemblyDescription( "Combine and minify CSS based on last WriteAccess" )]
 [assembly: AssemblyConfiguration( "" )]
-[assembly: AssemblyCompany( "" )]
+[assembly: AssemblyCompany( "Bryan Kizer" )]
 [assembly: AssemblyProduct( "Combinify" )]
 [assembly: AssemblyCopyright( "Copyright ©  2012" )]
 [assembly: AssemblyTrademark( "" )]
@@ -33,4 +33,4 @@ using System.Runtime.InteropServices;
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion( "1.0.1" )]
-[assembly: AssemblyFileVersion( "1.0.0" )]
+[assembly: AssemblyFileVersion( "1.0.1" )]
