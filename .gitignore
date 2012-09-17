@@ -1,9 +1,12 @@
 # Untracked files:
 *.suo
 *.user
+*.sln.docstates
 *.testsettings
 *.vsmdi
 *.sdf
+*.manifest
+*.csproj
 StyleCop.Cache
 Combinify/bin/*
 Combinify/obj/*

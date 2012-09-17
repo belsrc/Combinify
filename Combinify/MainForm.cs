@@ -43,9 +43,9 @@ namespace QuickMinCombine {
     public partial class frmMain : Form {
         #region "Class Variables"
         /// <summary>
-        /// The last directory to be used.
+        /// Project object.
         /// </summary>
-        private string _lastDir = string.Empty;
+        private Project _prj;
 
         /// <summary>
         /// Whether theres a current working project
@@ -63,19 +63,9 @@ namespace QuickMinCombine {
         private bool _needsSaved = false;
 
         /// <summary>
-        /// Path for the combined file.
-        /// </summary>
-        private string _combineFile = string.Empty;
-
-        /// <summary>
         /// Whether the app is monitoring the file list or not.
         /// </summary>
         private bool _isRunning = false;
-
-        /// <summary>
-        /// A dictionary containing the file name [key] and LastWriteTime [value].
-        /// </summary>
-        private Dictionary<string, DateTime> _fileTimes;
         #endregion
 
         /// <summary>
@@ -83,7 +73,7 @@ namespace QuickMinCombine {
         /// </summary>
         public frmMain() {
             InitializeComponent();
-            this._fileTimes = new Dictionary<string, DateTime>();
+            this._prj = new Project();
             string[] args = Environment.GetCommandLineArgs();
 
             // Check if the user dbl-clicked a project file
@@ -223,12 +213,12 @@ namespace QuickMinCombine {
             string path;
             bool wasSuccessful = false;
 
-            if( Dialogs.GetOpenPath( out path, new OpenFileDialog(), "CSS Files (*.css)|*.css", "Open File", this._lastDir ) ) {
+            if( Dialogs.GetOpenPath( out path, new OpenFileDialog(), "CSS Files (*.css)|*.css", "Open File", this._prj.LastDirectory ) ) {
                 txtSingle.Text = path;
                 FileInfo info = new FileInfo( path );
 
                 // Get the root of the file, from the start of the string to the last '\'
-                string root = this._lastDir = info.DirectoryName + "\\";
+                string root = this._prj.LastDirectory = info.DirectoryName + "\\";
 
                 // Get the file name, less the extension (and any other dot notation)
                 string file = info.Name.Split( '.' )[ 0 ];
@@ -264,8 +254,10 @@ namespace QuickMinCombine {
         /// Combine To File click event.
         /// </summary>
         private void CombineTo_Click( object sender, EventArgs e ) {
-            if( Dialogs.GetSavePath( out this._combineFile, new SaveFileDialog(), "CSS Files (*.css)|*.css", "Save File", this._lastDir ) ) {
-                txtCombine.Text = this._combineFile;
+            string path;
+            if( Dialogs.GetSavePath( out path, new SaveFileDialog(), "CSS Files (*.css)|*.css", "Save File", this._prj.LastDirectory ) ) {
+                this._prj.DestinationFile = path;
+                txtCombine.Text = this._prj.DestinationFile;
                 this.CheckReadyState();
             }
         }
@@ -276,8 +268,8 @@ namespace QuickMinCombine {
         private void AddDirectory_Click( object sender, EventArgs e ) {
             string path;
 
-            if( Dialogs.GetFolderPath( out path, new FolderBrowserDialog(), "Select a directory to watch", false, this._lastDir ) ) {
-                this._lastDir = path;
+            if( Dialogs.GetFolderPath( out path, new FolderBrowserDialog(), "Select a directory to watch", false, this._prj.LastDirectory ) ) {
+                this._prj.LastDirectory = path;
 
                 // If the list is empty go ahead and just add files
                 // otherwise, check for dupes
@@ -293,6 +285,9 @@ namespace QuickMinCombine {
                     }
                 }
 
+                // Set the projects cssfile list to the list control
+                this._prj.CssFiles = lstFiles.Items.Cast<string>().ToList();
+
                 ChangeClearEnable( true );
                 this._needsSaved = this._hasPrj;
                 this.CheckReadyState();
@@ -305,11 +300,12 @@ namespace QuickMinCombine {
         private void AddFile_Click( object sender, EventArgs e ) {
             string path;
 
-            if( Dialogs.GetOpenPath( out path, new OpenFileDialog(), "CSS Files (*.css)|*.css", "Open File", this._lastDir ) ) {
+            if( Dialogs.GetOpenPath( out path, new OpenFileDialog(), "CSS Files (*.css)|*.css", "Open File", this._prj.LastDirectory ) ) {
                 // Don't add dupes
                 if( !lstFiles.Items.Contains( path ) ) {
                     // Only want lastDir to be the directory, excluding file name
-                    this._lastDir = path.Substring( 0, ( path.LastIndexOf( "\\" ) + 1 ) );
+                    this._prj.LastDirectory = path.Substring( 0, ( path.LastIndexOf( "\\" ) + 1 ) );
+                    this._prj.CssFiles.Add( path );
                     lstFiles.Items.Add( path );
                     ChangeClearEnable( true );
                     this._needsSaved = this._hasPrj;
@@ -344,6 +340,8 @@ namespace QuickMinCombine {
             lstFiles.Items[ index - 1 ] = lstFiles.Items[ index ];
             lstFiles.Items[ index ] = tmp;
             lstFiles.SelectedIndex = index - 1;
+            // Just set the project list to the list controls new order
+            this._prj.CssFiles = lstFiles.Items.Cast<string>().ToList();
             this._needsSaved = this._hasPrj;
         }
 
@@ -356,6 +354,8 @@ namespace QuickMinCombine {
             lstFiles.Items[ index + 1 ] = lstFiles.Items[ index ];
             lstFiles.Items[ index ] = tmp;
             lstFiles.SelectedIndex = index + 1;
+            // Just set the project list to the list controls new order
+            this._prj.CssFiles = lstFiles.Items.Cast<string>().ToList();
             this._needsSaved = this._hasPrj;
         }
 
@@ -405,7 +405,7 @@ namespace QuickMinCombine {
                 StartStopMonitoring();
             }
 
-            if( Dialogs.GetOpenPath( out path, new OpenFileDialog(), "Combinify Project (*.cpj)|*.cpj", "Open Project", this._lastDir ) ) {
+            if( Dialogs.GetOpenPath( out path, new OpenFileDialog(), "Combinify Project (*.cpj)|*.cpj", "Open Project", this._prj.LastDirectory ) ) {
                 OpenProject( path );
 
                 // I suppose you could technically have a project with no files
@@ -477,7 +477,7 @@ namespace QuickMinCombine {
                 StartStopMonitoring();
             }
 
-            if( Dialogs.GetOpenPath( out path, new OpenFileDialog(), "CSS Files (*.css)|*.css", "Open File", this._lastDir ) ) {
+            if( Dialogs.GetOpenPath( out path, new OpenFileDialog(), "CSS Files (*.css)|*.css", "Open File", this._prj.LastDirectory ) ) {
                 SetNewProject( new FileInfo( path ).DirectoryName + "\\" );
                 lstFiles.Items.Add( path );
             }
@@ -494,7 +494,7 @@ namespace QuickMinCombine {
                 StartStopMonitoring();
             }
 
-            if( Dialogs.GetFolderPath( out path, new FolderBrowserDialog(), "Select a directory to watch", false, this._lastDir ) ) {
+            if( Dialogs.GetFolderPath( out path, new FolderBrowserDialog(), "Select a directory to watch", false, this._prj.LastDirectory ) ) {
                 SetNewProject( path );
                 lstFiles.Items.AddRange( FileOp.GetCssFiles( path ).ToArray() );
             }

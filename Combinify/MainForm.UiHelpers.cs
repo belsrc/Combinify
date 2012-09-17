@@ -52,7 +52,13 @@ namespace QuickMinCombine {
             lstFiles.Items.Clear();
 
             // Add the watched files from the project
-            lstFiles.Items.AddRange( FileOp.ReadProject( out this._lastDir, this._prjPath ) );
+            if( FileOp.ReadProject( out this._prj, this._prjPath ) ) {
+                lstFiles.Items.AddRange( this._prj.CssFiles.ToArray() );
+                txtCombine.Text = this._prj.DestinationFile;
+            }
+            else {
+                MessageBox.Show( "The selected file was an invalid project" );
+            }
         }
 
         /// <summary>
@@ -60,7 +66,7 @@ namespace QuickMinCombine {
         /// </summary>
         /// <param name="path">Path of the selected file/folder.</param>
         private void SetNewProject( string path ) {
-            this._lastDir = path;
+            this._prj.LastDirectory = path;
             this._hasPrj = true;
             this._needsSaved = true;
             lstFiles.Items.Clear();
@@ -112,7 +118,7 @@ namespace QuickMinCombine {
         private bool SaveNewProject() {
             string path = string.Empty;
 
-            if( Dialogs.GetSavePath( out path, new SaveFileDialog(), "Combinify Project (*.cpj)|*.cpj", "Save Project", this._lastDir ) ) {
+            if( Dialogs.GetSavePath( out path, new SaveFileDialog(), "Combinify Project (*.cpj)|*.cpj", "Save Project", this._prj.LastDirectory ) ) {
                 // Set the project fields
                 this._hasPrj = true;
                 this._prjPath = path;
@@ -129,7 +135,7 @@ namespace QuickMinCombine {
         /// Saves the contents of the watch list to the current project.
         /// </summary>
         private void SaveProject() {
-            FileOp.WriteProject( this._prjPath, this._lastDir, lstFiles.Items.Cast<string>().ToList() );
+            FileOp.WriteProject( this._prjPath, this._prj );
             this._needsSaved = false;
         }
 
@@ -152,8 +158,8 @@ namespace QuickMinCombine {
 
             foreach( string f in files ) {
                 var info = new FileInfo( f );
-                if( this._fileTimes[ info.Name ] < info.LastWriteTime ) {
-                    this._fileTimes[ info.Name ] = info.LastWriteTime;
+                if( this._prj.FileTimes[ info.Name ] < info.LastWriteTime ) {
+                    this._prj.FileTimes[ info.Name ] = info.LastWriteTime;
                     changed = true;
                 }
             }
@@ -183,11 +189,11 @@ namespace QuickMinCombine {
             if( this._isRunning ) {
                 // Clear the file time dictionary and then repopulate it
                 // Im lazy and dont feel like doing checks
-                this._fileTimes.Clear();
+                this._prj.FileTimes.Clear();
 
                 foreach( string f in lstFiles.Items.Cast<string>().ToList() ) {
                     var info = new FileInfo( f );
-                    this._fileTimes.Add( info.Name, info.LastWriteTime );
+                    this._prj.FileTimes.Add( info.Name, info.LastWriteTime );
                 }
 
                 this.ProcessFiles();
@@ -231,7 +237,7 @@ namespace QuickMinCombine {
                 // Get the size of the minified (or combined, albeit, its pointless but better than zeros)
                 // and the total combined size of the listed files and then figure the the amount of saves
                 // soace after the operation
-                long minified = new FileInfo( this._combineFile ).Length;
+                long minified = new FileInfo( this._prj.DestinationFile ).Length;
                 long original = 0;
 
                 foreach( string f in files ) {
@@ -287,7 +293,7 @@ namespace QuickMinCombine {
         /// </summary>
         /// <param name="oldFile">A list of file paths to combine.</param>
         private void DoCombine( List<string> oldFile ) {
-            using( var sw = new StreamWriter( this._combineFile, false ) ) {
+            using( var sw = new StreamWriter( this._prj.DestinationFile, false ) ) {
                 sw.Write( FileOp.CombineFile( oldFile ) );
                 sw.Close();
             }
@@ -298,7 +304,7 @@ namespace QuickMinCombine {
         /// </summary>
         /// <param name="oldFile">A list of file paths to combine and minify.</param>
         private void DoCombineMinify( List<string> oldFile ) {
-            using( var sw = new StreamWriter( this._combineFile, false ) ) {
+            using( var sw = new StreamWriter( this._prj.DestinationFile, false ) ) {
                 sw.Write( FileOp.MinifyFile( oldFile ) );
                 sw.Close();
             }
@@ -316,10 +322,10 @@ namespace QuickMinCombine {
                 string root = info.DirectoryName + "\\";
                 string file = info.Name.Split( '.' )[ 0 ];
 
-                if( this._fileTimes[ info.Name ] < info.LastWriteTime ||
+                if( this._prj.FileTimes[ info.Name ] < info.LastWriteTime ||
                     !File.Exists( root + file + ".min.css" ) ) {
-                    this._fileTimes[ info.Name ] = info.LastWriteTime;
-                    WriteFile( f, root + file + ".min.css" );
+                        this._prj.FileTimes[ info.Name ] = info.LastWriteTime;
+                        WriteFile( f, root + file + ".min.css" );
                 }
             }
         }

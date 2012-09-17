@@ -98,9 +98,6 @@ namespace QuickMinCombine {
                         using( var sr = new StreamReader( p ) ) {
                             string css = sr.ReadToEnd();
                             css.Trim();
-                            sb.Append( "/*\n" );
-                            sb.Append( " From " + new FileInfo( p ).Name + "\n" );
-                            sb.Append( " ========================================================================== */\n\n" );
                             sb.Append( css );
                             sb.Append( "\n\n" );
                         }
@@ -128,18 +125,19 @@ namespace QuickMinCombine {
         /// Writes a project file to the supllied path using the dir and 
         /// list to populate the project file.
         /// </summary>
-        /// <param name="path">Path to save the project file.</param>
-        /// <param name="dir">String representing the last directory open in the project.</param>
-        /// <param name="list">A list of files that were being watched.</param>
-        public static void WriteProject( string path, string dir, List<string> list ) {
+        /// <param name="project">A Project object to be saved.</param>
+        /// <param name="savePath">Path to save the project file.</param>
+        public static void WriteProject( string savePath, Project project ) {
             try {
                 // Create a new XDoc
                 var xdoc = new XDocument();
 
                 // Create the Project root element with the 
-                // LastDir child element
+                // LastDir child element and the
+                // Destination child element
                 var proj = new XElement( "Project",
-                        new XElement( "LastDir", dir )
+                           new XElement( "LastDir", project.LastDirectory ),
+                           new XElement( "Destination", project.DestinationFile )
                     );
 
                 // Create the Files element that will contain the
@@ -147,7 +145,7 @@ namespace QuickMinCombine {
                 var files = new XElement( "Files" );
 
                 // Add the Files children
-                foreach( string s in list ) {
+                foreach( string s in project.CssFiles ) {
                     files.Add( new XElement( "Path", s ) );
                 }
 
@@ -158,7 +156,7 @@ namespace QuickMinCombine {
                 xdoc.Add( proj );
 
                 // Save the document
-                xdoc.Save( path );
+                xdoc.Save( savePath );
             }
             catch( IOException e ) {
                 Dialogs.ErrorDialog( e );
@@ -168,28 +166,37 @@ namespace QuickMinCombine {
         /// <summary>
         /// Reads a project file from disks and returns the files to watch.
         /// </summary>
-        /// <param name="dir">String representing the last directory open in the project.</param>
-        /// <param name="path">The path of the project file.</param>
-        /// <returns>An array of files to start watching.</returns>
-        public static string[] ReadProject( out string dir, string path ) {
-            if( File.Exists( path ) ) {
+        /// <param name="openPath">The path of the project file.</param>
+        /// <returns>A Project object.</returns>
+        public static bool ReadProject( out Project project, string openPath ) {
+            if( File.Exists( openPath ) ) {
                 try {
+                    Project prj = new Project();
+
                     // Create the XDoc from the file
-                    var xdoc = XDocument.Load( path );
+                    var xdoc = XDocument.Load( openPath );
 
                     // Get the LastDir value
-                    dir = xdoc.Element( "Project" ).Element( "LastDir" ).Value;
+                    prj.LastDirectory = xdoc.Element( "Project" ).Element( "LastDir" ).Value;
+
+                    // Get the Destination value if newer version else string.Empty
+                    // This way it will maintain backward compatibility
+                    if( xdoc.Element( "Project" ).Element( "Destination" ) != null ) {
+                        prj.DestinationFile = xdoc.Element( "Project" ).Element( "Destination" ).Value;
+                    }
+                    else {
+                        prj.DestinationFile = string.Empty;
+                    }
 
                     // Get the Files descendants
                     var files = xdoc.Element( "Project" ).Descendants( "Files" );
-                    var list = new List<string>();
                     var broken = new StringBuilder( "" );
 
                     // For each of the paths, check if it exists than
                     // add it to the list, otherwise add to the broken string
                     foreach( var f in files.Elements( "Path" ) ) {
                         if( File.Exists( f.Value ) ) {
-                            list.Add( f.Value );
+                            prj.CssFiles.Add( f.Value );
                         }
                         else {
                             broken.Append( f.Value + "\n" );
@@ -202,7 +209,8 @@ namespace QuickMinCombine {
                                             broken.ToString() );
                     }
 
-                    return list.ToArray();
+                    project = prj;
+                    return true;
                 }
                 catch( XmlException e ) {
                     Dialogs.ErrorDialog( e );
@@ -210,8 +218,8 @@ namespace QuickMinCombine {
             }
 
             // File doesnt exist
-            dir = string.Empty;
-            return null;
+            project = new Project();
+            return false;
         }
 
         /// <summary>
