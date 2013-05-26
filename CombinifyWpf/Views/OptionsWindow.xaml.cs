@@ -34,6 +34,8 @@ namespace CombinifyWpf {
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Input;
+    using Cgum.Encryption;
+    using System;
 
     /// <summary>
     /// Interaction logic for OptionsWindow.xaml
@@ -75,12 +77,20 @@ namespace CombinifyWpf {
         }
 
         private void Window_Closing( object sender, System.ComponentModel.CancelEventArgs e ) {
-            // TODO : Encrypt the password using the id and store
-            Properties.Settings.Default.Save();
+            if( Password.Text.Length > 0 ) {
+                var cryptor = new Encrypt( EncryptType.Rijndael, Properties.Settings.Default.Guid.Substring( 0, 24 ) );
+                Properties.Settings.Default.Word = cryptor.EncryptString( Password.Text );
+                Properties.Settings.Default.Sign = Convert.ToBase64String( cryptor.Vector );
+                Properties.Settings.Default.Save();
+            }
         }
 
         private void Window_Loaded( object sender, RoutedEventArgs e ) {
-            // TODO : Dencrypt the password using the id and set text
+            if( !string.IsNullOrWhiteSpace( Properties.Settings.Default.Word ) ) {
+                byte[] vect = Convert.FromBase64String( Properties.Settings.Default.Sign );
+                var cryptor = new Decrypt( EncryptType.Rijndael, vect, Properties.Settings.Default.Guid.Substring( 0, 24 ) );
+                Password.Text = cryptor.DecryptString( Properties.Settings.Default.Word );
+            }
         }
     }
 }

@@ -60,11 +60,11 @@ namespace CombinifyWpf {
             InitializeComponent();
             //this.Hide();
             ConfigureTrayIcon();
-            if( string.IsNullOrWhiteSpace( Properties.Settings.Default.Id ) ) {
+            if( string.IsNullOrWhiteSpace( Properties.Settings.Default.Guid ) ) {
                 RandomNumberGenerator rng = new RNGCryptoServiceProvider();
                 byte[] tokenData = new byte[ 32 ];
                 rng.GetBytes( tokenData );
-                Properties.Settings.Default.Id = Convert.ToBase64String( tokenData );
+                Properties.Settings.Default.Guid = Convert.ToBase64String( tokenData );
                 Properties.Settings.Default.Save();
             }
 

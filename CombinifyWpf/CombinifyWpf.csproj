@@ -79,9 +79,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Controls\AdHocTreeView.xaml.cs">
-      <DependentUpon>AdHocTreeView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Converters\BoolVisibilityConverter.cs" />
     <Compile Include="Converters\HeaderToImageConverter.cs" />
     <Compile Include="Converters\NegateBoolVisibilityConverter.cs" />
@@ -123,10 +120,6 @@
     <Compile Include="ViewModels\ExtendedPropertyChangedEventArgs.cs" />
     <Compile Include="Utils\Flattener.cs" />
     <Compile Include="Utils\ProjectIO.cs" />
-    <Page Include="Controls\AdHocTreeView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Controls\WatchList\SectionHeader.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

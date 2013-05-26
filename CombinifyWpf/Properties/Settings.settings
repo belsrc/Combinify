@@ -17,20 +17,23 @@
     <Setting Name="Ssl" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="Id" Type="System.String" Scope="User">
+    <Setting Name="Guid" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="Host" Type="System.String" Scope="User">
+    <Setting Name="Path" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="Name" Type="System.String" Scope="User">
+    <Setting Name="Nick" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="Pass" Type="System.String" Scope="User">
+    <Setting Name="Word" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="Port" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">22</Value>
+    </Setting>
+    <Setting Name="Sign" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
     </Setting>
   </Settings>
 </SettingsFile>

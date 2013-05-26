@@ -86,48 +86,48 @@ namespace CombinifyWpf.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string Id {
+        public string Guid {
             get {
-                return ((string)(this["Id"]));
+                return ((string)(this["Guid"]));
             }
             set {
-                this["Id"] = value;
+                this["Guid"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string Host {
+        public string Path {
             get {
-                return ((string)(this["Host"]));
+                return ((string)(this["Path"]));
             }
             set {
-                this["Host"] = value;
+                this["Path"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string Name {
+        public string Nick {
             get {
-                return ((string)(this["Name"]));
+                return ((string)(this["Nick"]));
             }
             set {
-                this["Name"] = value;
+                this["Nick"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string Pass {
+        public string Word {
             get {
-                return ((string)(this["Pass"]));
+                return ((string)(this["Word"]));
             }
             set {
-                this["Pass"] = value;
+                this["Word"] = value;
             }
         }
         
@@ -140,6 +140,18 @@ namespace CombinifyWpf.Properties {
             }
             set {
                 this["Port"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string Sign {
+            get {
+                return ((string)(this["Sign"]));
+            }
+            set {
+                this["Sign"] = value;
             }
         }
     }
