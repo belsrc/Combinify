@@ -239,14 +239,14 @@
                                VerticalAlignment="Top"
                                FontSize="16"
                                FontWeight="Light" />
-                        <MetroUiToolkit:MetroTextBox HorizontalAlignment="Left"
+                        <PasswordBox HorizontalAlignment="Left"
                                                      Margin="266,92,0,0"
                                                      Name="Password"
                                                      VerticalAlignment="Top"
                                                      Width="176"
                                                      Padding="5,3"
-                                                     Text=""
-                                                     Background="White" />
+                                                     Background="White"
+                                     PasswordChar="☻" />
                     </Grid>
                 </MetroUiToolkit:MetroTabItem>
             </TabControl>

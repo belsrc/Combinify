@@ -77,9 +77,9 @@ namespace CombinifyWpf {
         }
 
         private void Window_Closing( object sender, System.ComponentModel.CancelEventArgs e ) {
-            if( Password.Text.Length > 0 ) {
+            if( Password.Password.Length > 0 ) {
                 var cryptor = new Encrypt( EncryptType.Rijndael, Properties.Settings.Default.Guid.Substring( 0, 24 ) );
-                Properties.Settings.Default.Word = cryptor.EncryptString( Password.Text );
+                Properties.Settings.Default.Word = cryptor.EncryptString( Password.Password );
                 Properties.Settings.Default.Sign = Convert.ToBase64String( cryptor.Vector );
                 Properties.Settings.Default.Save();
             }
@@ -89,7 +89,7 @@ namespace CombinifyWpf {
             if( !string.IsNullOrWhiteSpace( Properties.Settings.Default.Word ) ) {
                 byte[] vect = Convert.FromBase64String( Properties.Settings.Default.Sign );
                 var cryptor = new Decrypt( EncryptType.Rijndael, vect, Properties.Settings.Default.Guid.Substring( 0, 24 ) );
-                Password.Text = cryptor.DecryptString( Properties.Settings.Default.Word );
+                Password.Password = cryptor.DecryptString( Properties.Settings.Default.Word );
             }
         }
     }
