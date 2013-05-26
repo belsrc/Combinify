@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>Summary - Coverage Report</title>
+<link rel="stylesheet" type="text/css" href="report.css" />
+</head><body><div class="container">
+<h1>Summary</h1>
+<table class="overview">
+<colgroup>
+<col width="135" />
+<col />
+</colgroup>
+<tbody>
+<tr><th>Generated on:</th><td>5/19/2013 - 6:25:35 PM</td></tr>
+<tr><th>Parser:</th><td>OpenCoverParser</td></tr>
+<tr><th>Assemblies:</th><td>2</td></tr>
+<tr><th>Classes:</th><td>41</td></tr>
+<tr><th>Files:</th><td>42</td></tr>
+<tr><th>Coverage:</th><td>2.4%</td></tr>
+<tr><th>Covered lines:</th><td>53</td></tr>
+<tr><th>Uncovered lines:</th><td>2140</td></tr>
+<tr><th>Coverable lines:</th><td>2193</td></tr>
+<tr><th>Total lines:</th><td>6297</td></tr>
+</tbody>
+</table>
+<h1>Assemblies</h1>
+<script type="text/javascript">
+/* <![CDATA[ */
+document.write('<div id="showcustomizebox" class="customizebox"><input href="#" id="showcustomizeboxbutton" value="Enable filtering" title="This may take some time since the report contains many classes." type="submit" /></div><div id="customizebox" class="customizebox hidden"><div><a href="#" data-bind="click: collapseAll">Collapse all</a> | <a href="#" data-bind="click: expandAll">Expand all</a></div><div class="center"><span data-bind="text: groupingDescription"></span><br />Grouping: <div id="namespaceslider"></div></div> <div class="right">Filter: <input type="text" data-bind="value: filter, valueUpdate: \'afterkeydown\'" /></div></div>');
+/* ]]> */
+</script>
+<script type="text/html" id="assembly-template">
+<tr data-bind="visible: visible, css: { namespace: parent != null }"><th><a href="#" data-bind="text: name, click: toggleCollapse, attr: { class: collapsed() ? 'collapsed' : 'expanded' }" title="Collapse/Expand"> </a></th><th class="right" data-bind="text: coveredLines"></th><th class="right" data-bind="text: uncoveredLines"></th><th class="right" data-bind="text: coverableLines"></th><th class="right" data-bind="text: isNaN(coverage()) ? '' : coverage() + '%', attr: { title: isNaN(coverage()) ? '' : coverageType }"></th><th><table class="coverage"><tr><td class="green" data-bind="style: { width: Math.round(coverage()) + 'px' }, visible: !isNaN(coverage()) && Math.round(coverage()) > 0">&nbsp;</td><td class="red"data-bind="style: { width: (100 - Math.round(coverage())) + 'px' }, visible: !isNaN(coverage()) && 100 - Math.round(coverage()) > 0">&nbsp;</td><td class="gray" style="width: 100px;" data-bind="visible: isNaN(coverage())">&nbsp;</td></tr></table></th></tr>
+<!-- ko template: { name: function(element) { return element.isNamespace ? 'assembly-template' : 'class-template'; } , foreach: subelements } -->
+<!-- /ko -->
+</script>
+<script type="text/html" id="class-template">
+<tr data-bind="visible: visible, css: { namespace: parent().parent != null }"><td><a data-bind="text: name, attr: { href: reportPath }, visible: reportPath !== ''"></a><span data-bind="text: name, visible: reportPath === ''"></span></td><td class="right" data-bind="text: coveredLines"></td><td class="right" data-bind="text: uncoveredLines"></td><td class="right" data-bind="text: coverableLines"></td><td class="right" data-bind="text: isNaN(coverage()) ? '' : coverage() + '%', attr: { title: isNaN(coverage()) ? '' : coverageType }"></td><td><table class="coverage"><tr><td class="green" data-bind="style: { width: Math.round(coverage()) + 'px' }, visible: !isNaN(coverage()) && Math.round(coverage()) > 0">&nbsp;</td><td class="red"data-bind="style: { width: (100 - Math.round(coverage())) + 'px' }, visible: !isNaN(coverage()) && 100 - Math.round(coverage()) > 0">&nbsp;</td><td class="gray" style="width: 100px;" data-bind="visible: isNaN(coverage())">&nbsp;</td></tr></table></td></tr>
+</script>
+<table id="summaryTable" class="overview">
+<colgroup>
+<col />
+<col width="90" />
+<col width="105" />
+<col width="100" />
+<col width="60" />
+<col width="112" />
+</colgroup>
+<thead><tr><th><a href="#" data-bind="attr: { class: sortby() === 'name' ? 'sortactive' + '_' + sortorder() : 'sortinactive_asc' }, click: function(data, event) { changeSorting(data, event, 'name') }">Name</a></th><th class="right"><a href="#" data-bind="attr: { class: sortby() === 'covered' ? 'sortactive' + '_' + sortorder() : 'sortinactive_asc' }, click: function(data, event) { changeSorting(data, event, 'covered') }">Covered</a></th><th class="right"><a href="#" data-bind="attr: { class: sortby() === 'uncovered' ? 'sortactive' + '_' + sortorder() : 'sortinactive_asc' }, click: function(data, event) { changeSorting(data, event, 'uncovered') }">Uncovered</a></th><th class="right"><a href="#" data-bind="attr: { class: sortby() === 'coverable' ? 'sortactive' + '_' + sortorder() : 'sortinactive_asc' }, click: function(data, event) { changeSorting(data, event, 'coverable') }">Coverable</a></th><th class="center" colspan="2"><a href="#" data-bind="attr: { class: sortby() === 'coverage' ? 'sortactive' + '_' + sortorder() : 'sortinactive_asc' }, click: function(data, event) { changeSorting(data, event, 'coverage') }">Coverage</a></th></tr></thead>
+<tbody data-bind="template: { name: 'assembly-template', foreach: assemblies }">
+<tr><th>CombinifyWpf</th><th class="right">31</th><th class="right">2134</th><th class="right">2165</th><th title="LineCoverage" class="right">1.4%</th><th><table class="coverage"><tr><td class="green" style="width: 1px;">&nbsp;</td><td class="red" style="width: 99px;">&nbsp;</td></tr></table></th></tr>
+<tr><td><a href="CombinifyWpf_App.htm">CombinifyWpf.App</a></td><td class="right">0</td><td class="right">7</td><td class="right">7</td><td title="LineCoverage" class="right">0%</td><td><table class="coverage"><tr><td class="red" style="width: 100px;">&nbsp;</td></tr></table></td></tr>
+<tr><td><a href="CombinifyWpf_AdHocTreeView.htm">CombinifyWpf.Controls.AdHocTreeView</a></td><td class="right">0</td><td class="right">3</td><td class="right">3</td><td title="LineCoverage" class="right">0%</td><td><table class="coverage"><tr><td class="red" style="width: 100px;">&nbsp;</td></tr></table></td></tr>
+<tr><td><a href="CombinifyWpf_BaseConverter.htm">CombinifyWpf.Converters.BaseConverter</a></td><td class="right">0</td><td class="right">3</td><td class="right">3</td><td title="LineCoverage" class="right">0%</td><td><table class="coverage"><tr><td class="red" style="width: 100px;">&nbsp;</td></tr></table></td></tr>
+<tr><td><a href="CombinifyWpf_BoolVisibilityConverter.htm">CombinifyWpf.Converters.BoolVisibilityConverter</a></td><td class="right">0</td><td class="right">15</td><td class="right">15</td><td title="LineCoverage" class="right">0%</td><td><table class="coverage"><tr><td class="red" style="width: 100px;">&nbsp;</td></tr></table></td></tr>
+<tr><td><a href="CombinifyWpf_FileSizeConverter.htm">CombinifyWpf.Converters.FileSizeConverter</a></td><td class="right">0</td><td class="right">21</td><td class="right">21</td><td title="LineCoverage" class="right">0%</td><td><table class="coverage"><tr><td class="red" style="width: 100px;">&nbsp;</td></tr></table></td></tr>
+<tr><td><a href="CombinifyWpf_HeaderToImageConverter.htm">CombinifyWpf.Converters.HeaderToImageConverter</a></td><td class="right">0</td><td class="right">22</td><td class="right">22</td><td title="LineCoverage" class="right">0%</td><td><table class="coverage"><tr><td class="red" style="width: 100px;">&nbsp;</td></tr></table></td></tr>
+<tr><td><a href="CombinifyWpf_NegateBoolVisibilityConverter.htm">CombinifyWpf.Converters.NegateBoolVisibilityConverter</a></td><td class="right">0</td><td class="right">15</td><td class="right">15</td><td title="LineCoverage" class="right">0%</td><td><table class="coverage"><tr><td class="red" style="width: 100px;">&nbsp;</td></tr></table></td></tr>
+<tr><td><a href="CombinifyWpf_PercentConverter.htm">CombinifyWpf.Converters.PercentConverter</a></td><td class="right">0</td><td class="right">16</td><td class="right">16</td><td title="LineCoverage" class="right">0%</td><td><table class="coverage"><tr><td class="red" style="width: 100px;">&nbsp;</td></tr></table></td></tr>
+<tr><td><a href="CombinifyWpf_TimeConverter.htm">CombinifyWpf.Converters.TimeConverter</a></td><td class="right">0</td><td class="right">11</td><td class="right">11</td><td title="LineCoverage" class="right">0%</td><td><table class="coverage"><tr><td class="red" style="width: 100px;">&nbsp;</td></tr></table></td></tr>
+<tr><td><a href="CombinifyWpf_ErrorMockup.htm">CombinifyWpf.ErrorMockup</a></td><td class="right">0</td><td class="right">74</td><td class="right">74</td><td title="LineCoverage" class="right">0%</td><td><table class="coverage"><tr><td class="red" style="width: 100px;">&nbsp;</td></tr></table></td></tr>
+<tr><td><a href="CombinifyWpf_FolderSelectDialog.htm">CombinifyWpf.FolderSelectDialog</a></td><td class="right">0</td><td class="right">139</td><td class="right">139</td><td title="LineCoverage" class="right">0%</td><td><table class="coverage"><tr><td class="red" style="width: 100px;">&nbsp;</td></tr></table></td></tr>
+<tr><td><a href="CombinifyWpf_MainWindow.htm">CombinifyWpf.MainWindow</a></td><td class="right">0</td><td class="right">239</td><td class="right">239</td><td title="LineCoverage" class="right">0%</td><td><table class="coverage"><tr><td class="red" style="width: 100px;">&nbsp;</td></tr></table></td></tr>
+<tr><td><a href="CombinifyWpf_Project.htm">CombinifyWpf.Models.Project</a></td><td class="right">0</td><td class="right">6</td><td class="right">6</td><td title="LineCoverage" class="right">0%</td><td><table class="coverage"><tr><td class="red" style="width: 100px;">&nbsp;</td></tr></table></td></tr>
+<tr><td><a href="CombinifyWpf_UserSettings.htm">CombinifyWpf.Models.UserSettings</a></td><td class="right">0</td><td class="right">5</td><td class="right">5</td><td title="LineCoverage" class="right">0%</td><td><table class="coverage"><tr><td class="red" style="width: 100px;">&nbsp;</td></tr></table></td></tr>
+<tr><td><a href="CombinifyWpf_OptionsWindow.htm">CombinifyWpf.OptionsWindow</a></td><td class="right">0</td><td class="right">28</td><td class="right">28</td><td title="LineCoverage" class="right">0%</td><td><table class="coverage"><tr><td class="red" style="width: 100px;">&nbsp;</td></tr></table></td></tr>
+<tr><td><a href="CombinifyWpf_Resources.htm">CombinifyWpf.Properties.Resources</a></td><td class="right">0</td><td class="right">16</td><td class="right">16</td><td title="LineCoverage" class="right">0%</td><td><table class="coverage"><tr><td class="red" style="width: 100px;">&nbsp;</td></tr></table></td></tr>
+<tr><td><a href="CombinifyWpf_Settings.htm">CombinifyWpf.Properties.Settings</a></td><td class="right">0</td><td class="right">4</td><td class="right">4</td><td title="LineCoverage" class="right">0%</td><td><table class="coverage"><tr><td class="red" style="width: 100px;">&nbsp;</td></tr></table></td></tr>
+<tr><td><a href="CombinifyWpf_SectionHeader.htm">CombinifyWpf.SectionHeader</a></td><td class="right">0</td><td class="right">30</td><td class="right">30</td><td title="LineCoverage" class="right">0%</td><td><table class="coverage"><tr><td class="red" style="width: 100px;">&nbsp;</td></tr></table></td></tr>
+<tr><td><a href="CombinifyWpf_StatusBar.htm">CombinifyWpf.StatusBar</a></td><td class="right">0</td><td class="right">15</td><td class="right">15</td><td title="LineCoverage" class="right">0%</td><td><table class="coverage"><tr><td class="red" style="width: 100px;">&nbsp;</td></tr></table></td></tr>
+<tr><td><a href="CombinifyWpf_StripMenuVertical.htm">CombinifyWpf.StripMenuVertical</a></td><td class="right">0</td><td class="right">177</td><td class="right">177</td><td title="LineCoverage" class="right">0%</td><td><table class="coverage"><tr><td class="red" style="width: 100px;">&nbsp;</td></tr></table></td></tr>
+<tr><td><a href="CombinifyWpf_ColorCompressor.htm">CombinifyWpf.Utils.ColorCompressor</a></td><td class="right">0</td><td class="right">33</td><td class="right">33</td><td title="LineCoverage" class="right">0%</td><td><table class="coverage"><tr><td class="red" style="width: 100px;">&nbsp;</td></tr></table></td></tr>
+<tr><td><a href="CombinifyWpf_ColorConverter.htm">CombinifyWpf.Utils.ColorConverter</a></td><td class="right">31</td><td class="right">2</td><td class="right">33</td><td title="LineCoverage" class="right">93.9%</td><td><table class="coverage"><tr><td class="green" style="width: 94px;">&nbsp;</td><td class="red" style="width: 6px;">&nbsp;</td></tr></table></td></tr>
+<tr><td><a href="CombinifyWpf_Comber.htm">CombinifyWpf.Utils.Comber</a></td><td class="right">0</td><td class="right">4</td><td class="right">4</td><td title="LineCoverage" class="right">0%</td><td><table class="coverage"><tr><td class="red" style="width: 100px;">&nbsp;</td></tr></table></td></tr>
+<tr><td><a href="CombinifyWpf_Flattener.htm">CombinifyWpf.Utils.Flattener</a></td><td class="right">0</td><td class="right">56</td><td class="right">56</td><td title="LineCoverage" class="right">0%</td><td><table class="coverage"><tr><td class="red" style="width: 100px;">&nbsp;</td></tr></table></td></tr>
+<tr><td><a href="CombinifyWpf_FtpConnection.htm">CombinifyWpf.Utils.FtpConnection</a></td><td class="right">0</td><td class="right">434</td><td class="right">434</td><td title="LineCoverage" class="right">0%</td><td><table class="coverage"><tr><td class="red" style="width: 100px;">&nbsp;</td></tr></table></td></tr>
+<tr><td><a href="CombinifyWpf_FtpDirectory.htm">CombinifyWpf.Utils.FtpDirectory</a></td><td class="right">0</td><td class="right">9</td><td class="right">9</td><td title="LineCoverage" class="right">0%</td><td><table class="coverage"><tr><td class="red" style="width: 100px;">&nbsp;</td></tr></table></td></tr>
+<tr><td><a href="CombinifyWpf_FtpFile.htm">CombinifyWpf.Utils.FtpFile</a></td><td class="right">0</td><td class="right">6</td><td class="right">6</td><td title="LineCoverage" class="right">0%</td><td><table class="coverage"><tr><td class="red" style="width: 100px;">&nbsp;</td></tr></table></td></tr>
+<tr><td><a href="CombinifyWpf_FtpItem.htm">CombinifyWpf.Utils.FtpItem</a></td><td class="right">0</td><td class="right">27</td><td class="right">27</td><td title="LineCoverage" class="right">0%</td><td><table class="coverage"><tr><td class="red" style="width: 100px;">&nbsp;</td></tr></table></td></tr>
+<tr><td><a href="CombinifyWpf_Minifier.htm">CombinifyWpf.Utils.Minifier</a></td><td class="right">0</td><td class="right">172</td><td class="right">172</td><td title="LineCoverage" class="right">0%</td><td><table class="coverage"><tr><td class="red" style="width: 100px;">&nbsp;</td></tr></table></td></tr>
+<tr><td><a href="CombinifyWpf_Processor.htm">CombinifyWpf.Utils.Processor</a></td><td class="right">0</td><td class="right">116</td><td class="right">116</td><td title="LineCoverage" class="right">0%</td><td><table class="coverage"><tr><td class="red" style="width: 100px;">&nbsp;</td></tr></table></td></tr>
+<tr><td><a href="CombinifyWpf_ProjectIO.htm">CombinifyWpf.Utils.ProjectIO</a></td><td class="right">0</td><td class="right">84</td><td class="right">84</td><td title="LineCoverage" class="right">0%</td><td><table class="coverage"><tr><td class="red" style="width: 100px;">&nbsp;</td></tr></table></td></tr>
+<tr><td><a href="CombinifyWpf_SelectorCombiner.htm">CombinifyWpf.Utils.SelectorCombiner</a></td><td class="right">0</td><td class="right">4</td><td class="right">4</td><td title="LineCoverage" class="right">0%</td><td><table class="coverage"><tr><td class="red" style="width: 100px;">&nbsp;</td></tr></table></td></tr>
+<tr><td><a href="CombinifyWpf_BindableBase.htm">CombinifyWpf.ViewModels.BindableBase</a></td><td class="right">0</td><td class="right">56</td><td class="right">56</td><td title="LineCoverage" class="right">0%</td><td><table class="coverage"><tr><td class="red" style="width: 100px;">&nbsp;</td></tr></table></td></tr>
+<tr><td><a href="CombinifyWpf_ExtendedPropertyChangedEventArgs.htm">CombinifyWpf.ViewModels.ExtendedPropertyChangedEventArgs</a></td><td class="right">0</td><td class="right">6</td><td class="right">6</td><td title="LineCoverage" class="right">0%</td><td><table class="coverage"><tr><td class="red" style="width: 100px;">&nbsp;</td></tr></table></td></tr>
+<tr><td><a href="CombinifyWpf_ProjectViewModel.htm">CombinifyWpf.ViewModels.ProjectViewModel</a></td><td class="right">0</td><td class="right">131</td><td class="right">131</td><td title="LineCoverage" class="right">0%</td><td><table class="coverage"><tr><td class="red" style="width: 100px;">&nbsp;</td></tr></table></td></tr>
+<tr><td><a href="CombinifyWpf_SettingsViewModel.htm">CombinifyWpf.ViewModels.SettingsViewModel</a></td><td class="right">0</td><td class="right">20</td><td class="right">20</td><td title="LineCoverage" class="right">0%</td><td><table class="coverage"><tr><td class="red" style="width: 100px;">&nbsp;</td></tr></table></td></tr>
+<tr><td><a href="CombinifyWpf_WatchedItem.htm">CombinifyWpf.WatchedItem</a></td><td class="right">0</td><td class="right">32</td><td class="right">32</td><td title="LineCoverage" class="right">0%</td><td><table class="coverage"><tr><td class="red" style="width: 100px;">&nbsp;</td></tr></table></td></tr>
+<tr><td><a href="CombinifyWpf_WatchList.htm">CombinifyWpf.WatchList</a></td><td class="right">0</td><td class="right">81</td><td class="right">81</td><td title="LineCoverage" class="right">0%</td><td><table class="coverage"><tr><td class="red" style="width: 100px;">&nbsp;</td></tr></table></td></tr>
+<tr><td><a href="CombinifyWpf_GeneratedInternalTypeHelper.htm">XamlGeneratedNamespace.GeneratedInternalTypeHelper</a></td><td class="right">0</td><td class="right">15</td><td class="right">15</td><td title="LineCoverage" class="right">0%</td><td><table class="coverage"><tr><td class="red" style="width: 100px;">&nbsp;</td></tr></table></td></tr>
+<tr><th>CombiTests</th><th class="right">22</th><th class="right">6</th><th class="right">28</th><th title="LineCoverage" class="right">78.5%</th><th><table class="coverage"><tr><td class="green" style="width: 78px;">&nbsp;</td><td class="red" style="width: 22px;">&nbsp;</td></tr></table></th></tr>
+<tr><td><a href="CombiTests_ColorCompressTest.htm">CombiTests.ColorCompressTest</a></td><td class="right">0</td><td class="right">6</td><td class="right">6</td><td title="LineCoverage" class="right">0%</td><td><table class="coverage"><tr><td class="red" style="width: 100px;">&nbsp;</td></tr></table></td></tr>
+<tr><td><a href="CombiTests_ColorConvertTest.htm">CombiTests.ColorConvertTest</a></td><td class="right">22</td><td class="right">0</td><td class="right">22</td><td title="LineCoverage" class="right">100%</td><td><table class="coverage"><tr><td class="green" style="width: 100px;">&nbsp;</td></tr></table></td></tr>
+</tbody>
+</table>
+<script type="text/javascript">
+/* <![CDATA[ */
+var assemblies = [
+  {
+    "name" : 'CombinifyWpf',
+    "classes" : [
+    { "name" : 'CombinifyWpf.App', "reportPath" : 'CombinifyWpf_App.htm', "coveredLines" : 0, "uncoveredLines" : 7, "coverableLines" : 7, "coverageType" : 'LineCoverage', "methodCoverage" : '' },
+    { "name" : 'CombinifyWpf.Controls.AdHocTreeView', "reportPath" : 'CombinifyWpf_AdHocTreeView.htm', "coveredLines" : 0, "uncoveredLines" : 3, "coverableLines" : 3, "coverageType" : 'LineCoverage', "methodCoverage" : '' },
+    { "name" : 'CombinifyWpf.Converters.BaseConverter', "reportPath" : 'CombinifyWpf_BaseConverter.htm', "coveredLines" : 0, "uncoveredLines" : 3, "coverableLines" : 3, "coverageType" : 'LineCoverage', "methodCoverage" : '' },
+    { "name" : 'CombinifyWpf.Converters.BoolVisibilityConverter', "reportPath" : 'CombinifyWpf_BoolVisibilityConverter.htm', "coveredLines" : 0, "uncoveredLines" : 15, "coverableLines" : 15, "coverageType" : 'LineCoverage', "methodCoverage" : '' },
+    { "name" : 'CombinifyWpf.Converters.FileSizeConverter', "reportPath" : 'CombinifyWpf_FileSizeConverter.htm', "coveredLines" : 0, "uncoveredLines" : 21, "coverableLines" : 21, "coverageType" : 'LineCoverage', "methodCoverage" : '' },
+    { "name" : 'CombinifyWpf.Converters.HeaderToImageConverter', "reportPath" : 'CombinifyWpf_HeaderToImageConverter.htm', "coveredLines" : 0, "uncoveredLines" : 22, "coverableLines" : 22, "coverageType" : 'LineCoverage', "methodCoverage" : '' },
+    { "name" : 'CombinifyWpf.Converters.NegateBoolVisibilityConverter', "reportPath" : 'CombinifyWpf_NegateBoolVisibilityConverter.htm', "coveredLines" : 0, "uncoveredLines" : 15, "coverableLines" : 15, "coverageType" : 'LineCoverage', "methodCoverage" : '' },
+    { "name" : 'CombinifyWpf.Converters.PercentConverter', "reportPath" : 'CombinifyWpf_PercentConverter.htm', "coveredLines" : 0, "uncoveredLines" : 16, "coverableLines" : 16, "coverageType" : 'LineCoverage', "methodCoverage" : '' },
+    { "name" : 'CombinifyWpf.Converters.TimeConverter', "reportPath" : 'CombinifyWpf_TimeConverter.htm', "coveredLines" : 0, "uncoveredLines" : 11, "coverableLines" : 11, "coverageType" : 'LineCoverage', "methodCoverage" : '' },
+    { "name" : 'CombinifyWpf.ErrorMockup', "reportPath" : 'CombinifyWpf_ErrorMockup.htm', "coveredLines" : 0, "uncoveredLines" : 74, "coverableLines" : 74, "coverageType" : 'LineCoverage', "methodCoverage" : '' },
+    { "name" : 'CombinifyWpf.FolderSelectDialog', "reportPath" : 'CombinifyWpf_FolderSelectDialog.htm', "coveredLines" : 0, "uncoveredLines" : 139, "coverableLines" : 139, "coverageType" : 'LineCoverage', "methodCoverage" : '' },
+    { "name" : 'CombinifyWpf.MainWindow', "reportPath" : 'CombinifyWpf_MainWindow.htm', "coveredLines" : 0, "uncoveredLines" : 239, "coverableLines" : 239, "coverageType" : 'LineCoverage', "methodCoverage" : '' },
+    { "name" : 'CombinifyWpf.Models.Project', "reportPath" : 'CombinifyWpf_Project.htm', "coveredLines" : 0, "uncoveredLines" : 6, "coverableLines" : 6, "coverageType" : 'LineCoverage', "methodCoverage" : '' },
+    { "name" : 'CombinifyWpf.Models.UserSettings', "reportPath" : 'CombinifyWpf_UserSettings.htm', "coveredLines" : 0, "uncoveredLines" : 5, "coverableLines" : 5, "coverageType" : 'LineCoverage', "methodCoverage" : '' },
+    { "name" : 'CombinifyWpf.OptionsWindow', "reportPath" : 'CombinifyWpf_OptionsWindow.htm', "coveredLines" : 0, "uncoveredLines" : 28, "coverableLines" : 28, "coverageType" : 'LineCoverage', "methodCoverage" : '' },
+    { "name" : 'CombinifyWpf.Properties.Resources', "reportPath" : 'CombinifyWpf_Resources.htm', "coveredLines" : 0, "uncoveredLines" : 16, "coverableLines" : 16, "coverageType" : 'LineCoverage', "methodCoverage" : '' },
+    { "name" : 'CombinifyWpf.Properties.Settings', "reportPath" : 'CombinifyWpf_Settings.htm', "coveredLines" : 0, "uncoveredLines" : 4, "coverableLines" : 4, "coverageType" : 'LineCoverage', "methodCoverage" : '' },
+    { "name" : 'CombinifyWpf.SectionHeader', "reportPath" : 'CombinifyWpf_SectionHeader.htm', "coveredLines" : 0, "uncoveredLines" : 30, "coverableLines" : 30, "coverageType" : 'LineCoverage', "methodCoverage" : '' },
+    { "name" : 'CombinifyWpf.StatusBar', "reportPath" : 'CombinifyWpf_StatusBar.htm', "coveredLines" : 0, "uncoveredLines" : 15, "coverableLines" : 15, "coverageType" : 'LineCoverage', "methodCoverage" : '' },
+    { "name" : 'CombinifyWpf.StripMenuVertical', "reportPath" : 'CombinifyWpf_StripMenuVertical.htm', "coveredLines" : 0, "uncoveredLines" : 177, "coverableLines" : 177, "coverageType" : 'LineCoverage', "methodCoverage" : '' },
+    { "name" : 'CombinifyWpf.Utils.ColorCompressor', "reportPath" : 'CombinifyWpf_ColorCompressor.htm', "coveredLines" : 0, "uncoveredLines" : 33, "coverableLines" : 33, "coverageType" : 'LineCoverage', "methodCoverage" : '' },
+    { "name" : 'CombinifyWpf.Utils.ColorConverter', "reportPath" : 'CombinifyWpf_ColorConverter.htm', "coveredLines" : 31, "uncoveredLines" : 2, "coverableLines" : 33, "coverageType" : 'LineCoverage', "methodCoverage" : '' },
+    { "name" : 'CombinifyWpf.Utils.Comber', "reportPath" : 'CombinifyWpf_Comber.htm', "coveredLines" : 0, "uncoveredLines" : 4, "coverableLines" : 4, "coverageType" : 'LineCoverage', "methodCoverage" : '' },
+    { "name" : 'CombinifyWpf.Utils.Flattener', "reportPath" : 'CombinifyWpf_Flattener.htm', "coveredLines" : 0, "uncoveredLines" : 56, "coverableLines" : 56, "coverageType" : 'LineCoverage', "methodCoverage" : '' },
+    { "name" : 'CombinifyWpf.Utils.FtpConnection', "reportPath" : 'CombinifyWpf_FtpConnection.htm', "coveredLines" : 0, "uncoveredLines" : 434, "coverableLines" : 434, "coverageType" : 'LineCoverage', "methodCoverage" : '' },
+    { "name" : 'CombinifyWpf.Utils.FtpDirectory', "reportPath" : 'CombinifyWpf_FtpDirectory.htm', "coveredLines" : 0, "uncoveredLines" : 9, "coverableLines" : 9, "coverageType" : 'LineCoverage', "methodCoverage" : '' },
+    { "name" : 'CombinifyWpf.Utils.FtpFile', "reportPath" : 'CombinifyWpf_FtpFile.htm', "coveredLines" : 0, "uncoveredLines" : 6, "coverableLines" : 6, "coverageType" : 'LineCoverage', "methodCoverage" : '' },
+    { "name" : 'CombinifyWpf.Utils.FtpItem', "reportPath" : 'CombinifyWpf_FtpItem.htm', "coveredLines" : 0, "uncoveredLines" : 27, "coverableLines" : 27, "coverageType" : 'LineCoverage', "methodCoverage" : '' },
+    { "name" : 'CombinifyWpf.Utils.Minifier', "reportPath" : 'CombinifyWpf_Minifier.htm', "coveredLines" : 0, "uncoveredLines" : 172, "coverableLines" : 172, "coverageType" : 'LineCoverage', "methodCoverage" : '' },
+    { "name" : 'CombinifyWpf.Utils.Processor', "reportPath" : 'CombinifyWpf_Processor.htm', "coveredLines" : 0, "uncoveredLines" : 116, "coverableLines" : 116, "coverageType" : 'LineCoverage', "methodCoverage" : '' },
+    { "name" : 'CombinifyWpf.Utils.ProjectIO', "reportPath" : 'CombinifyWpf_ProjectIO.htm', "coveredLines" : 0, "uncoveredLines" : 84, "coverableLines" : 84, "coverageType" : 'LineCoverage', "methodCoverage" : '' },
+    { "name" : 'CombinifyWpf.Utils.SelectorCombiner', "reportPath" : 'CombinifyWpf_SelectorCombiner.htm', "coveredLines" : 0, "uncoveredLines" : 4, "coverableLines" : 4, "coverageType" : 'LineCoverage', "methodCoverage" : '' },
+    { "name" : 'CombinifyWpf.ViewModels.BindableBase', "reportPath" : 'CombinifyWpf_BindableBase.htm', "coveredLines" : 0, "uncoveredLines" : 56, "coverableLines" : 56, "coverageType" : 'LineCoverage', "methodCoverage" : '' },
+    { "name" : 'CombinifyWpf.ViewModels.ExtendedPropertyChangedEventArgs', "reportPath" : 'CombinifyWpf_ExtendedPropertyChangedEventArgs.htm', "coveredLines" : 0, "uncoveredLines" : 6, "coverableLines" : 6, "coverageType" : 'LineCoverage', "methodCoverage" : '' },
+    { "name" : 'CombinifyWpf.ViewModels.ProjectViewModel', "reportPath" : 'CombinifyWpf_ProjectViewModel.htm', "coveredLines" : 0, "uncoveredLines" : 131, "coverableLines" : 131, "coverageType" : 'LineCoverage', "methodCoverage" : '' },
+    { "name" : 'CombinifyWpf.ViewModels.SettingsViewModel', "reportPath" : 'CombinifyWpf_SettingsViewModel.htm', "coveredLines" : 0, "uncoveredLines" : 20, "coverableLines" : 20, "coverageType" : 'LineCoverage', "methodCoverage" : '' },
+    { "name" : 'CombinifyWpf.WatchedItem', "reportPath" : 'CombinifyWpf_WatchedItem.htm', "coveredLines" : 0, "uncoveredLines" : 32, "coverableLines" : 32, "coverageType" : 'LineCoverage', "methodCoverage" : '' },
+    { "name" : 'CombinifyWpf.WatchList', "reportPath" : 'CombinifyWpf_WatchList.htm', "coveredLines" : 0, "uncoveredLines" : 81, "coverableLines" : 81, "coverageType" : 'LineCoverage', "methodCoverage" : '' },
+    { "name" : 'XamlGeneratedNamespace.GeneratedInternalTypeHelper', "reportPath" : 'CombinifyWpf_GeneratedInternalTypeHelper.htm', "coveredLines" : 0, "uncoveredLines" : 15, "coverableLines" : 15, "coverageType" : 'LineCoverage', "methodCoverage" : '' },
+  ]},
+  {
+    "name" : 'CombiTests',
+    "classes" : [
+    { "name" : 'CombiTests.ColorCompressTest', "reportPath" : 'CombiTests_ColorCompressTest.htm', "coveredLines" : 0, "uncoveredLines" : 6, "coverableLines" : 6, "coverageType" : 'LineCoverage', "methodCoverage" : '' },
+    { "name" : 'CombiTests.ColorConvertTest', "reportPath" : 'CombiTests_ColorConvertTest.htm', "coveredLines" : 22, "uncoveredLines" : 0, "coverableLines" : 22, "coverageType" : 'LineCoverage', "methodCoverage" : '' },
+  ]},
+];
+/* ]]> */
+</script>
+<div class="footer">Generated by: ReportGenerator 1.8.0.0<br />5/19/2013 - 6:25:35 PM<br /><a href="http://www.palmmedia.de">www.palmmedia.de</a></div></div>
+<script type="text/javascript" src="combined.js"></script>
+</body></html>
