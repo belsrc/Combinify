@@ -3,6 +3,7 @@
 *.dotCover
 *.exclude
 *.FxCop
+*.StyleCop
 *.ilk
 *.manifest
 *.meta

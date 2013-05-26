@@ -1,0 +1,113 @@
+﻿<UserControl x:Class="CombinifyWpf.StatusBar"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:converter="clr-namespace:CombinifyWpf.Converters"
+             mc:Ignorable="d"
+             d:DesignHeight="30"
+             d:DesignWidth="552"
+             FontWeight="Thin"
+             Name="me">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <StackPanel Orientation="Horizontal"
+                    Grid.Column="0"
+                    HorizontalAlignment="Left">
+            <Label Content="combined size: "
+                   HorizontalAlignment="Left"
+                   VerticalAlignment="Stretch"
+                   VerticalContentAlignment="Center"
+                   Margin="0"
+                   Padding="0"
+                   FontFamily="Open Sans"
+                   FontSize="12"
+                   Foreground="#FF777777" />
+            <Label Name="lblOriginal"
+                   Content="{Binding OriginalSize, ElementName=me, Mode=OneWay, Converter={converter:FileSizeConverter}}"
+                   HorizontalAlignment="Left"
+                   VerticalAlignment="Stretch"
+                   VerticalContentAlignment="Center"
+                   Margin="0"
+                   Padding="0"
+                   FontFamily="Open Sans"
+                   FontSize="12"
+                   Foreground="#FF777777" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal"
+                    Grid.Column="1"
+                    HorizontalAlignment="Center">
+            <Label Content="post size: "
+                   HorizontalAlignment="Left"
+                   VerticalAlignment="Stretch"
+                   VerticalContentAlignment="Center"
+                   Margin="0"
+                   Padding="20,0,0,0"
+                   FontFamily="Open Sans"
+                   FontSize="12"
+                   Foreground="#FF777777" />
+            <Label Name="lblPost"
+                   Content="{Binding PostSize, ElementName=me, Mode=OneWay, Converter={converter:FileSizeConverter}}"
+                   HorizontalAlignment="Left"
+                   VerticalAlignment="Stretch"
+                   VerticalContentAlignment="Center"
+                   Margin="0"
+                   Padding="0"
+                   FontFamily="Open Sans"
+                   FontSize="12"
+                   Foreground="#FF777777" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal"
+                    Grid.Column="2"
+                    HorizontalAlignment="Center">
+            <Label Content="change: "
+                   HorizontalAlignment="Left"
+                   VerticalAlignment="Stretch"
+                   VerticalContentAlignment="Center"
+                   Margin="0"
+                   Padding="20,0,0,0"
+                   FontFamily="Open Sans"
+                   FontSize="12"
+                   Foreground="#FF777777" />
+            <Label Name="lblChange"
+                   Content="{Binding ChangeAmount, ElementName=me, Mode=OneWay, Converter={converter:PercentConverter}}"
+                   HorizontalAlignment="Left"
+                   VerticalAlignment="Stretch"
+                   VerticalContentAlignment="Center"
+                   Margin="0"
+                   Padding="0"
+                   FontFamily="Open Sans"
+                   FontSize="12"
+                   Foreground="#FF777777" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal"
+                    Grid.Column="3"
+                    HorizontalAlignment="Right">
+            <Label Content="last update: "
+                   HorizontalAlignment="Right"
+                   VerticalAlignment="Stretch"
+                   VerticalContentAlignment="Center"
+                   Margin="0"
+                   Padding="0"
+                   FontFamily="Open Sans"
+                   FontSize="12"
+                   Foreground="#FF777777" />
+            <Label Name="lblLast"
+                   Content="{Binding LastExecuted, ElementName=me, Mode=OneWay, Converter={converter:TimeConverter}}"
+                   HorizontalAlignment="Right"
+                   VerticalAlignment="Stretch"
+                   VerticalContentAlignment="Center"
+                   Margin="0"
+                   Padding="0"
+                   FontFamily="Open Sans"
+                   FontSize="12"
+                   Foreground="#FF777777" />
+        </StackPanel>
+
+    </Grid>
+</UserControl>

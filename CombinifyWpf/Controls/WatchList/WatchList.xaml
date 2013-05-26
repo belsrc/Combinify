@@ -1,0 +1,55 @@
+﻿<UserControl x:Class="CombinifyWpf.WatchList"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:CombinifyWpf"
+             xmlns:Toolkit="clr-namespace:MetroUiToolkit;assembly=MetroUiToolkit"
+             xmlns:my="clr-namespace:CombinifyWpf"
+             mc:Ignorable="d"
+             d:DesignHeight="395"
+             d:DesignWidth="430"
+             Name="me"
+             SizeChanged="me_SizeChanged">
+    <Grid Name="RootGrid">
+        <local:SectionHeader x:Name="listHead"
+                             HeaderText="watch list"
+                             ButtonText="clear"
+                             ButtonClick="listHead_ButtonClick" />
+        <Toolkit:MetroScrollViewer Name="scrollList"
+                                   Width="Auto"
+                                   Height="225"
+                                   Margin="0,53,0,0"
+                                   VerticalAlignment="Top"
+                                   HorizontalAlignment="Stretch"
+                                   VerticalScrollBarVisibility="Auto">
+            <ItemsControl Name="FileStack"
+                          Height="Auto"
+                          AllowDrop="True"
+                          DragEnter="FileStack_DragEnter"
+                          DragLeave="FileStack_DragLeave"
+                          DragOver="FileStack_DragOver"
+                          Drop="FileStack_Drop" />
+        </Toolkit:MetroScrollViewer>
+
+        <StackPanel VerticalAlignment="Bottom">
+            <local:SectionHeader x:Name="destHead"
+                                 ButtonText="select"
+                                 HeaderText="destination"
+                                 Margin="0,0,0,5"
+                                 ButtonClick="destHead_ButtonClick" />
+            <Label Name="lblDestPath"
+                   Content=""
+                   VerticalAlignment="Bottom"
+                   VerticalContentAlignment="Center"
+                   Height="45"
+                   FontFamily="Open Sans"
+                   FontSize="14"
+                   Padding="16,0"
+                   Background="#FFEEEEEE"
+                   HorizontalContentAlignment="Left"
+                   Opacity="0" />
+        </StackPanel>
+
+    </Grid>
+</UserControl>

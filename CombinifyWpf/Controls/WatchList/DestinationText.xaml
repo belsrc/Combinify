@@ -1,0 +1,29 @@
+﻿<UserControl xmlns:my="clr-namespace:CombinifyWpf"
+             x:Class="CombinifyWpf.DestinationText"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignHeight="97"
+             d:DesignWidth="430">
+    <Grid>
+        <my:SectionHeader x:Name="destHead"
+                          ButtonText="select"
+                          HeaderText="destination"
+                          ButtonClicked="destHead_ButtonClicked"
+                          Margin="0"
+                          VerticalAlignment="Top" />
+        <Label Name="lblDestPath"
+               Content="{Binding ShownPath}"
+               VerticalAlignment="Bottom"
+               VerticalContentAlignment="Center"
+               Height="45"
+               FontFamily="Open Sans"
+               FontSize="14"
+               Padding="16,0"
+               Background="#FFEEEEEE"
+               Opacity="0"
+               HorizontalContentAlignment="Left" />
+    </Grid>
+</UserControl>

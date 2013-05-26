@@ -1,0 +1,156 @@
+﻿<Window x:Class="CombinifyWpf.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:MetroUiToolkit="clr-namespace:MetroUiToolkit;assembly=MetroUiToolkit"
+        xmlns:local="clr-namespace:CombinifyWpf"
+        xmlns:vm="clr-namespace:CombinifyWpf.ViewModels"
+        xmlns:converter="clr-namespace:CombinifyWpf.Converters"
+        Name="WindowMain"
+        Title="MainWindow"
+        Height="620"
+        Width="667"
+        WindowStyle="None"
+        WindowStartupLocation="CenterScreen"
+        AllowsTransparency="True"
+        ResizeMode="NoResize"
+        Padding="24,0,24,24"
+        Icon="/CombinifyWpf;component/icon.ico"
+        AllowDrop="True"
+        UseLayoutRounding="True"
+        Closing="WindowMain_Closing"
+        StateChanged="WindowMain_StateChanged"
+        DragOver="WindowMain_DragOver"
+        Drop="WindowMain_Drop"
+        MouseMove="WindowMain_MouseMove">
+    <Window.Background>
+        <SolidColorBrush />
+    </Window.Background>
+    <Window.DataContext>
+        <vm:ProjectViewModel />
+    </Window.DataContext>
+    <Grid Name="RootGrid">
+        <Border Height="578"
+                Width="606"
+                Background="#14000000">
+            <Border.Effect>
+                <BlurEffect Radius="7" />
+            </Border.Effect>
+        </Border>
+        <Grid Name="ContentGrid"
+              Margin="16,18,15,19"
+              Background="White"
+              Width="600"
+              Height="572">
+            <Border Height="572"
+                    Width="600"
+                    BorderThickness="1"
+                    BorderBrush="#FFDDDDDD">
+
+            </Border>
+            <!-- Header area -->
+            <Canvas Name="IconSvg"
+                    Width="27"
+                    Height="28"
+                    ClipToBounds="True"
+                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    HorizontalAlignment="Left"
+                    Margin="8,12,0,0"
+                    VerticalAlignment="Top"
+                    Background="White"
+                    MouseLeftButtonDown="IconSvg_MouseLeftButtonDown">
+                <Path Fill="#FF000000"
+                      Name="filter_5_icon">
+                    <Path.Data>
+                        <PathGeometry FillRule="Nonzero"
+                                      Figures="M15.102618,18.257482L15.110418,18.266482C15.110418,12.496752,21.563782,4.0595618,25.403137,0.0313318199999983L20.654603,0.0313318199999983C19.25218,1.5420418,17.214714,3.6776418,15.102593,7.3743718L15.102593,0.03098182 11.013272,0.03098182 11.013272,7.3741518C8.9011128,3.6773518,6.8636467,1.5416918,5.4612243,0.03098182L0.71275329,0.03098182C4.5521078,4.0592818,11.005472,12.496402,11.005472,18.266132L11.013372,18.257132 11.013372,20.547092 7.5838215,20.547092 13.057957,26.030982 18.532093,20.547382 15.102618,20.547382 15.102618,18.257482z" />
+                    </Path.Data>
+                </Path>
+            </Canvas>
+            <Label Content="Combinify"
+                   FontFamily="Segoe UI"
+                   FontSize="34"
+                   Height="Auto"
+                   HorizontalAlignment="Left"
+                   Name="label1"
+                   Padding="0"
+                   VerticalAlignment="Top"
+                   Width="Auto"
+                   VerticalContentAlignment="Center"
+                   Margin="41,0,0,0" />
+            <MetroUiToolkit:WinStatesButton Name="winStateBtn"
+                                            VerticalAlignment="Top"
+                                            HorizontalAlignment="Right"
+                                            Margin="0,0,0,0"
+                                            Cursor="Hand"
+                                            Background="#00000000"
+                                            IsMaximizeVisible="False"
+                                            MinimizeClick="winStateBtn_MinimizeClick"
+                                            CloseClick="winStateBtn_CloseClick" />
+            <!-- Monitoring Status Labels -->
+            <Label Content="monitoring on"
+                   HorizontalAlignment="Right"
+                   Name="lblOn"
+                   VerticalAlignment="Top"
+                   FontFamily="Segoe UI Light"
+                   Foreground="#FF339933"
+                   Background="Transparent"
+                   VerticalContentAlignment="Center"
+                   HorizontalContentAlignment="Center"
+                   Margin="0,60,24,0"
+                   FontSize="18"
+                   Visibility="{Binding IsWatching, Converter={converter:BoolVisibilityConverter}}" />
+            <Label Content="monitoring off"
+                   HorizontalAlignment="Right"
+                   Name="lblOff"
+                   VerticalAlignment="Top"
+                   FontFamily="Segoe UI Light"
+                   Foreground="#FFE51400"
+                   Background="Transparent"
+                   VerticalContentAlignment="Center"
+                   HorizontalContentAlignment="Center"
+                   Margin="0,60,24,0"
+                   FontSize="18"
+                   Visibility="{Binding IsWatching, Converter={converter:NegateBoolVisibilityConverter}}" />
+            <local:StripMenuVertical x:Name="stripMenu"
+                                     HorizontalAlignment="Left"
+                                     VerticalAlignment="Bottom"
+                                     Width="225"
+                                     Height="395"
+                                     Margin="24,0,0,64"
+                                     StartClick="stripMenu_StartClick"
+                                     StopClick="stripMenu_StopClick"
+                                     ClearClick="stripMenu_ClearClick"
+                                     CloseProjectClick="stripMenu_CloseProjectClick"
+                                     FileAddClick="stripMenu_FileAddClick"
+                                     DirectoryAddClick="stripMenu_DirectoryAddClick"
+                                     SaveAsClick="stripMenu_SaveAsClick"
+                                     SaveProjectClick="stripMenu_SaveProjectClick"
+                                     OpenProjectClick="stripMenu_OpenProjectClick"
+                                     NewFromDirectoryClick="stripMenu_NewFromDirectoryClick"
+                                     NewFromFileClick="stripMenu_NewFromFileClick"
+                                     MenuClose="stripMenu_MenuClose"
+                                     MenuOpen="stripMenu_MenuOpen"
+                                     ExitClick="stripMenu_ExitClick" />
+            <local:WatchList x:Name="watchList"
+                             Width="430"
+                             Height="395"
+                             HorizontalAlignment="Right"
+                             Margin="0,0,24,64"
+                             VerticalAlignment="Bottom"
+                             ItemsSource="{Binding WatchedFiles}"
+                             ShownPath="{Binding Destination, Mode=TwoWay}"
+                             ClearClick="watchList_ClearClick"
+                             SelectClick="watchList_SelectClick"
+                             local:WatchedItem.RemoveClick="WatchedItemRemove_Click" />
+            <local:StatusBar x:Name="statusBar"
+                             Width="552"
+                             HorizontalAlignment="Left"
+                             VerticalAlignment="Bottom"
+                             Margin="24,0,0,16"
+                             OriginalSize="{Binding CombinedSize, Mode=OneWay}"
+                             PostSize="{Binding ProcessedSize, Mode=OneWay}"
+                             ChangeAmount="{Binding Difference, Mode=OneWay}"
+                             LastExecuted="{Binding LastTime, Mode=OneWay}"/>
+        </Grid>
+    </Grid>
+</Window>
