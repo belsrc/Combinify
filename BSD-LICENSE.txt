@@ -1,6 +1,6 @@
 Combinify is released under a BSD 3-Clause License
 
-Copyright (c) 2012, Bryan Kizer
+Copyright (c) 2013, Bryan Kizer
 All rights reserved. 
 
 Redistribution and use in source and binary forms, with or without 
