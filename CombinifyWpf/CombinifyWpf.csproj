@@ -99,9 +99,6 @@
     <Compile Include="Converters\FileSizeConverter.cs" />
     <Compile Include="Converters\PercentConverter.cs" />
     <Compile Include="Converters\TimeConverter.cs" />
-    <Compile Include="ErrorMockup.xaml.cs">
-      <DependentUpon>ErrorMockup.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\WatchList\SectionHeader.xaml.cs">
       <DependentUpon>SectionHeader.xaml</DependentUpon>
     </Compile>
@@ -127,10 +124,6 @@
     <Page Include="Controls\StripMenuVertical.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="ErrorMockup.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </Page>
     <Page Include="FolderSelectDialog.xaml">
       <SubType>Designer</SubType>
@@ -260,6 +253,9 @@
     <Resource Include="Images\javascript.png" />
     <Resource Include="Images\php.png" />
     <Resource Include="Images\xml.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\project.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

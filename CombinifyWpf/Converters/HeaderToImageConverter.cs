@@ -71,6 +71,11 @@ namespace CombinifyWpf.Converters {
                 BitmapImage source = new BitmapImage( uri );
                 return source;
             }
+            else if( val.Contains( ".cpj" ) ) {
+                Uri uri = new Uri( "pack://application:,,,/Images/project.png" );
+                BitmapImage source = new BitmapImage( uri );
+                return source;
+            }
             else if( val.Contains( @"\" ) ) {
                 Uri uri = new Uri( "pack://application:,,,/Images/drive.png" );
                 BitmapImage source = new BitmapImage( uri );

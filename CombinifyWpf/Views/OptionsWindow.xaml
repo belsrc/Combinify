@@ -11,7 +11,8 @@
         AllowsTransparency="True"
         ResizeMode="NoResize"
         Closing="Window_Closing"
-        Loaded="Window_Loaded">
+        Loaded="Window_Loaded"
+        FontWeight="Light">
     <Window.Background>
         <SolidColorBrush />
     </Window.Background>
@@ -35,13 +36,6 @@
                     BorderThickness="1"
                     BorderBrush="#FFDDDDDD" />
 
-            <Rectangle Height="65"
-                       Width="Auto"
-                       Margin="0"
-                       Name="rectHeader"
-                       VerticalAlignment="Top"
-                       Fill="#FF1BA1E2" />
-
             <Label Content="Options"
                    Height="Auto"
                    HorizontalAlignment="Stretch"
@@ -49,15 +43,14 @@
                    Name="lblHeader"
                    VerticalAlignment="Top"
                    Foreground="White"
-                   FontSize="40"
-                   FontFamily="Open Sans"
-                   FontWeight="Thin"
-                   Padding="20,0,0,0"
+                   Background="#FF1BA1E2"
+                   FontSize="24"
+                   Padding="10,5,0,5"
                    MouseMove="lblHeader_MouseMove"
                    Cursor="SizeAll" />
 
             <TabControl HorizontalAlignment="Stretch"
-                        Margin="0,70,0,45"
+                        Margin="3,70,3,45"
                         Name="tabControl"
                         VerticalAlignment="Stretch"
                         Background="White"

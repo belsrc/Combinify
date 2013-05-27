@@ -34,20 +34,18 @@ namespace CombinifyWpf {
     using System;
     using System.Collections.Generic;
     using System.ComponentModel;
+    using System.IO;
+    using System.Security.Cryptography;
+    using System.Threading;
     using System.Windows;
     using System.Windows.Input;
-    using Cgum;
+    using System.Windows.Threading;
     using Cgum.Controls;
     using Cgum.Dialog;
+    using CombinifyWpf.Utils;
+    using CombinifyWpf.ViewModels;
     using Microsoft.Win32;
     using ModernUIDialogs;
-    using System.IO;
-    using CombinifyWpf.Models;
-    using CombinifyWpf.ViewModels;
-    using CombinifyWpf.Utils;
-    using System.Threading;
-    using System.Windows.Threading;
-    using System.Security.Cryptography;
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -156,7 +154,7 @@ namespace CombinifyWpf {
             }
         }
 
-        private void WindowMain_DragOver( object sender, DragEventArgs e ) {
+        private void WindowMain_DragOver( object sender, DragEventArgs e ) { 
             // Check if the Dataformat of the data can be accepted
             // (we only accept file drops from Explorer, etc.)
             if( ( e.AllowedEffects & DragDropEffects.Copy ) == DragDropEffects.Copy ) {
@@ -167,6 +165,8 @@ namespace CombinifyWpf {
                     e.Effects = DragDropEffects.None;
                 }
             }
+
+            // TODO Add an adorner like the GitHub apps
         }
 
         private void stripMenu_StartClick( object sender, RoutedEventArgs e ) {
@@ -191,22 +191,18 @@ namespace CombinifyWpf {
         }
 
         private void stripMenu_FileAddClick( object sender, RoutedEventArgs e ) {
-            string path = string.Empty;
-
-            if( OpenSaveDialogs.GetOpenPath( out path, new OpenFileDialog(), "Cascading Style Sheet (*.css)|*.css" ) ) {
-                ( this.DataContext as ProjectViewModel ).AddFile( path );
+            var fsd = new FolderSelectDialog( "Select a CSS File", App.FileTypes["Stylesheet"] );
+            fsd.Owner = this;
+            if( (bool)fsd.ShowDialog() ) {
+                ( this.DataContext as ProjectViewModel ).AddFile( fsd.Path );
             }
         }
 
         private void stripMenu_DirectoryAddClick( object sender, RoutedEventArgs e ) {
-            string path = string.Empty;
-
-            if( OpenSaveDialogs.GetFolderPath( out path,
-                new System.Windows.Forms.FolderBrowserDialog(),
-                "Select Input Folder",
-                true,
-                ( this.DataContext as ProjectViewModel ).LastDirectory ) ) {
-                ( this.DataContext as ProjectViewModel ).AddDirectory( path );
+            var fsd = new FolderSelectDialog( "Select a Folder" );
+            fsd.Owner = this;
+            if( ( bool )fsd.ShowDialog() ) {
+                ( this.DataContext as ProjectViewModel ).AddDirectory( fsd.Path );
             }
         }
 
@@ -219,34 +215,29 @@ namespace CombinifyWpf {
         }
 
         private void stripMenu_OpenProjectClick( object sender, RoutedEventArgs e ) {
-            string path = string.Empty;
-
-            if( OpenSaveDialogs.GetOpenPath( out path, new OpenFileDialog(), "Combinify Project (*.cpj)|*.cpj" ) ) {
+            var fsd = new FolderSelectDialog( "Select a Project File", App.FileTypes[ "Project" ] );
+            fsd.Owner = this;
+            if( ( bool )fsd.ShowDialog() ) {
                 var pio = new ProjectIO();
-                ( this.DataContext as ProjectViewModel ).Model = pio.LoadProject( path );
+                ( this.DataContext as ProjectViewModel ).Model = pio.LoadProject( fsd.Path );
             }
         }
 
         private void stripMenu_NewFromDirectoryClick( object sender, RoutedEventArgs e ) {
-            string path = string.Empty;
-            var context = this.DataContext as ProjectViewModel;
-
-            if( OpenSaveDialogs.GetFolderPath( out path,
-                new System.Windows.Forms.FolderBrowserDialog(),
-                "Select Input Folder",
-                false,
-                context.LastDirectory ) ) {
+            var fsd = new FolderSelectDialog( "Select a Folder" );
+            fsd.Owner = this;
+            if( ( bool )fsd.ShowDialog() ) {
                 ResetProject();
-                context.AddDirectory( path );
+                ( this.DataContext as ProjectViewModel ).AddDirectory( fsd.Path );
             }
         }
 
         private void stripMenu_NewFromFileClick( object sender, RoutedEventArgs e ) {
-            string path = string.Empty;
-
-            if( OpenSaveDialogs.GetOpenPath( out path, new OpenFileDialog(), "Cascading Style Sheet (*.css)|*.css" ) ) {
+            var fsd = new FolderSelectDialog( "Select a CSS File", App.FileTypes[ "Stylesheet" ] );
+            fsd.Owner = this;
+            if( ( bool )fsd.ShowDialog() ) {
                 ResetProject();
-                ( this.DataContext as ProjectViewModel ).AddFile( path );
+                ( this.DataContext as ProjectViewModel ).AddFile( fsd.Path );
             }
         }
 
@@ -390,6 +381,7 @@ namespace CombinifyWpf {
 
         private void IconSvg_MouseLeftButtonDown( object sender, MouseButtonEventArgs e ) {
             var folder = new FolderSelectDialog();
+            folder.Owner = this;
             folder.ShowDialog();
         }
 
