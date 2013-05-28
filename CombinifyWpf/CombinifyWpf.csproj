@@ -56,6 +56,9 @@
     <ApplicationIcon>icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ftplib">
+      <HintPath>..\..\..\ftplib\ftplib\bin\Release\ftplib.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
@@ -86,11 +89,6 @@
       <DependentUpon>FolderSelectDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Utils\Comber.cs" />
-    <Compile Include="Utils\Ftp\FtpItemType.cs" />
-    <Compile Include="Utils\Ftp\FtpItem.cs" />
-    <Compile Include="Utils\Ftp\FtpDirectory.cs" />
-    <Compile Include="Utils\Ftp\FtpFile.cs" />
-    <Compile Include="Utils\Ftp\FtpConnection.cs" />
     <Compile Include="Utils\SelectorCombiner.cs" />
     <Compile Include="ViewModels\BindableBase.cs" />
     <Compile Include="Utils\Colors\ColorCompressor.cs" />

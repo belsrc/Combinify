@@ -41,6 +41,7 @@ namespace CombinifyWpf {
     using Cgum.Encryption;
     using CombinifyWpf.Utils;
     using ModernUIDialogs;
+    using FtpLib;
 
     /// <summary>
     /// Interaction logic for FolderSelectDialog.xaml
