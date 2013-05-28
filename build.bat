@@ -15,6 +15,7 @@ COPY "E:\Programming\!Csharp\Combinify Project\CombinifyWpf\CombiDocs\report.css
 COPY "E:\Programming\!Csharp\Combinify Project\CombinifyWpf\CombiDocs\Presentation.css" "E:\Programming\!Csharp\Combinify Project\CombinifyWpf\CombiDocs\Help\styles"
 COPY "E:\Programming\!Csharp\Combinify Project\CombinifyWpf\CombiDocs\TOC.css" "E:\Programming\!Csharp\Combinify Project\CombinifyWpf\CombiDocs\Help"
 DEL "E:\Programming\!Csharp\Combinify Project\CombinifyWpf\TestResult.xml"
+"C:\Program Files\7-Zip\7z.exe" a -mx9 "E:\Programming\!Csharp\Combinify Project\CombinifyWpf\CombiDocs.7z" "E:\Programming\!Csharp\Combinify Project\CombinifyWpf\CombiDocs\Help" "E:\Programming\!Csharp\Combinify Project\CombinifyWpf\CombiDocs\CoverageResult"
 
 REM Open the generate docs
 "E:\Programming\!Csharp\Combinify Project\CombinifyWpf\CombiDocs\CoverageResult\index.htm"

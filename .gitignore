@@ -41,9 +41,7 @@ _UpgradeReport_Files/
 Backup*/
 ClientBin
 Desktop.ini
-CombiDocs/Help/*.aspx
-CombiDocs/Help/*.config
-CombiDocs/Help/*.php
+CombiDocs/*
 sql
 stylecop.*
 TestResults
