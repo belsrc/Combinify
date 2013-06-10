@@ -111,7 +111,7 @@ namespace CombinifyWpf.Utils {
             try {
                 foreach( string p in paths ) {
                     if( File.Exists( p ) ) {
-                        using( var sr = new StreamReader( p ) ) {
+                        using( var sr = new StreamReader( p, Encoding.UTF8 ) ) {
                             string css = sr.ReadToEnd();
                             css.Trim();
                             sb.Append( css );
@@ -147,7 +147,7 @@ namespace CombinifyWpf.Utils {
             try {
                 foreach( string s in paths ) {
                     if( File.Exists( s ) ) {
-                        using( var sr = new StreamReader( s ) ) {
+                        using( var sr = new StreamReader( s, Encoding.UTF8 ) ) {
                             string css = sr.ReadToEnd();
                             sr.Close();
                             sb.Append( MinifyFile( css ) );
@@ -172,7 +172,7 @@ namespace CombinifyWpf.Utils {
             if( File.Exists( path ) ) {
                 string css = string.Empty;
 
-                using( var sr = new StreamReader( path ) ) {
+                using( var sr = new StreamReader( path, Encoding.UTF8 ) ) {
                     css = sr.ReadToEnd();
                     css.Trim();
                 }
@@ -215,7 +215,7 @@ namespace CombinifyWpf.Utils {
             var css = new List<string>();
             foreach( var file in paths ) {
                 if( File.Exists( file ) ) {
-                    using( var sr = new StreamReader( file ) ) {
+                    using( var sr = new StreamReader( file, Encoding.UTF8 ) ) {
                         css.Add( CombFile( sr.ReadToEnd() ) );
                     }
                 }
@@ -242,7 +242,7 @@ namespace CombinifyWpf.Utils {
             var css = new List<string>();
             foreach( var file in paths ) {
                 if( File.Exists( file ) ) {
-                    using( var sr = new StreamReader( file ) ) {
+                    using( var sr = new StreamReader( file, Encoding.UTF8 ) ) {
                         css.Add( CombineSelectors( sr.ReadToEnd() ) );
                     }
                 }

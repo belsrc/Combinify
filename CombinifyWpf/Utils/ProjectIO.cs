@@ -157,7 +157,7 @@ namespace CombinifyWpf.Utils {
         /// <param name="destination">The destination file path.</param>
         /// <param name="content">The file content to write.</param>
         public void SaveProcessedFile( string destination, string content ) {
-            using( var sw = new StreamWriter( destination, false ) ) {
+            using( var sw = new StreamWriter( destination, false, Encoding.UTF8 ) ) {
                 sw.Write( content );
                 sw.Close();
             }

@@ -35,6 +35,7 @@ namespace CombinifyWpf.Utils {
     using System.IO;
     using System.Net;
     using System.Text.RegularExpressions;
+    using System.Text;
 
     /// <summary>
     /// A class to handle (recursively) flattening all import statements of a CSS files.
@@ -96,7 +97,7 @@ namespace CombinifyWpf.Utils {
             FileInfo fi = new FileInfo( path );
 
             if( fi.Exists ) {
-                using( var reader = new StreamReader( fi.FullName ) ) {
+                using( var reader = new StreamReader( fi.FullName, Encoding.UTF8 ) ) {
                     content = reader.ReadToEnd();
                 }
             }
@@ -115,7 +116,7 @@ namespace CombinifyWpf.Utils {
 
             if( WebFileExists( uri ) ) {
                 using( WebClient client = new WebClient() ) {
-                    using( StreamReader reader = new StreamReader( client.OpenRead( uri ) ) ) {
+                    using( StreamReader reader = new StreamReader( client.OpenRead( uri ), Encoding.UTF8 ) ) {
                         content = reader.ReadToEnd();
                     }
                 }
