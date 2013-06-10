@@ -56,8 +56,7 @@
                     HorizontalAlignment="Left"
                     Margin="8,12,0,0"
                     VerticalAlignment="Top"
-                    Background="White"
-                    MouseLeftButtonDown="IconSvg_MouseLeftButtonDown">
+                    Background="White">
                 <Path Fill="#FF000000"
                       Name="filter_5_icon">
                     <Path.Data>

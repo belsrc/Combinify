@@ -12,11 +12,17 @@
         Width="310"
         Loaded="Window_Loaded"
         FontFamily="Segoe UI Light"
-        Name="FileWindow"
-        MouseMove="FileWindow_MouseMove"
-        ContentRendered="FileWindow_ContentRendered">
+        Name="FolderWindow"
+        MouseMove="FolderWindow_MouseMove"
+        ContentRendered="FolderWindow_ContentRendered" >
     <Grid>
-        <Label Content="Some Title"
+        <Border BorderBrush="#FF1BA1E2"
+                BorderThickness="1"
+                HorizontalAlignment="Stretch"
+                Margin="0"
+                Name="winBorder"
+                VerticalAlignment="Stretch"/>
+        <Label Content="{Binding Title, ElementName=FolderWindow}"
                Height="Auto"
                HorizontalAlignment="Stretch"
                Margin="0"
@@ -35,7 +41,7 @@
                             IsMaximizeVisible="False"
                             HorizontalAlignment="Right"
                             Width="30"
-                            CloseClick="winStatesButton1_CloseClick">
+                            CloseClick="winStatesButton_CloseClick">
             <my:WinStatesButton.BackgroundHover>
                 <SolidColorBrush />
             </my:WinStatesButton.BackgroundHover>
@@ -159,6 +165,5 @@
                         VerticalAlignment="Bottom"
                         Width="75"
                         Click="CancelButton_Click" />
-        
     </Grid>
 </Window>

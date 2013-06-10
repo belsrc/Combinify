@@ -72,7 +72,7 @@ namespace CombinifyWpf {
         /// <param name="fileExts">The files, with the proveided extensions, to show in the dialog.</param>
         public FolderSelectDialog( string title, params string[] fileExts ) {
             InitializeComponent();
-            lblHeader.Content = title;
+            this.Title = title;
             if( fileExts != null ) {
                 this._visibleFiles = true;
                 this._extensions = fileExts;
@@ -83,17 +83,17 @@ namespace CombinifyWpf {
         }
 
         /// <summary>
-        /// Gets or sets the user selected file/folder path.
+        /// Gets or sets the user selected folder path.
         /// </summary>
         public string Path { get; set; }
 
-        private void FileWindow_MouseMove( object sender, MouseEventArgs e ) {
+        private void FolderWindow_MouseMove( object sender, MouseEventArgs e ) {
             if( sender != null && e.LeftButton == MouseButtonState.Pressed ) {
                 this.DragMove();
             }
         }
 
-        private void winStatesButton1_CloseClick( object sender, RoutedEventArgs e ) {
+        private void winStatesButton_CloseClick( object sender, RoutedEventArgs e ) {
             this.DialogResult = false;
             this.Close();
         }
@@ -126,7 +126,7 @@ namespace CombinifyWpf {
             }
         }
 
-        private void FileWindow_ContentRendered( object sender, EventArgs e ) {
+        private void FolderWindow_ContentRendered( object sender, EventArgs e ) {
             if( hasRemoteInfo() ) {
                 this._con = GetConnection();
                 var dirs = FilterRemoteDirectory( this._con.SimpleDirectoryList( "" ) );

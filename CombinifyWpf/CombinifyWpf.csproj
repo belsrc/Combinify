@@ -82,14 +82,23 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Adorners\SelectedAdorner.cs" />
+    <Compile Include="Controls\FileIcon.xaml.cs">
+      <DependentUpon>FileIcon.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Converters\BoolVisibilityConverter.cs" />
     <Compile Include="Converters\HeaderToImageConverter.cs" />
     <Compile Include="Converters\NegateBoolVisibilityConverter.cs" />
-    <Compile Include="FolderSelectDialog.xaml.cs">
+    <Compile Include="Dialogs\FileSelectDialog.xaml.cs">
+      <DependentUpon>FileSelectDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\FolderSelectDialog.xaml.cs">
       <DependentUpon>FolderSelectDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Utils\Comber.cs" />
-    <Compile Include="Utils\SelectorCombiner.cs" />
+    <Compile Include="Utils\Operations\Comber.cs" />
+    <Compile Include="Utils\DialogType.cs" />
+    <Compile Include="Utils\IconPicker.cs" />
+    <Compile Include="Utils\Operations\SelectorCombiner.cs" />
     <Compile Include="ViewModels\BindableBase.cs" />
     <Compile Include="Utils\Colors\ColorCompressor.cs" />
     <Compile Include="Utils\Colors\ColorConverter.cs" />
@@ -113,8 +122,12 @@
       <DependentUpon>WatchList.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\ExtendedPropertyChangedEventArgs.cs" />
-    <Compile Include="Utils\Flattener.cs" />
+    <Compile Include="Utils\Operations\Flattener.cs" />
     <Compile Include="Utils\ProjectIO.cs" />
+    <Page Include="Controls\FileIcon.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\WatchList\SectionHeader.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -123,7 +136,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="FolderSelectDialog.xaml">
+    <Page Include="Dialogs\FileSelectDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\FolderSelectDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -135,7 +152,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Utils\Processor.cs" />
+    <Compile Include="Utils\Operations\Processor.cs" />
     <Compile Include="ViewModels\ProjectViewModel.cs" />
     <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
@@ -159,7 +176,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Utils\Minifier.cs" />
+    <Compile Include="Utils\Operations\Minifier.cs" />
     <Compile Include="Views\OptionsWindow.xaml.cs">
       <DependentUpon>OptionsWindow.xaml</DependentUpon>
     </Compile>
@@ -230,9 +247,7 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Adorners\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Resource Include="Images\folder.png" />
   </ItemGroup>
@@ -254,6 +269,33 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\project.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\css-64x64.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\drive-64x64.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\folder-64x64.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\html-64x64.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\image-64x64.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\javascript-64x64.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\php-64x64.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\xml-64x64.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\project-64x64.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

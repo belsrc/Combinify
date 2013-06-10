@@ -42,10 +42,12 @@ namespace CombinifyWpf {
     using System.Windows.Threading;
     using Cgum.Controls;
     using Cgum.Dialog;
+    using CombinifyWpf.Dialogs;
     using CombinifyWpf.Utils;
     using CombinifyWpf.ViewModels;
     using Microsoft.Win32;
     using ModernUIDialogs;
+    using System.Linq;
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -67,7 +69,7 @@ namespace CombinifyWpf {
             }
 
             string[] args = Environment.GetCommandLineArgs();
-            
+
             // Since the first arg is always the assemply name we need to make sure there is more than 
             // that, otherwise we can simply ignore it
             if( args.Length > 1 ) {
@@ -154,7 +156,7 @@ namespace CombinifyWpf {
             }
         }
 
-        private void WindowMain_DragOver( object sender, DragEventArgs e ) { 
+        private void WindowMain_DragOver( object sender, DragEventArgs e ) {
             // Check if the Dataformat of the data can be accepted
             // (we only accept file drops from Explorer, etc.)
             if( ( e.AllowedEffects & DragDropEffects.Copy ) == DragDropEffects.Copy ) {
@@ -191,9 +193,9 @@ namespace CombinifyWpf {
         }
 
         private void stripMenu_FileAddClick( object sender, RoutedEventArgs e ) {
-            var fsd = new FolderSelectDialog( "Select a CSS File", App.FileTypes["Stylesheet"] );
+            var fsd = new FileSelectDialog( DialogType.Open, "Select a CSS file", App.FileIcons.Keys.ToArray() );
             fsd.Owner = this;
-            if( (bool)fsd.ShowDialog() ) {
+            if( ( bool )fsd.ShowDialog() ) {
                 ( this.DataContext as ProjectViewModel ).AddFile( fsd.Path );
             }
         }
@@ -263,10 +265,10 @@ namespace CombinifyWpf {
         }
 
         private void watchList_SelectClick( object sender, RoutedEventArgs e ) {
-            string path = string.Empty;
-
-            if( OpenSaveDialogs.GetSavePath( out path, new SaveFileDialog(), "Cascading Style Sheet (*.css)|*.css", "Save Output To" ) ) {
-                ( this.DataContext as ProjectViewModel ).Destination = path;
+            var fsd = new FileSelectDialog( DialogType.Save, "Save Output To", ".css" );
+            fsd.Owner = this;
+            if( ( bool )fsd.ShowDialog() ) {
+                ( this.DataContext as ProjectViewModel ).Destination = fsd.Path;
             }
         }
 
@@ -297,7 +299,7 @@ namespace CombinifyWpf {
 
         private void ConfigureTrayIcon() {
             var contextMenu = new System.Windows.Forms.ContextMenuStrip();
-            
+
             System.Windows.Forms.ToolStripMenuItem miOne = new System.Windows.Forms.ToolStripMenuItem();
             miOne.Text = "Start Montioring";
             miOne.Enabled = true;
@@ -352,14 +354,14 @@ namespace CombinifyWpf {
         }
 
         private void NewSave() {
-            string path = string.Empty;
-
-            if( OpenSaveDialogs.GetSavePath( out path, new SaveFileDialog(), "Combinify Project (*.cpj)|*.cpj", "Save Project" ) ) {
+            var fsd = new FileSelectDialog( DialogType.Save, "Save Project", ".cpj" );
+            fsd.Owner = this;
+            if( ( bool )fsd.ShowDialog() ) {
                 var pio = new ProjectIO();
                 var context = this.DataContext as ProjectViewModel;
-                context.ProjectSavePath = path;
-                context.LastDirectory = path.Substring( 0, path.LastIndexOf( "\\" ) + 1 );
-                pio.SaveProject( path, context.Model );
+                context.ProjectSavePath = fsd.Path;
+                context.LastDirectory = fsd.Path.Substring( 0, fsd.Path.LastIndexOf( "\\" ) + 1 );
+                pio.SaveProject( fsd.Path, context.Model );
             }
         }
 
@@ -377,12 +379,6 @@ namespace CombinifyWpf {
         private void ResetProject() {
             // TODO : Check for unsaved changes in current project
             ( this.DataContext as ProjectViewModel ).Close();
-        }
-
-        private void IconSvg_MouseLeftButtonDown( object sender, MouseButtonEventArgs e ) {
-            var folder = new FolderSelectDialog();
-            folder.Owner = this;
-            folder.ShowDialog();
         }
 
         private void ParseCommandArgs( string[] args ) {
