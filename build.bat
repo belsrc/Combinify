@@ -11,9 +11,9 @@ REM Generate SandCastle Documentation
 "C:\Windows\Microsoft.NET\Framework\v4.0.30319\msbuild.exe" "E:\Programming\!Csharp\Combinify Project\CombinifyWpf\CombiDocs\CombiDocs.shfbproj"
 
 REM Clean up
-COPY "E:\Programming\!Csharp\Combinify Project\CombinifyWpf\CombiDocs\report.css" "E:\Programming\!Csharp\Combinify Project\CombinifyWpf\CombiDocs\CoverageResult"
-COPY "E:\Programming\!Csharp\Combinify Project\CombinifyWpf\CombiDocs\Presentation.css" "E:\Programming\!Csharp\Combinify Project\CombinifyWpf\CombiDocs\Help\styles"
-COPY "E:\Programming\!Csharp\Combinify Project\CombinifyWpf\CombiDocs\TOC.css" "E:\Programming\!Csharp\Combinify Project\CombinifyWpf\CombiDocs\Help"
+COPY "E:\Programming\!Csharp\report.css" "E:\Programming\!Csharp\Combinify Project\CombinifyWpf\CombiDocs\CoverageResult"
+COPY "E:\Programming\!Csharp\Presentation.css" "E:\Programming\!Csharp\Combinify Project\CombinifyWpf\CombiDocs\Help\styles"
+COPY "E:\Programming\!Csharp\TOC.css" "E:\Programming\!Csharp\Combinify Project\CombinifyWpf\CombiDocs\Help"
 DEL "E:\Programming\!Csharp\Combinify Project\CombinifyWpf\TestResult.xml"
 "C:\Program Files\7-Zip\7z.exe" a -mx9 "E:\Programming\!Csharp\Combinify Project\CombinifyWpf\CombiDocs.7z" "E:\Programming\!Csharp\Combinify Project\CombinifyWpf\CombiDocs\Help" "E:\Programming\!Csharp\Combinify Project\CombinifyWpf\CombiDocs\CoverageResult"
 
