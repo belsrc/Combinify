@@ -1,3 +1,6 @@
+[![No Maintenance Intended](https://img.shields.io/badge/No%20Maintenance%20Intended-x-red.svg?style=flat-square&longCache=true)](http://unmaintained.tech/)
+
+
 # Combinify
 
 Combinify is a simple C# (.Net4) app that monitors a list of css files and then combines and minifies them when their LastWriteTime attribute changes. 
